@@ -1,4 +1,42 @@
-# Static Site Generator
+# TODO
+
+- Try out with real content, porting existing blog.
+- Does it work well with inotify? How about cron?
+- Try with dropbox.
+- Unit tests.
+- Separate into classes.
+
+# Lightning
+
+* One-step to add a new post (eg. a link)
+* Static output
+* Edit with any editor
+* Markdown-based syntax
+* Simple logic-less templates
+* Ability to work offline
+* Fast builds
+* Logical placement of assets.
+
+Also important restrictions:
+
+* Build should never change the source tree (with the exception of moving
+  published drafts into the main site).
+* There must be no server-side component. No rewrite rules, no scripts,
+  etc.
+
+## Installation
+
+1. Clone this repository.
+2. Run `pip something` to install all of the dependencies.
+3. Run engine/builder.py on a regular basis (cron job or via inotify).
+
+### Dependencies
+
+* PyYAML==3.10
+* markdown2==1.1.1
+* pystache==0.4.0
+
+Or just install via pip. TODO: more details.
 
 ## Commands
 

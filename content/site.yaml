@@ -1,4 +1,8 @@
 title: Boris Smus
-permalinks:
+date_format: '%d %B %Y'
+permalink_format:
   post: '{{year}}/{{slug}}'
   page: '{{slug}}'
+  draft: 'drafts/{{slug}}'
+  archive: 'archives/{{slug}}'
+  index: ''

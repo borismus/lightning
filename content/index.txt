@@ -1,7 +1,7 @@
 Welcome
 =======
 list:
+type: index
 limit: 20
-sort: -published
 
 Welcome
