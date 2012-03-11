@@ -1,0 +1,7 @@
+All links
+=========
+list:
+type: archive
+filter: link
+
+This is a list of all links ever written.

@@ -1,0 +1,4 @@
+title: Boris Smus
+permalinks:
+  post: '{{year}}/{{slug}}'
+  page: '{{slug}}'

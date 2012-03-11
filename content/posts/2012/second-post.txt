@@ -1,0 +1,7 @@
+Draft 2
+=======
+type: post
+slug: foo-bar
+posted: 2012-01-03 22:22
+
+Blah blah.

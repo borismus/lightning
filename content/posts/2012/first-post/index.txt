@@ -1,0 +1,7 @@
+My draft title
+==============
+type: post
+slug: draft-post
+posted: 2011-10-12 9:00
+
+If there's no Published property set, the page will not be published.
