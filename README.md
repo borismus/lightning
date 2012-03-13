@@ -1,23 +1,28 @@
 # TODO
 
+- Publish assets that are stored in the content directory.
+- Respect the `<!--more-->` tag for excerpts, with a snip attribute as
+  an alternative.
+- Include CSS in the template directory.
+
 - Try out with real content, porting existing blog.
 - Does it work well with inotify? How about cron?
 - Try with dropbox.
 - Unit tests.
 - Separate into classes.
 
-# Lightning
+## Lightning features
 
 * One-step to add a new post (eg. a link)
 * Static output
-* Edit with any editor
-* Markdown-based syntax
+* Use any editor
+* Markdown (content) + YAML (metadata) + Mustache (template)
 * Simple logic-less templates
 * Ability to work offline
+* Logical placement of assets (near the content)
 * Fast builds
-* Logical placement of assets.
 
-Also important restrictions:
+### Important design decisions:
 
 * Build should never change the source tree (with the exception of moving
   published drafts into the main site).

@@ -2,6 +2,7 @@ title: Boris Smus
 date_format: '%d %B %Y'
 permalink_format:
   post: '{{year}}/{{slug}}'
+  link: '{{year}}/{{slug}}'
   page: '{{slug}}'
   draft: 'drafts/{{slug}}'
   archive: 'archives/{{slug}}'

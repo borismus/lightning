@@ -1,6 +1,0 @@
-Draft 2
-=======
-type: post
-posted: 2012-01-03 22:22
-
-Blah blah.

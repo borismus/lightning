@@ -2,6 +2,7 @@ import os
 import pickle
 import time
 import datetime
+from distutils import dir_util
 
 import yaml
 import markdown2
@@ -17,6 +18,7 @@ class SiteBuilder:
     self.root = self.find_root()
     self.content_root = self.root + 'content/'
     self.template_root = self.root + 'template/'
+    self.static_root = self.template_root + 'static/'
     self.output_root = self.root + 'www/'
 
     # Figure out the pathes.
@@ -262,7 +264,6 @@ class SiteBuilder:
     # Get the type and load the appropriate template.
     type_name = info['type']
     template = self.load_template(type_name)
-    print template
     # Evaluate the template with data.
     html = pystache.render(template, template_data)
     # Compute the final path based on permalink config.
@@ -311,7 +312,7 @@ class SiteBuilder:
       out = [i for i in out if i['type'] == type_filter]
     # Order it correctly.
     out = sorted(out, cmp=lambda a, b:
-        a['posted_info']['unix'] - b['posted_info']['unix'])
+        b['posted_info']['unix'] - a['posted_info']['unix'])
     # Limit the number of results.
     return out[:limit]
 
@@ -357,6 +358,14 @@ class SiteBuilder:
 
     return (created, updated, deleted)
 
+  def copy_static(self):
+    """Copies the static part of the template directory into the output
+    root (only if it's not there yet)."""
+    src = self.template_root + 'static/'
+    dst = self.output_root + 'static/'
+
+    if not os.path.exists(dst):
+      dir_util.copy_tree(src, dst)
 
   def build_incremental(self):
     """Performs an incremental build."""
@@ -406,12 +415,16 @@ class SiteBuilder:
     lists = [i for i in cache if 'list' in i['info']]
     # Distinguish between single and lists posts.
     singles = [i for i in created + updated if 'list' not in i['info']]
+
     # Build all of the single files.
     for info in singles:
       self.build(info)
     # Build the lists.
     for info in lists:
       self.build(info)
+
+    # Copy over the static template files.
+    self.copy_static()
 
     # Write out the new cache to disk.
     self.save_cache(cache)
