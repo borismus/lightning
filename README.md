@@ -1,25 +1,35 @@
 # TODO
 
-- Publish assets that are stored in the content directory.
-- Respect the `<!--more-->` tag for excerpts, with a snip attribute as
-  an alternative.
-- Include CSS in the template directory.
+- Archive page (with filtering)
+- Generate RSS feed.
 
-- Try out with real content, porting existing blog.
 - Does it work well with inotify? How about cron?
 - Try with dropbox.
-- Unit tests.
-- Separate into classes.
+- Unit test and refactor.
+- Refactoring into classes.
+
+### Done
+
+- Make links actually link out
+- Publish assets that are stored in the content directory (only if
+  associated file changes).
+- Try out with real content, porting existing blog.
+- Respect the `<!--more-->` tag for excerpts, with a snip attribute as
+  an alternative.
+- Fix position of the read more thingy
+- Responsive styles for different sizes
+- Code snippets syntax highlight.
 
 ## Lightning features
 
 * One-step to add a new post (eg. a link)
 * Static output
 * Use any editor
-* Markdown (content) + YAML (metadata) + Mustache (template)
+* Uses existing DSLs: Markdown (content) + YAML (metadata) + Mustache (template)
 * Simple logic-less templates
 * Ability to work offline
-* Logical placement of assets (near the content)
+* Logical placement of assets (content-related ones near the content,
+  layout ones in the template)
 * Fast builds
 
 ### Important design decisions:

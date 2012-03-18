@@ -16,9 +16,8 @@ class SiteBuilder:
   def __init__(self):
     # Get the roots.
     self.root = self.find_root()
-    self.content_root = self.root + 'content/'
     self.template_root = self.root + 'template/'
-    self.static_root = self.template_root + 'static/'
+    self.content_root = self.root + 'content/'
     self.output_root = self.root + 'www/'
 
     # Figure out the pathes.
@@ -144,6 +143,7 @@ class SiteBuilder:
       type: post
       posted: 2012-03-01 9:00
       slug: my-new-post
+      snip: A short summary of what's written in the post.
 
       Just **testing**
 
@@ -160,12 +160,16 @@ class SiteBuilder:
           "day": 1,
           "hour": 9,
           "min": 0
-        }
-        "content": "Just <b>testing</b>"
+        },
+        "content": "Just <b>testing</b>",
+        "snip": "Just <b>testing</b>",
         "permalink": "/whatever/2012/my-new-post",
+        "link": "/whatever/2012/my-new-post"
       }
 
-      Permalink is computed based on site config too.
+      Permalink is computed based on site config too. Link is the actual link
+      to the content (maybe an external URL if its a link post with URL
+      specified)
     """
     # Load the file.
     f = open(path, 'r')
@@ -180,6 +184,9 @@ class SiteBuilder:
     # Process the rest of the post as Markdown.
     markdown_lines = lines[separator_index+1:]
     content = markdown2.markdown(''.join(markdown_lines))
+    # If there's no snip specified, try to parse it either before the
+    # <!--more--> tag, or use the whole body.
+    data['snip'] = 'snip' in data and data['snip'] or self.parse_snip(content)
     # Put everything in a dict.
     data['title'] = title
     data['content'] = content
@@ -194,7 +201,9 @@ class SiteBuilder:
       posted_info = self.parse_date(data['posted'])
       data['posted_info'] = posted_info
     # Compute the permalink.
-    data['permalink'] = self.compute_permalink(type_name, slug, posted_info)
+    permalink = self.compute_permalink(type_name, slug, posted_info)
+    data['permalink'] = permalink
+    data['link'] = 'link' in data and data['link'] or permalink
     # Return the dict.
     return data
 
@@ -217,6 +226,16 @@ class SiteBuilder:
       return 'draft'
     elif path.startswith('./content/archives/'):
       return 'archive'
+    if path.startswith('./content/links/'):
+      return 'link'
+
+  def parse_snip(self, content):
+    """Return the snippet based on the content."""
+    found = content.find('<!--more-->')
+    if found:
+      return content[:found]
+    else:
+      return content
 
   def parse_site(self):
     """Parses a site.yaml like this:
@@ -260,7 +279,9 @@ class SiteBuilder:
       limit = 10
       type_filter = 'filter' in info and info['filter']
       items = self.get_list(type_filter, limit)
+      print 'filter', type_filter, 'length', len(items)
       template_data['posts'] = items
+
     # Get the type and load the appropriate template.
     type_name = info['type']
     template = self.load_template(type_name)
@@ -270,25 +291,28 @@ class SiteBuilder:
     path = info['permalink']
     # Create the directory for the parsed HTML.
     abs_path = self.output_root + path
-    self.mkdir_parents(abs_path)
+    dir_util.mkpath(abs_path)
     # Create the index file inside the directory.
     f = open(abs_path + '/index.html', 'w')
     f.write(html.encode('utf-8'))
-    # Copy any assets that should be copied (if applicable).
+    # Copy any assets that should be copied.
+    self.copy_assets(item)
 
-  def mkdir_parents(self, newdir):
-    """Emulates mkdir -p"""
-    if os.path.isdir(newdir):
-      pass
-    elif os.path.isfile(newdir):
-      raise OSError("a file with the same name as the desired " \
-          "dir, '%s', already exists." % newdir)
-    else:
-      head, tail = os.path.split(newdir)
-      if head and not os.path.isdir(head):
-        self.mkdir_parents(head)
-      if tail:
-        os.mkdir(newdir)
+  def copy_assets(self, item):
+    """If the item is an index file, and there are assets in its directory,
+    copy them over."""
+    if not item['path'].endswith('index.txt'):
+      # Not an index file, so there's nothing to do.
+      return
+
+    src = os.path.dirname(item['path'])
+    dst = self.output_root + item['info']['permalink']
+    print (src, dst)
+    # Copy everything in the item path to the destination path.
+    dir_util.copy_tree(src, dst)
+    # Remove the raw index.txt.
+    os.remove(dst + '/index.txt')
+
 
   def archive_output(self, item):
     """Moves the output specified by this item to an archive directory."""
@@ -299,7 +323,8 @@ class SiteBuilder:
     # Ensure target archive directory exists.
     dst_dir = os.path.dirname(dst)
     if not os.path.exists(dst_dir):
-      self.mkdir_parents(dst_dir)
+      dir_util.mkpath(dst_dir)
+    
     os.rename(src, dst)
 
 
@@ -423,7 +448,7 @@ class SiteBuilder:
     for info in lists:
       self.build(info)
 
-    # Copy over the static template files.
+    # Copy over the static template files if necessary.
     self.copy_static()
 
     # Write out the new cache to disk.

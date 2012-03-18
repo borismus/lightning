@@ -1,4 +1,4 @@
-title: Boris Smus
+site_title: Boris Smus
 date_format: '%d %B %Y'
 permalink_format:
   post: '{{year}}/{{slug}}'

@@ -1,7 +1,12 @@
 {{#posts}}
-<h1><a href="{{permalink}}">{{title}}</a></h1>
-{{#posted_info}}
-<span>Published on {{formatted}}</span>
-{{/posted_info}}
-<p>{{{content}}}</p>
+<article>
+  <h1><a href="{{link}}">{{title}}</a></h1>
+  {{#posted_info}}
+  <time>Published on {{formatted}}</time>
+  {{/posted_info}}
+  <p>
+    {{{snip}}}
+  </p>
+  <a href="{{permalink}}" class="readmore">&#8618;</a>
+</article>
 {{/posts}}

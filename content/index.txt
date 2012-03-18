@@ -1,7 +1,0 @@
-Welcome
-=======
-list:
-type: index
-limit: 20
-
-Welcome

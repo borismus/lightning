@@ -1,4 +1,11 @@
-<article id="post">
-{{{content}}}
+<article>
+  <h1><a href="{{link}}">{{title}}</a></h1>
+  {{#posted_info}}
+  <time>Published on {{formatted}}</time>
+  {{/posted_info}}
+  <p>
+    {{{content}}}
+  </p>
+  <a href="/" class="back">&#8617;</a>
 </article>
 
