@@ -5,5 +5,5 @@ permalink_format:
   link: '{{year}}/{{slug}}'
   page: '{{slug}}'
   draft: 'drafts/{{slug}}'
-  archive: 'archives/{{slug}}'
+  archive: 'archive/{{slug}}'
   index: ''

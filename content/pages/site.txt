@@ -1,0 +1,45 @@
+About this site
+===============
+
+This site is statically generated with [Lightning][lightning], a
+blogging engine I wrote. The basic idea is that I write all of my
+content like this:
+
+    About this site
+    ===============
+
+    This site is statically generated with [Lightning][lightning]
+
+Then a script converts it into the HTML/CSS that you are reading now.
+
+There are many such projects, (eg. [Hyde][hyde],
+[Octopress][octopress]). I wrote Lightning to scratch some specific
+itches (which may or may not have been addressed in other projects by
+the time you read this):
+
+- Incremental builds (only rebuild what changed).
+- Logical placement of content-specific assets (in same dir as
+  content).
+- Minimalist metadata header.
+- Output that doesn't require htaccess, rewrite rules and other HTTPD
+  specific setup.
+
+I designed this site with aiming for appealing typography for optimal
+readability. Since my visitors are increasingly coming from a variety of
+devices, I also created three variants of the site for small, medium and
+large screens via media queries:
+
+    @media screen and (max-width: $small) {/* small */}
+    @media screen and (min-width: $small) and (max-width: $large) {/* medium */}
+    @media screen and (min-width: $large) {/* large */}
+
+The layout of this site is largely based on inspiration from designers
+far more skilled than I, including:
+
+- <http://viljamis.com/>
+- <http://www.markboulton.co.uk/>
+
+
+[octopress]: http://octopress.org/
+[hyde]: http://ringce.com/hyde
+[lightning]: https://github.com/borismus/lightning

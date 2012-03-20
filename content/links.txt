@@ -1,8 +1,0 @@
-All links
-=========
-list:
-type: archive
-filter: link
-limit: 10
-
-This is a list of all links ever written.

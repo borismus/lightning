@@ -1,0 +1,33 @@
+About the author
+================
+
+I'm most passionate about creating enjoyable user interfaces, especially
+at the cusp of hardware and software.
+
+I'm currently a Developer Programs Engineer on the Chrome team, doing my
+part to bring more awesomeness to the modern web platform.
+
+Before Google, I was a graduate student at Carnegie Mellon University,
+where I mostly did HCI research in physical, wearable and social
+computing.
+
+I became interested in HCI after working as an engineer at Apple for a
+couple of years. Dipping into Apple's culture, I learned to appreciate
+the importance of high quality user interfaces. At Apple I wrote large
+chunks of iWork.com and interned on iWeb.
+
+I joined Apple right after graduating from the University of British
+Columbia in Vancouver, Canada with a Bachelors degree. I studied
+mathematics and computer science, focusing on algorithms and computer
+graphics.
+
+Still not bored? Read my [resume][].
+
+## Hobbies and stuff
+
+* Long distance runner (5K in under 19m, 10K in under 39m)
+* Skiing instructor (CSIA L1)
+* Classical pianist (RCM Grade 10)
+* Mediocre guitarist, singer and accordionist
+
+[resume]: /resume

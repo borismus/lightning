@@ -1,0 +1,593 @@
+/* line 17, ../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.7/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+/* line 20, ../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.7/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+body {
+  line-height: 1;
+}
+
+/* line 22, ../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.7/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 24, ../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.7/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 26, ../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.7/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+/* line 28, ../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.7/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q, blockquote {
+  quotes: none;
+}
+/* line 101, ../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.7/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+  content: none;
+}
+
+/* line 30, ../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.7/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+a img {
+  border: none;
+}
+
+/* line 114, ../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.11.7/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
+  display: block;
+}
+
+/***********************************
+* General styles.
+************************************/
+/* line 12, ../sass/screen.scss */
+html {
+  overflow-x: hidden;
+}
+
+/* line 16, ../sass/screen.scss */
+body {
+  font-family: "PT Sans", "PTSansRegular", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  color: #222220;
+}
+
+/* line 23, ../sass/screen.scss */
+a, a:visited {
+  -webkit-transition: all 0.3s ease-in;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  color: #00aa00;
+}
+/* line 29, ../sass/screen.scss */
+a:hover, a:visited:hover {
+  border-bottom: 1px solid #ADADA5;
+  color: #29251F;
+}
+
+/* line 35, ../sass/screen.scss */
+img {
+  max-width: 100%;
+}
+
+/* line 39, ../sass/screen.scss */
+h1 {
+  font-size: 40px;
+}
+
+/* line 40, ../sass/screen.scss */
+h2 {
+  font-size: 28px;
+}
+
+/* line 41, ../sass/screen.scss */
+h3 {
+  font-size: 22px;
+}
+
+/* line 43, ../sass/screen.scss */
+h1, h2, h3, h4, h5 {
+  font-family: "Yanone Kaffeesatz", "TrumpGothicEastMedium", "Arial Narrow", Impact, Calibri, sans-serif;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #305030;
+  line-height: 1.2;
+  padding-bottom: 5px;
+}
+/* line 51, ../sass/screen.scss */
+h1 a, h1 a:visited, h2 a, h2 a:visited, h3 a, h3 a:visited, h4 a, h4 a:visited, h5 a, h5 a:visited {
+  color: #305030;
+}
+
+/* line 54, ../sass/screen.scss */
+#border {
+  background: #305030;
+  width: 100%;
+  height: 7px;
+}
+
+/* line 60, ../sass/screen.scss */
+header {
+  width: 100%;
+  height: 8px;
+  background: #4CC417;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 6px;
+  text-transform: uppercase;
+  background-image: -webkit-gradient(linear, left bottom, left top, from(#45b215), to(#4cc417));
+  background-image: -moz-linear-gradient(#45b215, #4cc417);
+  -webkit-box-shadow: inset 0 -1px 2px rgba(0, 0, 0, 0.2), 0 15px 15px white;
+  -moz-box-shadow: inset 0 -1px 2px rgba(0, 0, 0, 0.2), 0 15px 15px white;
+  border-bottom: 3px solid #305030;
+}
+/* line 74, ../sass/screen.scss */
+header a, header a:visited, header a:active {
+  position: relative;
+  color: #eee;
+  border: 0;
+  letter-spacing: 1px;
+  padding: 6px 10px;
+  -webkit-transition: background .2s linear;
+  -moz-transition: background .2s linear;
+}
+/* line 83, ../sass/screen.scss */
+header a:hover, header a:visited:hover, header a:active:hover {
+  color: #fff;
+  border: 0;
+  -webkit-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
+  background: #305030;
+}
+/* line 92, ../sass/screen.scss */
+header span {
+  position: absolute;
+  top: 2px;
+}
+/* line 93, ../sass/screen.scss */
+header .left {
+  left: 10px;
+}
+/* line 94, ../sass/screen.scss */
+header .right {
+  right: 10px;
+}
+/* line 96, ../sass/screen.scss */
+header .right a {
+  margin-left: 5px;
+}
+
+/* line 100, ../sass/screen.scss */
+#main {
+  margin: 0 auto;
+  overflow: hidden;
+}
+/* line 104, ../sass/screen.scss */
+#main time {
+  display: block;
+  margin: -7px 0 10px;
+  font-size: 12px;
+  color: #444444;
+}
+/* line 111, ../sass/screen.scss */
+#main blockquote {
+  padding-left: 45px;
+  font: italic 14px/1.6 Georgia, "Times New Roman", Times, serif;
+  background: transparent url(/static/images/quote.png) no-repeat;
+}
+/* line 117, ../sass/screen.scss */
+#main pre, #main ul, #main ol, #main p, #main blockquote {
+  margin-bottom: 16px;
+}
+/* line 121, ../sass/screen.scss */
+#main ul, #main ol {
+  margin-left: 24px;
+}
+/* line 125, ../sass/screen.scss */
+#main ul {
+  list-style-type: square;
+}
+/* line 126, ../sass/screen.scss */
+#main ol {
+  list-style-type: decimal;
+}
+/* line 128, ../sass/screen.scss */
+#main pre {
+  font-family: 'Inconsolata', monospace;
+  background: #eee;
+  border-radius: 3px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+/* line 140, ../sass/screen.scss */
+#articles {
+  float: left;
+}
+
+/* line 144, ../sass/screen.scss */
+article {
+  margin: 0 0 30px;
+  padding-top: 1px;
+  float: left;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* line 152, ../sass/screen.scss */
+aside {
+  -webkit-hyphens: auto;
+  color: #444444;
+  margin-bottom: 30px;
+}
+/* line 157, ../sass/screen.scss */
+aside img {
+  width: 100%;
+  margin-bottom: 10px;
+  border-radius: 10px 10px 0 0;
+}
+
+/* line 164, ../sass/screen.scss */
+#push {
+  height: 70px;
+}
+
+/* line 168, ../sass/screen.scss */
+footer {
+  clear: both;
+  font: 12px/1.4 Arial, Helvetica, "Helvetica Neue", sans-serif;
+  margin: 0 auto;
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+/* line 175, ../sass/screen.scss */
+footer p {
+  max-width: 260px;
+  float: left;
+  font-size: 10px;
+  color: #444444;
+}
+/* line 182, ../sass/screen.scss */
+footer .social {
+  overflow: hidden;
+  margin-top: 3px;
+  display: block;
+  float: right;
+  margin-left: 10px;
+  width: 36px;
+  height: 36px;
+  text-indent: -9999px;
+  background-size: 36px;
+}
+/* line 193, ../sass/screen.scss */
+footer .social:hover {
+  opacity: 0.7;
+  border-bottom: 1px solid transparent;
+}
+/* line 199, ../sass/screen.scss */
+footer .twitter {
+  background: url(/static/images/twitter.png) no-repeat 0 0;
+}
+/* line 200, ../sass/screen.scss */
+footer .plus {
+  background: url(/static/images/plus.png) no-repeat 0 0;
+}
+/* line 201, ../sass/screen.scss */
+footer .github {
+  background: url(/static/images/github.png) no-repeat 0 0;
+}
+/* line 202, ../sass/screen.scss */
+footer .rss {
+  background: url(/static/images/rss.png) no-repeat 0 0;
+}
+
+/***********************************
+* Responsive design styles.
+************************************/
+@media screen and (max-width: 650px) {
+  /* line 222, ../sass/screen.scss */
+  header {
+    display: none;
+  }
+
+  /* line 223, ../sass/screen.scss */
+  #articles {
+    margin-top: 5px;
+  }
+
+  /* line 225, ../sass/screen.scss */
+  footer, #main {
+    padding: 0 7%;
+    font-size: 90%;
+  }
+
+  /* line 230, ../sass/screen.scss */
+  h1 {
+    font-size: 30px;
+  }
+
+  /* line 231, ../sass/screen.scss */
+  h2 {
+    font-size: 22px;
+  }
+
+  /* line 232, ../sass/screen.scss */
+  h3 {
+    font-size: 18px;
+  }
+
+  /* line 234, ../sass/screen.scss */
+  aside {
+    background: #F5F6ED;
+    float: left;
+    padding: 20px;
+    border-radius: 10px;
+  }
+  /* line 240, ../sass/screen.scss */
+  aside img {
+    width: 30%;
+    border-radius: 0;
+    margin-right: 20px;
+    float: left;
+  }
+  /* line 247, ../sass/screen.scss */
+  aside p {
+    margin-top: 10px;
+    font-size: 12px;
+  }
+}
+@media screen and (min-width: 650px) and (max-width: 1000px) {
+  /* line 257, ../sass/screen.scss */
+  footer, #main {
+    width: 640px;
+  }
+
+  /* line 261, ../sass/screen.scss */
+  h1 {
+    font-size: 35px;
+  }
+
+  /* line 262, ../sass/screen.scss */
+  h2 {
+    font-size: 24px;
+  }
+
+  /* line 263, ../sass/screen.scss */
+  h3 {
+    font-size: 18px;
+  }
+
+  /* line 265, ../sass/screen.scss */
+  #articles {
+    margin-top: 30px;
+  }
+
+  /* line 267, ../sass/screen.scss */
+  aside {
+    background: #F5F6ED;
+    float: left;
+    padding: 20px;
+    border-radius: 10px;
+  }
+  /* line 273, ../sass/screen.scss */
+  aside img {
+    width: 30%;
+    border-radius: 0;
+    margin-right: 20px;
+    float: left;
+  }
+  /* line 280, ../sass/screen.scss */
+  aside p {
+    margin-top: 10px;
+    font-size: 14px;
+  }
+}
+@media screen and (min-width: 1000px) {
+  /* line 290, ../sass/screen.scss */
+  footer, #main {
+    width: 940px;
+  }
+
+  /* line 294, ../sass/screen.scss */
+  #articles {
+    width: 630px;
+    margin-top: 50px;
+  }
+
+  /* line 299, ../sass/screen.scss */
+  aside {
+    margin-right: 50px;
+    margin-top: 100px;
+    overflow: hidden;
+    font-size: 12px;
+    line-height: 16px;
+    float: right;
+    width: 200px;
+    text-shadow: 0 1px 1px;
+  }
+}
+/* line 311, ../sass/screen.scss */
+::selection {
+  background: #4CC417;
+  color: white;
+  text-shadow: none;
+}
+
+/*
+
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+
+*/
+/* line 7, ../sass/_highlight-github.scss */
+pre code {
+  display: block;
+  padding: 0.5em;
+  color: #000;
+}
+
+/* line 15, ../sass/_highlight-github.scss */
+pre .comment,
+pre .template_comment,
+pre .diff .header,
+pre .javadoc {
+  color: #998;
+  font-style: italic;
+}
+
+/* line 25, ../sass/_highlight-github.scss */
+pre .keyword,
+pre .css .rule .keyword,
+pre .winutils,
+pre .javascript .title,
+pre .lisp .title,
+pre .subst {
+  color: #000;
+  font-weight: bold;
+}
+
+/* line 31, ../sass/_highlight-github.scss */
+pre .number,
+pre .hexcolor {
+  color: #40a070;
+}
+
+/* line 38, ../sass/_highlight-github.scss */
+pre .string,
+pre .tag .value,
+pre .phpdoc,
+pre .tex .formula {
+  color: #dd1144;
+}
+
+/* line 43, ../sass/_highlight-github.scss */
+pre .title,
+pre .id {
+  color: #900;
+  font-weight: bold;
+}
+
+/* line 50, ../sass/_highlight-github.scss */
+pre .javascript .title,
+pre .lisp .title,
+pre .subst {
+  font-weight: normal;
+}
+
+/* line 56, ../sass/_highlight-github.scss */
+pre .class .title,
+pre .haskell .label,
+pre .tex .command {
+  color: #458;
+  font-weight: bold;
+}
+
+/* line 64, ../sass/_highlight-github.scss */
+pre .tag,
+pre .tag .title,
+pre .rules .property,
+pre .django .tag .keyword {
+  color: #000080;
+  font-weight: normal;
+}
+
+/* line 72, ../sass/_highlight-github.scss */
+pre .attribute,
+pre .variable,
+pre .instancevar,
+pre .lisp .body {
+  color: teal;
+}
+
+/* line 76, ../sass/_highlight-github.scss */
+pre .regexp {
+  color: #009926;
+}
+
+/* line 80, ../sass/_highlight-github.scss */
+pre .class {
+  color: #458;
+  font-weight: bold;
+}
+
+/* line 91, ../sass/_highlight-github.scss */
+pre .symbol,
+pre .ruby .symbol .string,
+pre .ruby .symbol .keyword,
+pre .ruby .symbol .keymethods,
+pre .lisp .keyword,
+pre .tex .special,
+pre .input_number {
+  color: #990073;
+}
+
+/* line 97, ../sass/_highlight-github.scss */
+pre .builtin,
+pre .built_in,
+pre .lisp .title {
+  color: #0086b3;
+}
+
+/* line 105, ../sass/_highlight-github.scss */
+pre .preprocessor,
+pre .pi,
+pre .doctype,
+pre .shebang,
+pre .cdata {
+  color: #999;
+  font-weight: bold;
+}
+
+/* line 110, ../sass/_highlight-github.scss */
+pre .deletion {
+  background: #ffdddd;
+}
+
+/* line 114, ../sass/_highlight-github.scss */
+pre .addition {
+  background: #ddffdd;
+}
+
+/* line 118, ../sass/_highlight-github.scss */
+pre .diff .change {
+  background: #0086b3;
+}
+
+/* line 122, ../sass/_highlight-github.scss */
+pre .chunk {
+  color: #aaaaaa;
+}
+
+/* line 126, ../sass/_highlight-github.scss */
+pre .tex .formula {
+  opacity: 0.5;
+}

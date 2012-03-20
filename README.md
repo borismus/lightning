@@ -1,10 +1,16 @@
 # TODO
 
-- Archive page (with filtering)
+Before launch:
+
 - Generate RSS feed.
+- Migrate all content.
+- Fix boris.smus.com to work :)
 
 - Does it work well with inotify? How about cron?
-- Try with dropbox.
+- Integrate with dropbox.
+
+Later:
+
 - Unit test and refactor.
 - Refactoring into classes.
 
@@ -19,6 +25,7 @@
 - Fix position of the read more thingy
 - Responsive styles for different sizes
 - Code snippets syntax highlight.
+- Archive page (with filtering)
 
 ## Lightning features
 
