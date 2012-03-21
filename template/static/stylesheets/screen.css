@@ -154,7 +154,7 @@ header a, header a:visited, header a:active {
   color: #eee;
   border: 0;
   letter-spacing: 1px;
-  padding: 6px 10px;
+  padding: 5px 10px;
   -webkit-transition: background .2s linear;
   -moz-transition: background .2s linear;
 }
