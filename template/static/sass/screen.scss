@@ -59,9 +59,9 @@ h1, h2, h3, h4, h5 {
 
 header {
   width: 100%;
-  height: 8px;
+  height: 10px;
   background: #4CC417;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: bold;
   padding: 6px;
   text-transform: uppercase;
@@ -69,7 +69,7 @@ header {
   background-image: -moz-linear-gradient(#45B215, #4CC417);
   -webkit-box-shadow: inset 0 -1px 2px rgba(0,0,0,.2), 0 15px 15px rgba(255,255,255,1);
   -moz-box-shadow: inset 0 -1px 2px rgba(0,0,0,.2), 0 15px 15px rgba(255,255,255,1);
-  border-bottom: 3px solid $dark-green;
+  border-bottom: 2px solid $dark-green;
 
   a, a:visited, a:active {
     position: relative;
