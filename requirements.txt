@@ -1,3 +1,4 @@
 PyYAML==3.10
 markdown2==1.1.1
 pystache==0.4.0
+pyinotify==0.9.3

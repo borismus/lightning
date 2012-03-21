@@ -3,11 +3,9 @@
 Before launch:
 
 - Generate RSS feed.
-- Migrate all content.
-- Fix boris.smus.com to work :)
-
-- Does it work well with inotify? How about cron?
-- Integrate with dropbox.
+- Migrate all content to new blog.
+- BUG: What about including `{{...}}` in the markup?
+- Pack it up into a convenient installation (including inotify, dropbox, etc).
 
 Later:
 
@@ -16,6 +14,9 @@ Later:
 
 ### Done
 
+- Does it work well with inotify? How about cron?
+- Integrate with dropbox.
+- Fix boris.smus.com to work :)
 - Make links actually link out
 - Publish assets that are stored in the content directory (only if
   associated file changes).

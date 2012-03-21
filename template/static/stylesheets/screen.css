@@ -219,6 +219,9 @@ header .right a {
   list-style-type: decimal;
 }
 /* line 128, ../sass/screen.scss */
+#main code {
+  font-family: 'Inconsolata', monospace;
+}
 #main pre {
   font-family: 'Inconsolata', monospace;
   background: #eee;

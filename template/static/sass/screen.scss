@@ -125,6 +125,10 @@ header {
   ul { list-style-type: square; }
   ol { list-style-type: decimal; }
 
+  code { 
+    font-family: 'Inconsolata', monospace;
+  }
+
   pre {
     font-family: 'Inconsolata', monospace;
     background: #eee;
