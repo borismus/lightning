@@ -2,14 +2,11 @@ Hybrid Operating Systems
 ========================
 categories: [web]
 posted: 2011-11-28
-snip: A short essay about hybrid operating systems, the place where web and native
-  apps meet.
-
 
 
 I've been thinking a bit about native and web applications, and how they can
 (or can't) coexist in the future. This topic has been steeping in my head for
-months now, so here is a brain dump of some of my thoughts.
+months now, so here is a brain dump of some of my thoughts.<!--more-->
 
 ## On hybrid apps
 

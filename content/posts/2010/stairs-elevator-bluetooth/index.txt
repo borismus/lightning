@@ -93,10 +93,10 @@ possible paths are.
 For more information on related projects, check out [Vassilis' work][]
 at UMa.
 
-  [image]: /media/images/blog/2010/problem.png
-  [1]: /media/images/blog/2010/architecture.png
-  [bluetooth scanner program]: /x/bluetooth-network/bluetooth_scanner.py
-  [analyzer program]: /x/bluetooth-network/trip_analyzer.py
+  [image]: problem.png
+  [1]: architecture.png
+  [bluetooth scanner program]: bluetooth_scanner.py
+  [analyzer program]: trip_analyzer.py
   [Raphael]: http://raphaeljs.com/
   [Google Visualization]: http://code.google.com/apis/charttools/index.html
   [Vassilis' work]: http://dme.uma.pt/people/faculty/vassilis.kostakos/

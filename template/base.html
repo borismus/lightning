@@ -28,7 +28,7 @@
         I'm Boris Smus, a software engineer and UI prototyper from
         Vancouver, Canada. I recently moved to San Francisco to work at
         Google in Chrome developer relations.
-        <a href="/about/" class="about">(?)</a>
+        <a href="/about/" class="readmore">&#8618;</a>
       </p>
     </aside>
   </div>
@@ -47,14 +47,17 @@
     <a href="http://twitter.com/borismus" class="social twitter" title="Twitter" rel="external me">Twitter</a>
   </footer>
 
-  <!-- Google Analytics -->
+
+  <script src="/static/scripts/highlight.pack.js"></script>
   <script>
-    var _gaq=[["_setAccount","UA-17930798-23"],["_trackPageview"]]; // Change UA-XXXXX-X to be your site's ID 
+    // Google Analytics
+    var _gaq=[["_setAccount","UA-17930798-22"],["_trackPageview"]]; // Change UA-XXXXX-X to be your site's ID 
     (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
       g.src=("https:"==location.protocol?"//ssl":"//www")+".google-analytics.com/ga.js";
       s.parentNode.insertBefore(g,s)}(document,"script"));
-  </script>
 
-  <script src="/static/scripts/highlight.pack.js"></script>
-  <script src="/static/scripts/main.js"></script>
+    // Syntax highlighting for code.
+    hljs.tabReplace = '  ';
+    hljs.initHighlightingOnLoad();
+  </script>
 </body>

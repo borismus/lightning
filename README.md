@@ -1,21 +1,26 @@
 # TODO
 
-Before launch:
+Before blog update:
 
+- Pagespeed
 - Make it possible to comment via HN or twitter.
+- Check all assets for posts, make them inline if needed.
 - Pack it up into a convenient installation (including inotify, dropbox, etc).
+
+Before public release:
+
 - Should there be a git repo clone involved?
 - submit to pypi
-
 - BUG: What about including `{{...}}` in the markup?
-
-Later:
-
 - Unit test and refactor.
 - Refactoring into classes.
 
 ### Done
 
+- Analytics
+- text distinctions based on post type (talk, link, article)
+- graphical permalink (ב)
+- Change quote image.
 - Migrate all content to new blog.
 - Generate RSS feed.
   - one for all posts

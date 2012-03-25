@@ -74,10 +74,10 @@ project needs generated fret diagrams with a highly customizable look. You can
 also see the diagrams live at [guitarunleashed.com][Guitar Unleashed].
 
   [Guitar Unleashed]: http://www.guitarunleashed.com
-  [C]: /media/images/blog/2009/C.png "C"
-  [C_1]: /media/images/blog/2009/C_1.png "C_1"
+  [C]: C.png "C"
+  [C_1]: C_1.png "C_1"
   [lilypond fret diagrams]: http://lilypond.org/doc/v2.9/Documentation/user/lilypond/Fret-diagrams
   [GCHORDS]: http://www.aei.mpg.de/~peekas/gchords/
   [lilypond bundle for textmate]: http://netcetera.org/cgi-bin/tmbundles.cgi#Lilypond
-  [available for download]: /x/chord-image-generator.zip
+  [available for download]: chord-image-generator.zip
 

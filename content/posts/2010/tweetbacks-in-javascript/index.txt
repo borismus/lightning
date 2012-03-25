@@ -97,7 +97,7 @@ would like to run it on your site, let me know and I'll pack
 tweetbacks.js up into a jQuery plugin or something. Thanks for reading! 
 
 **Update:** I no longer use this code, in favor of the official twitter
-button. For posterity, here are the [topsy-twitterized files][].
+button.
 
   [pingback]: http://en.wikipedia.org/wiki/Pingback
   [topsy]: http://topsy.com
@@ -105,5 +105,5 @@ button. For posterity, here are the [topsy-twitterized files][].
   [JSONP API]: http://otter.topsy.com
   [twitter search]: http://search.twitter.com
   [tweetback plugin]: http://yoast.com/wordpress/tweetbacks/
-  [topsy-twitterized files]: /x/topsy-tweetback.zip
+  [topsy-twitterized files]: topsy-tweetback.zip
 

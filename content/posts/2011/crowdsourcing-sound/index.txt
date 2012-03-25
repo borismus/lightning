@@ -68,10 +68,10 @@ noise!!
   [soundsourcing.com]: http://soundsourcing.com
   [train leaving the station]: http://soundcloud.com/borismus/sets/turkish-trains-leaving-the-station/
   [order bias]: http://www.jstor.org/pss/3151704
-  [image]: /media/images/blog/2011/turk-rate.png
+  [image]: turk-rate.png
   [Django]: http://www.djangoproject.com/
   [Boto]: http://code.google.com/p/boto/
   [CrowdForge]: /crowdforge
-  [1]: /media/images/blog/2011/soundsourcing.jpg
+  [1]: soundsourcing.jpg
   [lion roars]: http://soundsourcing.com/set/a-lion-roaring/
 

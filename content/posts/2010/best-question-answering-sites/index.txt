@@ -88,7 +88,7 @@ details of that approach to the reader :) PS. Thanks Sean, Jenn and Pat!
   [answers.yahoo.com]: http://answers.yahoo.com
   [askville.amazon.com]: http://askville.amazon.com
   [compete.com]: http://compete.com
-  [image]: /media/images/blog/2010/qa-analysis.png
+  [image]: qa-analysis.png
   [Aardvark]: http://vark.com/t/Tljh9Q
   [Quora]: https://www.quora.com/What-is-the-best-question-answering-site-besides-Quora-and-why
   [Mahalo]: http://www.mahalo.com/answers/what-is-the-best-question-answering-site-besides-mahalo-and-why

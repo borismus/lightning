@@ -45,6 +45,6 @@ they are reserved for developers who have nothing but disdain for their users.
   [Firefox]: https://addons.mozilla.org/en-US/firefox/addon/2190
   [IE]: http://www.download.com/HTTP-File-Upload-ActiveX-Control/3000-2206_4-10451672.html
   [difficult to style]: http://www.quirksmode.org/dom/inputfile.html
-  [converted into a drag area]: /x/drag-drop-upload.html
+  [converted into a drag area]: drag-drop-upload.html
   [java applet]: http://www.radinks.com/upload/
 

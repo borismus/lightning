@@ -94,7 +94,7 @@ Interesting. Given how annoying it would be to miss a Game 4 victory and how
 favorable the finals history-based odds look, I’ll go for 4 and 5. Now to try
 to work from home, book flights and bask in Canuck glory!
 
-[graph]: /media/images/blog/2011/nhl-series-odds.png
+[graph]: nhl-series-odds.png
 [python script]: /x/nhl/
 [Arthur Benjamin]: http://www.ted.com/talks/arthur_benjamin_s_formula_for_changing_math_education.html
 [wikipedia page]: http://en.wikipedia.org/wiki/List_of_Stanley_Cup_champions

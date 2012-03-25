@@ -27,6 +27,6 @@ idea can inspire you to come up with something more polished. Looking
 forward to what you come up with! P.S. Thanks for the help, [Jenn][]!
 
   [moo mini cards]: http://us.moo.com/en/products/minicards.php
-  [image]: /media/images/blog/2010/borismus_business_card.png
+  [image]: business-card.png
   [Jenn]: http://www.jennlu.com/
 

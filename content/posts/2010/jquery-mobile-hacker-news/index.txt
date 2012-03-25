@@ -107,7 +107,7 @@ This app provides share intent handling through WebIntents, an Android
 PhoneGap plugin that I've been working on. More on that next post, so
 stay tuned!
 
-  [image]: /media/images/blog/2010/hackernews.png
+  [image]: hackernews.png
   [mobile Hacker News client]: /x/hackernews/
   [jQuery Forum]: http://forum.jquery.com/topic/links-don-t-load-scripts
   [ScriptCache loader is on github]: https://github.com/borismus/jQuery-Mobile-Hacker-News/blob/master/assets/www/scriptcache.js

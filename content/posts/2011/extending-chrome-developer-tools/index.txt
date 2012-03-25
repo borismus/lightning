@@ -196,12 +196,12 @@ patch. Let me know if you do!
 [commits]: http://peter.sh/data/web-inspector-rss.php
 [screencast]: http://www.youtube.com/watch?v=nOEw9iiopwI
 [har]: http://groups.google.com/group/http-archive-specification/web/har-1-2-spec
-[auditshot]: /media/images/blog/2011/audit.png
-[panelshot]: /media/images/blog/2011/panel.png
+[auditshot]: audit.png
+[panelshot]: panel.png
 [switches]: http://peter.sh/experiments/chromium-command-line-switches/
 [sheet]: /devtools-cheatsheet
 [JSHint]: http://jshint.com
-[meta]: /media/images/blog/2011/meta.png
+[meta]: meta.png
 [messaging]: http://code.google.com/chrome/extensions/messaging.html
 [zip]: http://commondatastorage.googleapis.com/chromium-browser-continuous/index.html?path=Mac/91508/
 [github]: https://github.com/borismus/jshint-extension

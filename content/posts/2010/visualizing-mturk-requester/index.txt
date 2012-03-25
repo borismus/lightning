@@ -62,18 +62,18 @@ about visualization technologies. I'll soon get my hands on the data I'm
 expecting and create a custom visualization for it with the Google
 Visualization API. Stay chooned!
 
-  []: /x/turk-visualizer/
-  [python program]: /x/turk-visualizer/turk_scraper.py
+  []: turk-visualizer/
+  [python program]: turk-visualizer/turk_scraper.py
   [visualization literature]: http://www.amazon.com/Visual-Display-Quantitative-Information/dp/096139210X
   [visualization project database]: http://www.visualcomplexity.com/vc/
   [Processing]: http://processing.org/
   [Processing.js]: http://processingjs.org/
   [Raphaël]: http://raphaeljs.com/
   [Hans Rosling]: http://www.gapminder.org/
-  [image]: /media/images/blog/2010/raphael.jpg
+  [image]: raphael.jpg
   [explained to me]: http://www.youtube.com/watch?v=guhdYoPY3kM
   [Motion Chart]: http://code.google.com/apis/visualization/documentation/gallery/motionchart.html
   [GData framework]: http://code.google.com/p/gdata-python-client/
-  [python program]: /x/turk-visualizer/turkviz_scraper.py
+  [python program]: turk-visualizer/turkviz_scraper.py
   [The results]: http://www.borismus.com/wp-content/uploads/2010/02/turk_requester_visualizer.html
 

@@ -16,9 +16,9 @@ I would really appreciate additional suggestions on how to improve the
 [poster][], or your thoughts on academic posters in general. Why are
 they usually so ugly?
 
-  [image]: /media/images/blog/2010/ubiquitous-drums-poster.jpg
-  [poster]: /media/images/blog/2010/ubiquitous-drums-poster.pdf
+  [image]: ubiquitous-drums-poster.jpg
+  [poster]: ubiquitous-drums-poster.pdf
   [CHI2010]: http://chi2010.org/
   [Ubiquitous Drums]: /ubiquitous-drums
-  [WIP]: /media/images/blog/2010/ubiquitous-drums-paper.pdf
+  [WIP]: ubiquitous-drums-paper.pdf
 

@@ -36,7 +36,7 @@ see what people create to make these developer tools even better!
 [cheatsheet pdf]: https://github.com/borismus/DevTools-Lab/raw/master/cheatsheet/chromedev-cheatsheet.pdf
 [cheatsheet png]: https://github.com/borismus/DevTools-Lab/raw/master/cheatsheet/chromedev-cheatsheet.png
 [chrome extension APIs]: http://code.google.com/chrome/extensions/trunk/experimental.devtools.html
-[html5 cake]: /media/images/blog/2011/html5-cake.jpg
+[html5 cake]: html5-cake.jpg
 [bootcamp lab]: http://www.io-bootcamp.com/
 [I/O talk]: http://www.youtube.com/watch?v=N8SS-rUEZPg
 

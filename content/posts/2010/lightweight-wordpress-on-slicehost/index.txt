@@ -47,7 +47,7 @@ for the low-memory environment. In addition, I installed the
 [WP Super Cache][] plugin.
 
 For my [django site][], I wrote an init script for 
-[launching the django fcgi][] server via django's manage.py. Here's the
+launching the django fcgi server via django's manage.py. Here's the
 important part:
 
     MAXCHILDREN=5
@@ -69,7 +69,7 @@ However, I'm just guessing when it comes to values of `MAXCHILDREN`,
 Do you have insight on how to tweak these parameters? Is your VPS
 hosting configuration better?
 
-  [image]: /media/images/blog/2010/performance.png
+  [image]: performance.png
   [WebFaction]: http://www.webfaction.com
   [site performance and uptime]: http://www.pingdom.com
   [Slicehost]: http://www.slicehost.com
@@ -79,5 +79,4 @@ hosting configuration better?
   [php-fastcgi init script]: http://tomasz.sterna.tv/2009/04/php-fastcgi-with-nginx-on-ubuntu/
   [WP Super Cache]: http://wordpress.org/extend/plugins/wp-super-cache/
   [django site]: http://www.guitarunleashed.com
-  [launching the django fcgi]: /wp-content/uploads/2010/02/django-fastcgi.txt
 

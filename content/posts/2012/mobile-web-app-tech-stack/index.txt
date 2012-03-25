@@ -230,8 +230,8 @@ important type of framework? Let me know!
 [qunit]: http://docs.jquery.com/QUnit
 [qunit-async]: http://docs.jquery.com/QUnit/start#decrement
 [thorax]: http://walmartlabs.github.com/thorax/
-[flipboard-phone]: /media/images/blog/2012/flipboard-phone.jpg
-[flipboard-tablet]: /media/images/blog/2012/flipboard-tablet.jpg
-[separation]: /media/images/blog/2012/separation.jpg
+[flipboard-phone]: flipboard-phone.jpg
+[flipboard-tablet]: flipboard-tablet.jpg
+[separation]: separation.jpg
 
 

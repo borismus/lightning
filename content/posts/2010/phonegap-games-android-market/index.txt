@@ -44,8 +44,7 @@ the market to hide the evidence! I also received a very friendly
 **cease-and-desist** style letter from the good folks at LDG (this is
 one of those times when the "ask for forgiveness, not permission"
 approach has its drawbacks). Needless to say, I gladly pulled the game
-and apologized profusely to the developers. For posterity, the 
-[APK is still available][].
+and apologized profusely to the developers.
 
 ## PhoneGap
 
@@ -63,8 +62,7 @@ Looking forward to trying it out!
   [previous blog post]: /mobile-html-games/
   [PhoneGap]: http://www.phonegap.com/
   [Zeemote]: http://zeemote.com/
-  [image]: /media/images/blog/2010/onslaught_stats.png
-  [APK is still available]: /x/onslaught/onslaught.apk
+  [image]: stats.png
   [this documentation page]: http://wiki.phonegap.com/w/page/16494774/Getting-started-with-Android-PhoneGap-in-Eclipse
   [PhoneGap Build]: http://build.phonegap.com/start
 

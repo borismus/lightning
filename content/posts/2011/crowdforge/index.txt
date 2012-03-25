@@ -123,17 +123,17 @@ questions, comments or interest in collaborating or maintaining the framework.
 **Update (November 2011)**: The [full paper][paper] was [presented][] at
 [UIST 2011][] in Santa Barbara.
 
-  [image]: /media/images/blog/2011/crowdforge-simple.png
-  [1]: /media/images/blog/2011/crowdforge-article.png
-  [2]: /media/images/blog/2011/crowdforge-purchase.png
+  [image]: crowdforge-simple.png
+  [1]: crowdforge-article.png
+  [2]: crowdforge-purchase.png
   [creative and novel]: http://www.quora.com/What-are-the-most-creative-uses-of-Amazon-s-Mechanical-Turk
   [Boto interface]: http://code.google.com/p/boto/
-  [3]: /media/images/blog/2011/crowdforge-complex.png
+  [3]: crowdforge-complex.png
   [released it]: https://github.com/borismus/CrowdForge
   [the Creative Commons license]: http://creativecommons.org/licenses/by-nc/3.0/
   [UIST 2011]: http://www.acm.org/uist/
   [NewScientist]: http://www.newscientist.com/article/mg20927985.800-silicon-supervisor-gets-the-job-done-online.html
   [CMU article]: http://www.cmu.edu/homepage/society/2011/winter/crowdforge.shtml
-  [paper]: /media/images/blog/2011/crowdforge-uist-11.pdf
+  [paper]: crowdforge-uist-11.pdf
   [presented]: http://smustalks.appspot.com/crowdforge-11/
 

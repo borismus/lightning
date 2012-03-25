@@ -61,6 +61,6 @@ on A0!
   [Vassilis Kostakos]: http://dme.uma.pt/people/faculty/vassilis.kostakos/
   [Ubicomp 2010]: http://www.ubicomp2010.org/
   [github]: http://github.com/borismus/Running-Gestures
-  [paper]: /media/images/blog/2010/running-gestures-paper.pdf
-  [poster]: /media/images/blog/2010/running-gestures-poster.pdf
+  [paper]: running-gestures-paper.pdf
+  [poster]: running-gestures-poster.pdf
 

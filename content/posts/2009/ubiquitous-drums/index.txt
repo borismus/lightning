@@ -73,8 +73,7 @@ like this idea? Please give me feedback below!
 **Update:** Do you want to build your own drum pants? Check out this
 [instructable][]!
 
-**Update 2:** Accepted as a CHI 2010 WIP. Many thanks to [Mark Gross][]! 
-[Extended abstract][] now available.
+**Update 2:** Accepted as a CHI 2010 WIP. Many thanks to [Mark Gross][]!
 
   [force-sensitive resistors]: http://www.sparkfun.com/commerce/product_info.php?products_id=9376
   [this Arduino sketch]: http://www.borismus.com/wp-content/uploads/2009/11/drum.pde
@@ -83,5 +82,4 @@ like this idea? Please give me feedback below!
   [wifi shield]: http://asynclabs.com/wiki/index.php?title=WiShield_1.0
   [instructable]: http://www.instructables.com/id/Drum-Wear-drums-in-your-clothing/
   [Mark Gross]: http://code.arc.cmu.edu/~mdg/
-  [Extended abstract]: /media/images/blog/2009/wip462-smus.pdf
 

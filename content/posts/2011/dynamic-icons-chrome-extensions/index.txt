@@ -137,12 +137,12 @@ better.
 [source on github]: https://github.com/borismus/Music-Visualizer-Chrome-Extension
 [known issue]: http://stackoverflow.com/questions/195262/can-i-turn-off-antialiasing-on-an-html-canvas-element
 [tracked issue]: https://bugs.webkit.org/show_bug.cgi?id=61947
-[silkscreen]: /media/images/blog/2011/silkscreen.png
+[silkscreen]: silkscreen.png
 [PageRank extension]: https://chrome.google.com/webstore/detail/kpekpmmfocifmbnnoahnclccmjkckpcl
 [Web Audio API]: http://chromium.googlecode.com/svn/trunk/samples/audio/specification/specification.html
 [provides an API]: http://code.google.com/chrome/extensions/browserAction.html#method-setIcon
 [codified]: https://github.com/paulirish/font-face-detect/blob/master/isFontLoaded.js
 [data URIs]: http://en.wikipedia.org/wiki/Data_URI_scheme
-[screenshot]: /media/images/blog/2011/music-vis.png
+[screenshot]: music-vis.png
 
 

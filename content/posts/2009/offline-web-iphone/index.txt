@@ -79,13 +79,13 @@ a first class iPhone application. You can try it out at
 [http://www.guitarunleashed.com/m/][], and please bear in mind that it's
 a proof of concept.
 
-  [phone]: /media/images/blog/2009/phone.png
+  [phone]: phone.png
   [iUI]: http://code.google.com/p/iui/
   [jQTouch]: http://www.jqtouch.com/
   [from Apple]: http://developer.apple.com/safari/library/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html
   [HTML5 databases]: http://webkit.org/blog/126/webkit-does-html5-client-side-database-storage/
-  [jar.js]: /x/offline-mobile/jar.js
-  [database.js]: /x/offline-mobile/database.js
+  [jar.js]: offline-mobile/jar.js
+  [database.js]: offline-mobile/database.js
   [cache manifest]: http://www.w3.org/TR/2009/WD-html5-20090212/offline.html
   [http://www.guitarunleashed.com/m/]: http://www.guitarunleashed.com/m/
 

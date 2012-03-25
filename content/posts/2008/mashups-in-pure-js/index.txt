@@ -47,5 +47,5 @@ jQuery, humanmsg, and the LyricsWiki API!
   [host]: http://personalized20.blogspot.com/2006/02/jsonp-service-and-security.html
   [XSS]: http://unclehulka.com/ryan/blog/archives/2005/12/12/jsonpyoure-joking-right/
   [vulnerabilities]: http://www.west-wind.com/Weblog/posts/107136.aspx
-  [little demo application]: /x/lyricwiki
+  [little demo application]: lyricwiki
 

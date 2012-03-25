@@ -97,15 +97,32 @@ header {
   }
 }
 
+.readmore {
+  &:hover {
+    border-bottom: none;
+  }
+}
+
 #main {
   margin: 0 auto;
   overflow: hidden;
 
-  time {
-    display: block;
-    margin: -7px 0 10px;
-    font-size: 12px;
-    color: $gray;
+  .subtitle {
+    margin-top: -7px;
+    font-size: 14px;
+    color: $dark-green;
+
+    time {
+    }
+
+    a.permalink {
+      color: $dark-green;
+      border-bottom: none;
+
+      &:hover {
+        border-bottom: none;
+      }
+    }
   }
 
   blockquote {
@@ -125,7 +142,7 @@ header {
   ul { list-style-type: square; }
   ol { list-style-type: decimal; }
 
-  code { 
+  code {
     font-family: 'Inconsolata', monospace;
   }
 
@@ -220,6 +237,8 @@ footer {
     text-transform: none;
     a {
       color: $dark-green;
+      font-weight: bold;
+      letter-spacing: -1px;
     }
   }
 

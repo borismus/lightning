@@ -60,13 +60,13 @@ I did not include the graph resulting from varying circle size as it had no
 significant impact on render time. Another interesting observation is that
 creating the canvas element takes a mysterious 10 ms on Firefox, but not on
 Safari. This is not significant unless you are dealing with large numbers of
-canvas elements. 
+canvas elements.
 
 Whether or not you use Canvas or SVG mostly depends on your specific
 application. A graphics-intensive game, where many objects are redrawn all the
 time is probably best implemented in Canvas. On the other hand, applications
 like map viewers may involve large rendering areas and might lend themselves
-better to SVG. 
+better to SVG.
 
 As always, please comment if something is unclear, inconsistent, boring or
 omitted. Thanks!
@@ -74,7 +74,7 @@ omitted. Thanks!
   [Scalable Vector Graphics]: http://en.wikipedia.org/wiki/Svg
   [SVG, version 1.1]: http://www.w3.org/TR/SVG11/
   [HTML5 Canvas]: http://en.wikipedia.org/wiki/Canvas_(HTML_element)
-  [collecting performance data]: /x/canvas-svg-benchmark/
-  [Varying the number of objects]: /media/images/blog/2009/varying-number-of-objects.png
-  [Varying drawing area height]: /media/images/blog/2009/varying-drawing-area-height.png
+  [collecting performance data]: canvas-svg-benchmark/
+  [Varying the number of objects]: varying-number-of-objects.png
+  [Varying drawing area height]: varying-drawing-area-height.png
 

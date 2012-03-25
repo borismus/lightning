@@ -85,7 +85,7 @@ available on [my github][].
   [pass messages]: https://code.google.com/chrome/extensions/messaging.html
   [HTML5 postMessage]: http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html
   [Chrome Extension Developer Guide]: http://code.google.com/chrome/extensions/content_scripts.html
-  [image]: /media/images/blog/2010/chrome-extension-diagram.png
-  [1]: /media/images/blog/2010/radio-61-screenshot.png
+  [image]: chrome-extension-diagram.png
+  [1]: radio-61-screenshot.png
   [my github]: https://github.com/borismus/Radio-61
 

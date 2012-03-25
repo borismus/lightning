@@ -34,6 +34,6 @@ the odd discussion here or there. Thank you all.
   [ClockWorkAir]: http://wp-themes.com/clockworkair/
   [people's]: http://limi.net/
   [web logs]: http://www.joehewitt.com/
-  [old]: /media/images/blog/2009/old_design.png
-  [new]: /media/images/blog/2009/new_design.png
+  [old]: old-design.png
+  [new]: new-design.png
 

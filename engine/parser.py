@@ -214,7 +214,10 @@ class SiteBuilder:
     # Compute the permalink.
     permalink = self.compute_permalink(type_name, slug, posted_info)
     data['permalink'] = permalink
-    data['link'] = 'link' in data and data['link'] or permalink
+    data['computed_link'] = 'link' in data and data['link'] or permalink
+    # Compute the verb.
+    verbs = self.site_info['verbs']
+    data['verb'] = type_name in verbs and verbs[type_name] or 'Published'
     # Return the dict.
     return data
 

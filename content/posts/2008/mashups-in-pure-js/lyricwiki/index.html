@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>untitled</title>
+    <meta name="author" content="Boris Smus">
+    <link rel="stylesheet" href="http://jquery-ui.googlecode.com/svn/trunk/themes/default/ui.all.css" type="text/css" />
+    <link rel="stylesheet" href="http://binarybonsai.com/misc/humanmsg/humanmsg.css" type="text/css" />
+    <style type="text/css">
+    body {
+        text-align: center;
+    }
+    #container {
+        margin: 0 auto;
+        text-align: left;
+        width: 700px;
+    }
+    #nav #menu {
+        text-transform: uppercase;
+        padding: 0;
+        font-size: 0.8em;
+        margin-bottom: 2em;
+    }
+    
+    #nav #menu li {
+        display: inline;
+    }
+    
+    #song {
+        padding-bottom: 3em;
+    }
+    </style>
+    <!-- Date: 2008-11-29 -->
+</head>
+<body>
+    <div id="container">
+        <div id="nav">
+            <ul id="menu">
+                <li>
+                    <a href="#">Search</a>
+                </li>
+            </ul>
+        </div>
+        
+        <h1 id="songTitle"></h1>
+    
+        <div id="song">
+            No Song Loaded
+        </div>
+    </div>
+
+    <!-- Dialogs -->
+    <div id="search" title="Search for Song">
+        <table>
+            <tr>
+                <td><label for="artist">Artist: </label></td>
+                <td><input id="artist" /></td>
+            </tr>
+            <tr>
+                <td><label for="title">Title: </label></td>
+                <td><input id="title" /></td>
+            </tr>
+        </table>
+    </div>
+
+    <script src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+    google.load("jquery", "1.2.6");
+    google.load("jqueryui", "1.5.2");
+
+    var LYRIC_JSON_TIMEOUT = 3000;
+
+    var waitForSongToUpdate = function(origSong, startTime, onSuccess, onFail) {
+        var currSong = window.song;
+        // If there was no song before, and now there is, OR
+        // If there was a song before, but it's changed, success!
+        if ((!origSong && currSong) || (currSong && origSong && currSong.url != origSong.url)) {
+            onSuccess(currSong);
+            return true;
+        }
+        // If it's taking too long, time out and fail!
+        if (new Date() - startTime > LYRIC_JSON_TIMEOUT) {
+            onFail();
+            return false;
+        }
+        setTimeout(function() {
+            waitForSongToUpdate(origSong, startTime, onSuccess, onFail);
+        }, 100);
+    };
+
+    var fetchLyricJSON = function(artist, title, onSuccess, onFail) {
+        delete song;
+        var scriptElement = document.createElement('script');
+        scriptElement.src = 'http://lyricwiki.org/api.php?artist=' + artist + 
+            '&song=' + title + '&fmt=json';
+        document.body.appendChild(scriptElement);
+        waitForSongToUpdate(window.song, new Date(), onSuccess, onFail);
+    };
+    
+    var formatSong = function (song) {
+      return song.artist + ' - ' + song.song;
+    };
+    
+    var showLyrics = function(song) {
+        var rawLyrics = song.lyrics;
+        var htmlLyrics = rawLyrics.replace(/\n/g, '<br/>');
+        $('#song').html(htmlLyrics);
+        $('#songTitle').text(formatSong(song));
+    };
+    
+    var startSearch = function() {
+        $("#search").dialog({ 
+            modal: true, 
+            overlay: { 
+                opacity: 0.5, 
+                background: "black" 
+            },
+            buttons: { 
+                "Search": function() {
+                    // Get the artist and title from the dialog
+                    fetchLyricJSON($('#artist').attr('value'), $('#title').attr('value'), 
+                        function(song) { 
+                            if (song.lyrics == 'Not found') {
+                              humanMsg.displayMsg('Could not find lyrics for ' + formatSong(song));
+                            } else {
+                              showLyrics(song);
+                              humanMsg.displayMsg('Successfully fetched lyrics for ' + formatSong(song));
+                            }
+                        },
+                        function(result) {
+                            humanMsg.displayMsg('Server error attempting to fetch lyrics for query');
+                        });
+                    $(this).dialog('close');
+                }, 
+                "Cancel": function() { 
+                    $(this).dialog("close"); 
+                } 
+            }
+        });
+    };
+
+    var main = function() {
+        startSearch();
+        $('#menu').click(function() {
+            startSearch();
+        })
+    };
+
+    google.setOnLoadCallback(main);
+    </script>
+    <script src="http://binarybonsai.com/misc/humanmsg/humanmsg.js"></script>
+
+    </body>
+    </html>

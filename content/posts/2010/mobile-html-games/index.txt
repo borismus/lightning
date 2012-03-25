@@ -80,12 +80,12 @@ it to this [mobile HTML game contest][]. Let the games begin!
 
   [list of impressive titles]: http://www.casualgirlgamer.com/articles/entry/28/The-Best-30-HTML-5-games/
   [Onslaught!]: http://lostdecadegamesapp.appspot.com/
-  [porting it to Android/iPhone]: /x/onslaught/
+  [porting it to Android/iPhone]: onslaught/
   [say jQuery]: http://api.jquery.com/keydown/
   [for security reasons]: http://stackoverflow.com/questions/1601593/fire-tab-keypress-event-in-javascript
-  [controller]: /x/onslaught/js/controller.js
+  [controller]: onslaught/js/controller.js
   [meta viewport]: http://www.quirksmode.org/mobile/viewports.html
-  [image]: /media/images/blog/2010/onslaught.png
+  [image]: onslaught.png
   [quirksmode writeup]: http://quirksmode.org/mobile/tableTouch.html
   [bug report]: http://code.google.com/p/android/issues/detail?id=11909
   [target-densityDpi]: http://developer.android.com/reference/android/webkit/WebView.html

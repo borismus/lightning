@@ -93,7 +93,7 @@ travel photos, with a geodesy cherry on top. Stay tuned for future
 work...
 
   [an application demo]: http://thattrip.appspot.com/
-  [image]: /media/images/blog/2010/madlib.png
+  [image]: madlib.png
   [Google Earth plugin]: http://www.google.com/earth/explore/products/plugin.html
   [KML Tours]: http://code.google.com/apis/kml/documentation/touring.html
   [well documented]: http://www.movable-type.co.uk/scripts/latlong.html

@@ -54,8 +54,8 @@ please let me know. Looking forward to next time!
 
   [The League of Extraordinary Hackers]: http://extraordinary-hackers.appspot.com/hackathon.html
   [Breadpig's Hack Club]: http://breadpig.com/2011/01/18/hack-club-1-total-success/
-  [img-small]: /media/images/blog/2011/hackathon-small.jpg
-  [img-large]: /media/images/blog/2011/hackathon.jpg
+  [img-small]: hackathon-small.jpg
+  [img-large]: hackathon.jpg
   [Speakeasy]: http://www.speakeasyaustin.com/
   [@tielure]: http://twitter.com/tielure
   [@chrismessina]: http://twitter.com/chrismessina

@@ -47,7 +47,7 @@ give me constructive feedback and consider monitoring the
 [so]: http://stackoverflow.com/
 [google-chrome]: http://stackoverflow.com/questions/tagged/google-chrome
 [google-chrome-extension]: http://stackoverflow.com/questions/tagged/google-chrome-extension
-[screenshot]: /media/images/blog/2011/stack-screenshot.png
+[screenshot]: stack-screenshot.png
 [src]: https://github.com/borismus/Question-Monitor-for-Stack-Exchange
 [cws]: https://chrome.google.com/webstore/detail/bnnkhapbhkejookmhgpgaikfdoegkmdp
 [closure]: http://code.google.com/closure/

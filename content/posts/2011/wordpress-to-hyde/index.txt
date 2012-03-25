@@ -153,9 +153,9 @@ You, for reading this post and continuing to read this blog. Until next time!
 [on github]: http://github.com/borismus/smus.com
 [SCSS]: http://sass-lang.com/
 
-[old]: /media/images/blog/2009/new_design.png
-[new]: /media/images/blog/2011/new-design.png
-[old perf]: /media/images/blog/2011/old-perf.png
-[new perf]: /media/images/blog/2011/new-perf.png
+[old]: old-design.png
+[new]: new-design.png
+[old perf]: old-perf.png
+[new perf]: new-perf.png
 
 

@@ -184,8 +184,8 @@ posted on html5rocks.
 [browserify]: http://substack.net/posts/24ab8c/browserify-browser-side-require-for-your-node-js
 [8bit]: http://feryl.bandcamp.com/album/8-bit-magic-a-module-chiptune-collection
 [hg]: http://www.hemispheregames.com
-[architecture]: /media/images/blog/2011/osmus-architecture.png
-[state]: /media/images/blog/2011/osmus-state.png
+[architecture]: osmus-architecture.png
+[state]: osmus-state.png
 [node.js]: http://nodejs.org/
 [osmus]: http://o.smus.com/
 [socket.io]: http://socket.io/
