@@ -2,10 +2,12 @@
 
 Before launch:
 
-- Generate RSS feed.
-- Migrate all content to new blog.
-- BUG: What about including `{{...}}` in the markup?
+- Make it possible to comment via HN or twitter.
 - Pack it up into a convenient installation (including inotify, dropbox, etc).
+- Should there be a git repo clone involved?
+- submit to pypi
+
+- BUG: What about including `{{...}}` in the markup?
 
 Later:
 
@@ -14,6 +16,13 @@ Later:
 
 ### Done
 
+- Migrate all content to new blog.
+- Generate RSS feed.
+  - one for all posts
+  - one for all links
+
+- Make a new type for talks
+- More compact archive page
 - Does it work well with inotify? How about cron?
 - Integrate with dropbox.
 - Fix boris.smus.com to work :)
@@ -30,15 +39,16 @@ Later:
 
 ## Lightning features
 
-* One-step to add a new post (eg. a link)
-* Static output
-* Use any editor
-* Uses existing DSLs: Markdown (content) + YAML (metadata) + Mustache (template)
-* Simple logic-less templates
-* Ability to work offline
-* Logical placement of assets (content-related ones near the content,
+- One-step to add a new post (eg. a link)
+- Static output
+- Use any editor
+- Uses existing DSLs: Markdown (content) + YAML (metadata) + Mustache (template)
+- Simple logic-less templates
+- Ability to work offline
+- Logical placement of assets (content-related ones near the content,
   layout ones in the template)
-* Fast builds
+- Fast builds
+- Content directory format is decoupled from output.
 
 ### Important design decisions:
 

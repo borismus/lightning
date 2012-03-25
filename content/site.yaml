@@ -1,9 +1,15 @@
 site_title: Boris Smus
 date_format: '%d %B %Y'
 permalink_format:
-  post: '{{year}}/{{slug}}'
-  link: '{{year}}/{{slug}}'
+  post: '{{slug}}'
   page: '{{slug}}'
+  talk: 'talk/{{year}}/{{slug}}'
+  link: 'link/{{year}}/{{slug}}'
   draft: 'drafts/{{slug}}'
   archive: 'archive/{{slug}}'
+  feed: '{{slug}}'
   index: ''
+verbs:
+  post: 'Published'
+  talk: 'Presented'
+  link: 'Linked'

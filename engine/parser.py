@@ -1,14 +1,14 @@
 import os
 import pickle
-import time
-import datetime
+from time import mktime
+from datetime import date, time, datetime
 from distutils import dir_util
 
 import yaml
 import markdown2
 import pystache
 
-DATE_FORMAT = '%Y-%m-%d %H:%M'
+DEFAULT_TIME = time(9, 0)
 
 
 class SiteBuilder:
@@ -112,17 +112,27 @@ class SiteBuilder:
 
   def parse_date(self, date_string):
     """Gets the permalink parameters based on the item's info."""
-    parsed = {}
-    # Parse the posted date into year, month, day.
-    t_tuple = time.strptime(date_string, DATE_FORMAT)
-    t = datetime.datetime(*t_tuple[:6])
+    t = datetime.combine(date_string, DEFAULT_TIME)
+
     return {
       'year': t.year,
       'month': t.month,
       'day': t.day,
-      'unix': int(time.mktime(t_tuple)),
-      'formatted': t.strftime(self.site_info['date_format'])
+      'unix': int(mktime(t.timetuple())),
+      'formatted': t.strftime(self.site_info['date_format']),
+      'rfc': self.rfcformat(t)
     }
+
+  def rfcformat(self, dt):
+    """Output datetime in RFC 3339 format that is also valid ISO 8601 timestamp
+    representation. From http://bugs.python.org/issue7584"""
+
+    if dt.tzinfo is None:
+      suffix = "-00:00"
+    else:
+      suffix = dt.strftime("%z")
+      suffix = suffix[:-2] + ":" + suffix[-2:]
+    return dt.strftime("%Y-%m-%dT%H:%M:%S") + suffix
 
 
   def load_template(self, name):
@@ -198,6 +208,7 @@ class SiteBuilder:
     # Parse the date if it's specified.
     posted_info = None
     if 'posted' in data:
+      print title
       posted_info = self.parse_date(data['posted'])
       data['posted_info'] = posted_info
     # Compute the permalink.
@@ -217,7 +228,7 @@ class SiteBuilder:
       return path.split('/')[-1].split('.')[0]
 
   def parse_type(self, path):
-    """Return the type."""
+    """Return the type. These are a bunch of defaults..."""
     if path.startswith('./content/pages/'):
       return 'page'
     elif path.startswith('./content/posts/'):
@@ -228,6 +239,8 @@ class SiteBuilder:
       return 'archive'
     if path.startswith('./content/links/'):
       return 'link'
+    if path.startswith('./content/talks/'):
+      return 'talk'
 
   def parse_snip(self, content):
     """Return the snippet based on the content."""
@@ -276,7 +289,7 @@ class SiteBuilder:
     template_data = dict(info.items() + self.site_info.items())
     # If it's a list, also get the list parameters.
     if 'list' in info:
-      limit = 10
+      limit = 'limit' in info and info['limit'] or 10
       type_filter = 'filter' in info and info['filter']
       items = self.get_list(type_filter, limit)
       print 'filter', type_filter, 'length', len(items)
@@ -297,6 +310,28 @@ class SiteBuilder:
     f.write(html.encode('utf-8'))
     # Copy any assets that should be copied.
     self.copy_assets(item)
+
+  def build_feed(self, item):
+    """Builds an ATOM RSS feed."""
+    info = item['info']
+    template_data = dict(info.items() + self.site_info.items())
+    # Get the list of items to build the feed from.
+    limit = 'limit' in info and info['limit'] or 10
+    type_filter = 'filter' in info and info['filter']
+    items = self.get_list(type_filter, limit)
+    template_data['posts'] = items
+    # Get the current date in RFC format.
+    template_data['rfc'] = self.rfcformat(datetime.now())
+    # Get the template for the feed.
+    template = open(self.template_root + 'feed.xml').read()
+    # Fill template with data.
+    xml = pystache.render(template, template_data)
+    # Get the right path and make container directory if needed.
+    abs_path = self.output_root + info['permalink'] + '.xml'
+    dir_util.mkpath(os.path.dirname(abs_path))
+    # Create the appropriate feed file.
+    f = open(abs_path, 'w')
+    f.write(xml.encode('utf-8'))
 
   def copy_assets(self, item):
     """If the item is an index file, and there are assets in its directory,
@@ -324,7 +359,7 @@ class SiteBuilder:
     dst_dir = os.path.dirname(dst)
     if not os.path.exists(dst_dir):
       dir_util.mkpath(dst_dir)
-    
+
     os.rename(src, dst)
 
 
@@ -432,6 +467,8 @@ class SiteBuilder:
 
     # If something was deleted, archive from output directory.
     for item in deleted:
+      if item['info']['type'] == 'feed':
+        continue
       self.archive_output(item)
       # Remove this item in the cache.
       cache[:] = [i for i in cache if i['path'] != item['path']]
@@ -446,7 +483,11 @@ class SiteBuilder:
       self.build(info)
     # Build the lists.
     for info in lists:
-      self.build(info)
+      # Special logic for building feeds.
+      if info['info']['type'] == 'feed':
+        self.build_feed(info)
+      else:
+        self.build(info)
 
     # Copy over the static template files if necessary.
     self.copy_static()

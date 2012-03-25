@@ -1,0 +1,66 @@
+Skip to Skip: a Running Gesture
+===============================
+categories: [physical, music]
+posted: 2010-08-06
+snip: What if you had accelerometers in your shoes? Could mid-stride gestures replace
+  the headphone remote for changing tracks?
+
+
+
+Like many other runners, I like to listen to my music while training.
+Even with a playlist of running music, I often want to change the
+currently playing track. There are currently two popular options of
+doing this: using the device itself, or using a headphone remote. My
+ubiquitous computing project from last Spring explores a third option:
+imagine if your shoes had built-in accelerometers that allowed you to
+skip mid-stride to change tracks. 
+
+The most obvious way to change tracks is directly through the music
+player, but operating a touch screen while running is pretty annoying. A
+much better way of changing tracks is by using a button attached to a
+pair of headphones, but finding it, and then double clicking it is often
+a frustrating experience. Some clicks don't get registered, so one often
+ends up triple-clicking, which skips *back* a track. My project explores
+a novel way of changing tracks: mid-stride skip. This gesture is
+detected by having an accelerometer in each shoe which tracks your
+running patterns and detects when you perform the skip gesture. In
+addition to being useful, this running gesture makes an otherwise
+monotonous activity more varied and enjoyable.
+
+I prototyped the skip-to-skip system with a wii remote attached to the
+runner's lower leg, as pictured above. A computer is paired to the
+wiimote, collecting accelerometer data (especially in the axis
+corresponding to the runner's vertical movement). This communication is
+established using a wii library from a [previous post][]. The naive
+algorithm I use for detecting skips works as follows:
+
+1.  Find peaks by looking at the 1st derivative (positive slope,
+    negative slope pairs)
+2.  Discard insignificant peak values (under a threshold)
+3.  Compute distances between peaks
+4.  Look at the last 5 distances, and compute the mode. That's the pace.
+5.  Look for declinations from the pace characteristic of a skip.
+
+Once my gesture recognition code worked reasonably well, I ran a user
+study to see how people liked this method compared to the touch screen
+and headphone remote. After a few hitches (including getting kicked out
+of the Madeira Tecnopolo), I managed to test the prototype with many of
+my Madeiran classmates (thanks guys!). Most people preferred the
+skip-to-skip method over both the direct smartphone and headphone remote
+methods, which is promising.
+
+For more details on this project, check out the [paper][] that
+[Vassilis Kostakos][] and I will present at [Ubicomp 2010][] in
+Copenhagen. If you're interested in the source code, it's located on
+[github][].
+
+**Update:** here's the [poster][]. The font-size is scary huge
+on A0!
+
+  [previous post]: /prototyping-wii-remote-python/
+  [Vassilis Kostakos]: http://dme.uma.pt/people/faculty/vassilis.kostakos/
+  [Ubicomp 2010]: http://www.ubicomp2010.org/
+  [github]: http://github.com/borismus/Running-Gestures
+  [paper]: /media/images/blog/2010/running-gestures-paper.pdf
+  [poster]: /media/images/blog/2010/running-gestures-poster.pdf
+

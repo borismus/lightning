@@ -60,13 +60,13 @@ h1, h2, h3, h4, h5 {
 header {
   width: 100%;
   height: 10px;
-  background: #4CC417;
+  background: #3B3;
   font-size: 13px;
   font-weight: bold;
   padding: 6px;
   text-transform: uppercase;
-  background-image: -webkit-gradient( linear, left bottom, left top, from(#45B215), to(#4CC417));
-  background-image: -moz-linear-gradient(#45B215, #4CC417);
+  background-image: -webkit-gradient( linear, left bottom, left top, from(#3B3), to(#4A4));
+  background-image: -moz-linear-gradient(#3B3, #4A4);
   -webkit-box-shadow: inset 0 -1px 2px rgba(0,0,0,.2), 0 15px 15px rgba(255,255,255,1);
   -moz-box-shadow: inset 0 -1px 2px rgba(0,0,0,.2), 0 15px 15px rgba(255,255,255,1);
   border-bottom: 2px solid $dark-green;
@@ -204,6 +204,32 @@ footer {
   .plus { background: url(/static/images/plus.png) no-repeat 0 0; }
   .github { background: url(/static/images/github.png) no-repeat 0 0; }
   .rss { background: url(/static/images/rss.png) no-repeat 0 0; }
+}
+
+
+/***********************************
+* Archive page styles.
+************************************/
+#archives {
+  article {
+    margin-bottom: 5px;
+  }
+  .title {
+    font-size: 15px;
+    font-family: 'Inconsolata', monospace;
+    text-transform: none;
+    a {
+      color: $dark-green;
+    }
+  }
+
+  .time {
+    font-size: 15px;
+    font-family: 'Inconsolata', monospace;
+    display: inline;
+    float: right;
+    margin-left: 10px;
+  }
 }
 
 

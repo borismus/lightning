@@ -1,9 +1,0 @@
-I love QR codes
-===============
-posted: 2012-03-19 9:00
-
-Look at this picture of a QR code: <!--more-->
-
-![qrcode](qrcode.jpg)
-
-**I love it!**

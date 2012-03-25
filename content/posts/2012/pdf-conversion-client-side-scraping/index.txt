@@ -1,7 +1,9 @@
 PDF Conversion and Client-side Scraping
 =======================================
-snip: File format conversion using Google App Engine APIs, as well as a new approach to screen scraping.
-posted: 2012-02-08 09:00
+categories: [web, extension]
+posted: 2012-02-08
+
+
 
 One of my ongoing projects is called smusique, a mobile web-based sheet
 music viewer. The application was designed for tablets, enabling a
@@ -9,6 +11,7 @@ rich browsing experience through sheet music. Though some sheet
 music is encumbered by licenses, most of the classic stuff is legally
 available online via sheet music databases such as the [Petrucci
 Library][imslp] at [imslp.org][imslp].
+<!--more-->
 
 While the focus of my project was to design and develop a delightful
 tablet-based interface for sheet music, I needed to solve some technical
@@ -168,3 +171,5 @@ The source of the extension is somewhat messy but available also on
 [ext-src]: https://github.com/borismus/smusique-extension
 [content scripts]: http://code.google.com/chrome/extensions/content_scripts.html
 [screenshot]: http://i.imgur.com/6YhZ2.png
+
+

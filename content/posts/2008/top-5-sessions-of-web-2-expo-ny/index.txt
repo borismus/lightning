@@ -1,0 +1,47 @@
+Top 5 Sessions of Web 2.0 Expo NY
+=================================
+categories: [conference, web]
+posted: 2008-09-23
+snip: A recap of my favorite sessions at my first web conference.
+
+
+
+Yesterday I got back from the Web 2.0 Expo in New York. There were many
+interesting sessions, and I, for the most part, took notes! Here is a
+short list of my five favorite speakers, in no particular order:
+
+1.  Cal Henderson's whirlwind [introduction to video on the web][]. Cal
+    really likes speak really fast, to make typos in his slides and to
+    cuss, all of which makes for a very informative and entertaining
+    hour.
+2.  John Resig's [talk about Processing.js][], his port of
+    [Processing][] to canvas. I'm constantly dealing with graphics on
+    the web, and it's awesome to have such a powerful library available.
+    Pretty demos, too!
+3.  Jason Fried's short but sweet keynote talk, focusing on minimalism
+    in product management, and proper (read: very narrow) scoping of
+    features. The philosophical question of "what would your software be
+    like if it was physical?" struck me as a very useful thing to think
+    about.
+4.  A [browser panel][] including Chris Wilson from MS, Brendan Eich
+    from Mozilla and an unnamed developer from Chrome responded to a
+    nice set of questions about future directions of browsers. Poor
+    Chris got a beating IE7's flaws, lack of canvas/SVG support,
+    barriers to plugin development for IE.
+5.  Geir Magnusson Jr delivered an excellent introduction to [scaling data in the cloud][].
+
+I also had the chance to talk to and bounce some ideas off of Pete
+Koomen, a Google App Engine product manager. He told me that there are
+plans both for process scheduling, and for support of django-1.0 down
+the road, but of course gave no time frame for either. Overall, the
+conference was interesting - there were other good sessions and keynotes
+which I simply haven't bothered to write up. The crowd wasn't very
+technical though, comprising in large part designers, marketers and
+managers.
+
+  [introduction to video on the web]: http://wiki.z3.ca/Web%202.0%20Expo/Moving%20Pictures
+  [talk about Processing.js]: http://wiki.z3.ca/Web%202.0%20Expo/Processing.js
+  [Processing]: http://processing.org/
+  [browser panel]: http://wiki.z3.ca/Web%202.0%20Expo/Browser%20Panel
+  [scaling data in the cloud]: http://wiki.z3.ca/Web%202.0%20Expo/Sequel%20to%20SQL
+

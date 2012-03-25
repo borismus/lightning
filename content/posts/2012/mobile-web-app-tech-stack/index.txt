@@ -1,6 +1,8 @@
 A mobile web application tech stack
 ===================================
-posted: 2012-01-18 9:00
+categories: [web, mobile]
+posted: 2012-01-18
+
 
 There are many technical decisions to make when writing web applications. I've
 come back to writing modern web applications lately, and wanted to consolidate
@@ -10,7 +12,6 @@ be instrumental in developing my most recent project. I'll go over some of the
 most important framework types, each of which could be expanded into an article
 in its own right. This is not meant to be an extensive comparison of existing
 offerings, just a slice of technologies that I experimented with most recently.
-
 <!--more-->
 
 Although my focus is on mobile first, I think that this set of technologies can
@@ -229,7 +230,8 @@ important type of framework? Let me know!
 [qunit]: http://docs.jquery.com/QUnit
 [qunit-async]: http://docs.jquery.com/QUnit/start#decrement
 [thorax]: http://walmartlabs.github.com/thorax/
-[flipboard-phone]: flipboard-phone.jpeg
-[flipboard-tablet]: flipboard-tablet.jpeg
-[separation]: separation.jpeg
+[flipboard-phone]: /media/images/blog/2012/flipboard-phone.jpg
+[flipboard-tablet]: /media/images/blog/2012/flipboard-tablet.jpg
+[separation]: /media/images/blog/2012/separation.jpg
+
 

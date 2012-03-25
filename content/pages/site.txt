@@ -18,11 +18,15 @@ itches (which may or may not have been addressed in other projects by
 the time you read this):
 
 - Incremental builds (only rebuild what changed).
+- Quick deployment.
 - Logical placement of content-specific assets (in same dir as
   content).
+- Decouple content structure from output structure.
 - Minimalist metadata header.
 - Output that doesn't require htaccess, rewrite rules and other HTTPD
   specific setup.
+- Use any editor.
+- Use Markdown for structured text.
 
 I designed this site with aiming for appealing typography for optimal
 readability. Since my visitors are increasingly coming from a variety of
@@ -33,8 +37,8 @@ large screens via media queries:
     @media screen and (min-width: $small) and (max-width: $large) {/* medium */}
     @media screen and (min-width: $large) {/* large */}
 
-The layout of this site is largely based on inspiration from designers
-far more skilled than I, including:
+The layout of this site is largely inspired by designers far more
+skilled than I, including:
 
 - <http://viljamis.com/>
 - <http://www.markboulton.co.uk/>

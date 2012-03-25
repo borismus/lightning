@@ -2,6 +2,6 @@ Welcome
 =======
 list:
 type: index
-limit: 20
+limit: 10
 
 Welcome

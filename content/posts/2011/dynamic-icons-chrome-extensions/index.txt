@@ -1,0 +1,148 @@
+Dynamic Chrome Extension Icons
+==============================
+categories: [web, chrome]
+posted: 2011-06-06
+snip: Adding a bit of pizzazz to your extension UIs with dynamic, maybe even animated
+  browser and page actions.
+
+
+
+
+Extension developers aren't given much freedom to modify Chrome's browser
+chrome. Without resorting to changing the page itself, or using the new devtools
+extension APIs, there are two main ways of doing this. [Page actions][], which
+reside in the omnibox, and [browser actions][], which are positioned to the
+right of the omnibox both of which are simple buttons with icons, click actions
+and hover states. Chrome conveniently [provides an API][] to dynamically change
+the icon of these buttons.
+
+You can do this by creating image data by hand or using the canvas API's
+`getImageData` function.:
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    // ...draw to the canvas...
+    var imageData = context.getImageData(0, 0, 19, 19);
+    chrome.browserAction.setIcon({
+      imageData: imageData
+    });
+
+Note that this would be possible even without this chrome-specific API, by
+instead using [data URIs][] to set the image. There's a GMail [labs plugin][]
+that does this to badge the favicon with the unread email count.
+
+What makes this an interesting design domain is the limitation of the medium.
+Limited real estate (browser actions at 19x19 px, page actions at 16x16 px) adds
+significant constraints. Still, one can show numbers, colors, small icons and
+graphs in this context, or even small amounts of text.
+
+## Applications of Dynamic Icons
+
+There are extensions that use dynamic icons already, such as the
+[PageRank extension][], which effectively shows the Google PageRank for the
+current page right inside the browser action.
+
+Here are some other possibilities (not at all an exhaustive list):
+
+* Create badges for page actions (which don't implement `setBadge*` calls).
+* Icon of the weather forecast, click to toggle between days.
+* Bandwidth meter: how large was the download of this page?
+* A random profile pic of people that +1'ed the site.
+
+## The Smallest Music Visualizer
+
+I wrote a sample extension to demonstrate the dynamic icon potential of Chrome
+extensions. This indispensible extension is a music visualizer that renders
+inside of a browser action button. I use the [Web Audio API][] to playback a
+song and analyse the audio stream, render the visualized audio spectrum with a
+canvas element and then transfer the resulting image data to the browser action
+icon.
+
+![screenshot][]
+
+Try out the [chrome extension][] here, but note that it requires the Web Audio
+API flag to be enabled under about:flags (and a browser restart afterward).
+Check out and fork the [source on github][].
+
+## Learnings
+
+This music visualizer extension loads an mp3 file when the extension
+background page loads, which takes a certain amount of time. To provide a
+better user experience, I was hoping to change the icon to reflect that the
+file was being loaded, and ran into two issues.
+
+The first issue was that when I tried to render a small string like "wait" in
+the icon, I wanted to use a custom `@font-face` embedded font, which is now
+well supported in CSS3. You can load CSS fonts
+
+    @font-face {
+      font-family: "Silkscreen"
+      src: url(slkscr.ttf);
+    }
+
+and then use them in a canvas:
+
+    context.font = "8px Silkscreen";
+    context.fillText('load');
+
+When using custom fonts from HTML, the browser waits for the font to load, and
+then does a relayout. When using it from canvas, things get a bit tricky since
+the browser of course doesn't do font relayout for you and there's
+unfortunately no DOM event that fires when all embedded fonts finished loading.
+More precisely, onload behaviors differ from browser to browser. Mozilla waits
+for all fonts to load before firing the event, WebKit doesn't. You can work
+around this problem by assigning the custom font to a div, and observing the
+div's width, which will change when the font loads ([codified][]).
+
+Although I ultimately didn't use this font to show loading state, I recommend
+checking out the [silkscreen font][] for 8-bit style designs that lend
+themselves well to small resolution envirnoments. You can fit about 3x3
+characters inside a 16x16 canvas:
+
+![silkscreen][]
+
+To show that the extension is still loading, I went with a progress bar instead
+of a message. A second issue arose when I wanted to show the progress
+bar animating while the mp3 loads. Unfortunately the Web Audio API doesn't
+currently support asynchronous loading of files, so the UI thread gets blocked
+during the `audioContext.createBuffer` call of this code snippet:
+
+    var request = new XMLHttpRequest();
+    request.onload = function() {
+      var audioBuffer = audioContext.createBuffer(request.response, false);
+    }
+
+Async loading of audio buffers is now a [tracked issue][] for you upvote in
+the webkit bug tracker. I thought of working around this with Web Workers, but
+gave up early because of difficulties with passing objects between worker
+threads, and no shared memory options that would let workers access the
+context of the main UI thread.
+
+Another interesting observation is that `requestAnimationFrame` does not work in
+a background page. I initially tried to use it to animate the music visualizer,
+but it didn't work. This is of course the API is designed to only callback when
+the calling page is in the foreground, and since the background page is never
+foregrounded, the callback never fires.
+
+That's it for me, now it's your turn! So, dearest reader, go forth and write
+some awesome Chrome extensions which tastefully use dynamic icons for page
+actions, browser actions, and favicons to make our browsing experience even
+better.
+
+[labs plugin]: http://googlesystem.blogspot.com/2011/01/dynamic-gmail-favicon.html
+[page actions]: http://code.google.com/chrome/extensions/pageAction.html
+[browser actions]: http://code.google.com/chrome/extensions/browserAction.html
+[silkscreen font]: http://kottke.org/plus/type/silkscreen/
+[chrome extension]: https://chrome.google.com/webstore/detail/befnabfghcghgpmkjoalbecphdgdmick?hl=en
+[source on github]: https://github.com/borismus/Music-Visualizer-Chrome-Extension
+[known issue]: http://stackoverflow.com/questions/195262/can-i-turn-off-antialiasing-on-an-html-canvas-element
+[tracked issue]: https://bugs.webkit.org/show_bug.cgi?id=61947
+[silkscreen]: /media/images/blog/2011/silkscreen.png
+[PageRank extension]: https://chrome.google.com/webstore/detail/kpekpmmfocifmbnnoahnclccmjkckpcl
+[Web Audio API]: http://chromium.googlecode.com/svn/trunk/samples/audio/specification/specification.html
+[provides an API]: http://code.google.com/chrome/extensions/browserAction.html#method-setIcon
+[codified]: https://github.com/paulirish/font-face-detect/blob/master/isFontLoaded.js
+[data URIs]: http://en.wikipedia.org/wiki/Data_URI_scheme
+[screenshot]: /media/images/blog/2011/music-vis.png
+
+

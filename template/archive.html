@@ -2,9 +2,13 @@
 {{{content}}}
 </p>
 
+<div id="archives">
 {{#posts}}
-  <h1><a href="{{permalink}}">{{title}}</a></h1>
+<article>
   {{#posted_info}}
-  <time>Published on {{formatted}}</time>
+  <span class="time">{{formatted}}</span>
   {{/posted_info}}
+  <span class="title"><a href="{{permalink}}">{{title}}</a></span>
+</article>
 {{/posts}}
+</div>
