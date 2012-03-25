@@ -1,11 +1,17 @@
 <article>
-  <h1><a href="{{link}}">{{title}}</a></h1>
+  <h1><a href="{{computed_link}}">{{title}}</a></h1>
+  <div class="subtitle">
   {{#posted_info}}
-  <time>Linked on {{formatted}}</time>
+  <time>{{verb}} on {{formatted}}</time>
   {{/posted_info}}
+  {{#link}}
+  <a class="permalink" href="{{permalink}}">&#8734;</a>
+  {{/link}}
+  </div>
   <p>
     {{{content}}}
   </p>
   <a href="/" class="back">&#8617;</a>
 </article>
+
 

@@ -2,8 +2,6 @@ UIST 2011 Greatest Hits
 =======================
 categories: [research, conference]
 posted: 2011-10-20
-snip: My favorite research from the User Interface Software and Technology conference
-  in Santa Barbara.
 
 
 
@@ -12,7 +10,7 @@ I went to UIST 2011 in Santa Barbara and presented our research on
 
 Here's a sample of some of the great work that was presented this year, in the
 3 research areas that interest me most: crowdsourcing/human computation,
-mobile physical computing, and music.
+mobile physical computing, and music.<!--more-->
 
 # Crowdsourcing
 

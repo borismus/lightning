@@ -33,8 +33,15 @@ Still not bored? Read my [resume][].
 * Backpacking around the world
 * Long distance running (5K in under 19m, 10K in under 39m)
 * Downhill skiing (CSIA L1)
-* Classical piano (RCM Grade 10)
-* Mediocre guitarist, singer and accordionist
+* Classical piano playing (RCM Grade 10)
+* Mediocre guitaring and singing
 * [Genealogy](/family)
 
+## Contact
+
+If you want to leave a brief, public note, please tweet at me via
+[@borismus][tw]. If your thoughts are long and/or secretive, I can be
+contacted via my email via boris (at this domain).
+
 [resume]: /resume
+[tw]: http://twitter.com/borismus

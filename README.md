@@ -3,11 +3,11 @@
 Before blog update:
 
 - Pagespeed
-- Make it possible to comment via HN or twitter.
-- Check all assets for posts, make them inline if needed.
+- Post describing change
+- Better headshot
 - Pack it up into a convenient installation (including inotify, dropbox, etc).
 
-Before public release:
+Before lightning release:
 
 - Should there be a git repo clone involved?
 - submit to pypi
@@ -17,6 +17,7 @@ Before public release:
 
 ### Done
 
+- Check all assets for posts, make them inline if needed.
 - Analytics
 - text distinctions based on post type (talk, link, article)
 - graphical permalink (ב)
