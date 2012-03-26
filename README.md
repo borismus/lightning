@@ -3,7 +3,8 @@
 Before blog update:
 
 - Pagespeed
-- Post describing change
+- Post describing changes
+- Use directories from configuration file.
 - Better headshot
 - Pack it up into a convenient installation (including inotify, dropbox, etc).
 
@@ -17,6 +18,7 @@ Before lightning release:
 
 ### Done
 
+- Run through optimizer before deploy?
 - Check all assets for posts, make them inline if needed.
 - Analytics
 - text distinctions based on post type (talk, link, article)

@@ -1,5 +1,9 @@
 site_title: Boris Smus
 date_format: '%d %B %Y'
+verbs:
+  post: 'Published'
+  talk: 'Presented'
+  link: 'Linked'
 permalink_format:
   post: '{{slug}}'
   page: '{{slug}}'
@@ -9,7 +13,3 @@ permalink_format:
   archive: 'archive/{{slug}}'
   feed: '{{slug}}'
   index: ''
-verbs:
-  post: 'Published'
-  talk: 'Presented'
-  link: 'Linked'

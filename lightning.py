@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 import pickle
 from time import mktime
@@ -14,16 +15,22 @@ DEFAULT_TIME = time(9, 0)
 class SiteBuilder:
 
   def __init__(self):
+    # Parse lightning.yaml.
+    f = open('lightning.yaml')
+    build = yaml.load(f)
     # Get the roots.
-    self.root = self.find_root()
-    self.template_root = self.root + 'template/'
-    self.content_root = self.root + 'content/'
-    self.output_root = self.root + 'www/'
+    if not os.path.exists(build['template']):
+      raise Exception('Invalid template root. Fix lightning.yaml')
+    self.template_root = build['template']
+    if not os.path.exists(build['content']):
+      raise Exception('Invalid content root. Fix lightning.yaml')
+    self.content_root = build['content']
+    self.output_root = build['output']
 
     # Figure out the pathes.
-    self.archive_path = self.output_root + '.archived/'
-    self.cache_path = self.output_root + '.last_build'
-    self.site_config_path = self.content_root + 'site.yaml'
+    self.archive_path = os.path.join(self.output_root, '.archived/')
+    self.cache_path = os.path.join(self.output_root, '.last_build')
+    self.site_config_path = os.path.join(self.content_root, 'site.yaml')
 
 
   def get_items(self):
@@ -75,41 +82,6 @@ class SiteBuilder:
     cache_file = open(self.cache_path, 'w')
     pickle.dump(cache_data, cache_file)
 
-  def find_root(self):
-    """Finds the root for this static site.
-    """
-    required_subdirs = ['content', 'template']
-    potential_roots = ['./', '../']
-    for root in potential_roots:
-      is_root = True
-      for subdir in required_subdirs:
-        if not os.path.exists(root + subdir):
-          is_root = False
-          break
-
-      if is_root:
-        return root
-
-    # If we get here, failed to find the path.
-    raise Exception('Unable to find site root.')
-
-  def find_output_root(self):
-    """Finds the root of the output for the site."""
-    path = self.content_root + '../www/'
-    if not os.path.exists(path):
-      os.mkdir(path)
-
-    return path
-
-  def find_template_root(self):
-    """Finds the root of the content for this static site.
-    """
-    potential_pathes = ['./template/', '../template/']
-    for path in potential_pathes:
-      if os.path.exists(path):
-        return path
-
-
   def parse_date(self, date_string):
     """Gets the permalink parameters based on the item's info."""
     t = datetime.combine(date_string, DEFAULT_TIME)
@@ -139,10 +111,10 @@ class SiteBuilder:
     """Loads a template with the given name. Returns a string with the
     template's contents."""
     # Load the special base template first.
-    base = open(self.template_root + 'base.html').read()
+    base = open(os.path.join(self.template_root, 'base.html')).read()
     # Then populate the contents of the base template with the desired
     # template.
-    template = open(self.template_root + name + '.html').read()
+    template = open(os.path.join(self.template_root, name + '.html')).read()
     return base.replace('{{{template}}}', template)
 
   def parse_item(self, path):
@@ -203,6 +175,7 @@ class SiteBuilder:
     # Infer slug and type from path.
     slug = 'slug' in data and data['slug'] or self.parse_slug(path)
     type_name = 'type' in data and data['type'] or self.parse_type(path)
+    print path
     data['slug'] = slug
     data['type'] = type_name
     # Parse the date if it's specified.
@@ -232,17 +205,17 @@ class SiteBuilder:
 
   def parse_type(self, path):
     """Return the type. These are a bunch of defaults..."""
-    if path.startswith('./content/pages/'):
+    if path.find('content/pages/') >= 0:
       return 'page'
-    elif path.startswith('./content/posts/'):
+    elif path.find('content/posts/') >= 0:
       return 'post'
-    elif path.startswith('./content/drafts/'):
+    elif path.find('content/drafts/') >= 0:
       return 'draft'
-    elif path.startswith('./content/archives/'):
+    elif path.find('content/archives/') >= 0:
       return 'archive'
-    if path.startswith('./content/links/'):
+    if path.find('content/links/') >= 0:
       return 'link'
-    if path.startswith('./content/talks/'):
+    if path.find('content/talks/') >= 0:
       return 'talk'
 
   def parse_snip(self, content):
@@ -326,7 +299,7 @@ class SiteBuilder:
     # Get the current date in RFC format.
     template_data['rfc'] = self.rfcformat(datetime.now())
     # Get the template for the feed.
-    template = open(self.template_root + 'feed.xml').read()
+    template = open(os.path.join(self.template_root, 'feed.xml')).read()
     # Fill template with data.
     xml = pystache.render(template, template_data)
     # Get the right path and make container directory if needed.
@@ -356,8 +329,8 @@ class SiteBuilder:
     """Moves the output specified by this item to an archive directory."""
     path = item['info']['permalink']
     # Move it from the output dir into the archive dir.
-    src = self.output_root + path
-    dst = self.archive_path + path
+    src = os.path.join(self.output_root, path)
+    dst = os.path.join(self.archive_path, path)
     # Ensure target archive directory exists.
     dst_dir = os.path.dirname(dst)
     if not os.path.exists(dst_dir):
@@ -424,8 +397,8 @@ class SiteBuilder:
   def copy_static(self):
     """Copies the static part of the template directory into the output
     root (only if it's not there yet)."""
-    src = self.template_root + 'static/'
-    dst = self.output_root + 'static/'
+    src = os.path.join(self.template_root, 'static/')
+    dst = os.path.join(self.output_root, 'static/')
 
     if not os.path.exists(dst):
       dir_util.copy_tree(src, dst)
