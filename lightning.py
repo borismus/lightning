@@ -166,9 +166,12 @@ class SiteBuilder:
     # Process the rest of the post as Markdown.
     markdown_lines = lines[separator_index+1:]
     content = markdown2.markdown(''.join(markdown_lines))
-    # If there's no snip specified, try to parse it either before the
-    # <!--more--> tag, or use the whole body.
-    data['snip'] = 'snip' in data and data['snip'] or self.parse_snip(content)
+    # If there's no snip specified, try to parse it before the <!--more--> tag.
+    snip = 'snip' in data and markdown2.markdown(data['snip']) \
+                           or self.parse_snip(content)
+    # If there's no snip, juse use the content, but remember that it's short.
+    data['is_long'] = bool(snip)
+    data['snip'] = snip or content
     # Put everything in a dict.
     data['title'] = title
     data['content'] = content
@@ -220,10 +223,9 @@ class SiteBuilder:
   def parse_snip(self, content):
     """Return the snippet based on the content."""
     found = content.find('<!--more-->')
-    if found:
+    if found >= 0:
+      print content[:found]
       return content[:found]
-    else:
-      return content
 
   def parse_site(self):
     """Parses a site.yaml like this:
@@ -267,7 +269,6 @@ class SiteBuilder:
       limit = 'limit' in info and info['limit'] or 10
       type_filter = 'filter' in info and info['filter']
       items = self.get_list(type_filter, limit)
-      print 'filter', type_filter, 'length', len(items)
       template_data['posts'] = items
 
     # Get the type and load the appropriate template.
