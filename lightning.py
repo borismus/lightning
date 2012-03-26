@@ -175,7 +175,6 @@ class SiteBuilder:
     # Infer slug and type from path.
     slug = 'slug' in data and data['slug'] or self.parse_slug(path)
     type_name = 'type' in data and data['type'] or self.parse_type(path)
-    print path
     data['slug'] = slug
     data['type'] = type_name
     # Parse the date if it's specified.
