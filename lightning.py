@@ -205,17 +205,17 @@ class SiteBuilder:
 
   def parse_type(self, path):
     """Return the type. These are a bunch of defaults..."""
-    if path.find('content/pages/') >= 0:
+    if path.find('/pages/') >= 0:
       return 'page'
-    elif path.find('content/posts/') >= 0:
+    elif path.find('/posts/') >= 0:
       return 'post'
-    elif path.find('content/drafts/') >= 0:
+    elif path.find('/drafts/') >= 0:
       return 'draft'
-    elif path.find('content/archives/') >= 0:
+    elif path.find('/archives/') >= 0:
       return 'archive'
-    if path.find('content/links/') >= 0:
+    if path.find('/links/') >= 0:
       return 'link'
-    if path.find('content/talks/') >= 0:
+    if path.find('/talks/') >= 0:
       return 'talk'
 
   def parse_snip(self, content):
