@@ -2,7 +2,6 @@
 
 Before blog update:
 
-- Change main page title to nothing (remove Welcome)
 - Put unformatted meta descriptions into the page.
 
 Before lightning release:
