@@ -3,6 +3,9 @@
 Before blog update:
 
 - Pack it up into a convenient installation (including inotify, dropbox, etc).
+- Make icon work on iOS
+- Change main page title to nothing (remove Welcome)
+- Put unformatted meta descriptions into the page.
 
 Before lightning release:
 
