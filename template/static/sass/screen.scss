@@ -314,6 +314,11 @@ $large: 1000px;
       font-size: 12px;
     }
   }
+
+  // Hide github and rss for small version.
+  footer {
+    .github, .rss { display: none; }
+  }
 }
 
 @media screen and (min-width: $small) and (max-width: $large) {

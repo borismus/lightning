@@ -2,13 +2,12 @@
 
 Before blog update:
 
-- Pack it up into a convenient installation (including inotify, dropbox, etc).
-- Make icon work on iOS
 - Change main page title to nothing (remove Welcome)
 - Put unformatted meta descriptions into the page.
 
 Before lightning release:
 
+- Pack it up into a convenient installation (including inotify, dropbox, etc).
 - Should there be a git repo clone involved?
 - submit to pypi
 - BUG: What about including `{{...}}` in the markup?
@@ -17,6 +16,7 @@ Before lightning release:
 
 ### Done
 
+- Make icon work on iOS
 - Icon
 - Pagespeed
 - Post describing changes
