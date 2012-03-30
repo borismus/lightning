@@ -2,8 +2,6 @@
 
 Before blog update:
 
-- Pagespeed
-- Post describing changes
 - Pack it up into a convenient installation (including inotify, dropbox, etc).
 
 Before lightning release:
@@ -16,6 +14,9 @@ Before lightning release:
 
 ### Done
 
+- Icon
+- Pagespeed
+- Post describing changes
 - Better headshot
 - Use directories from configuration file.
 - Run through optimizer before deploy?
