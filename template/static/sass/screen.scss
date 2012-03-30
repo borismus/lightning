@@ -48,7 +48,11 @@ h1, h2, h3, h4, h5 {
   line-height: 1.2;
   padding-bottom: 5px;
 
-  a, a:visited { color: #305030; }
+  a, a:visited { color: #305030; border: 0; }
+  a:hover {
+    border: 0;
+    text-decoration: underline;
+  }
 }
 
 #border {
