@@ -64,5 +64,5 @@ Lightning working on your server.
 
 [dropbox]: https://www.dropbox.com/install?os=lnx
 [nebulous]: http://nebulousapps.net/
-[flow]: #
+[flow]: http://www.youtube.com/watch?v=z6ZH2DyURU4
 
