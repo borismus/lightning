@@ -6,8 +6,7 @@ author and update large blogs. Key features are:
 - Easy-to-author configuration.
 - Use your favorite editor for everything.
 
-Here's a preview of how easy it is to use lightning [blogging flow
-screencast][flow] once you're set up.
+Here's a preview of [publishing using lightning][flow] once you're set up.
 
 # Installation
 
@@ -57,10 +56,13 @@ Lightning working on your server.
 2. Customize your theme.
 3. Configure `lightning.yaml` to look for your content on Dropbox (eg.
    `~/Dropbox/my-blog/`)
-4. Setup a watcher on your server via `lightning watch`.
+4. Setup a watcher on your server via `lightning watch`. It's useful to
+   run the watcher using `nohup`.
 5. Make some changes to your content directory from any Dropbox client
    (I sometimes use [Nebulous][nebulous] on iPad).
 6. You're done.
+
+[Enjoy][flow].
 
 [dropbox]: https://www.dropbox.com/install?os=lnx
 [nebulous]: http://nebulousapps.net/
