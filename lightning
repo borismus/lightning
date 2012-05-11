@@ -94,16 +94,20 @@ class SiteBuilder:
 
   def delete_output(self):
     """Removes the contents of the output directory entirely."""
-    import shutil
     for f in os.listdir(self.output_root):
       file_path = os.path.join(self.output_root, f)
-      try:
-        if os.path.isfile(file_path):
-          os.unlink(file_path)
-        else:
-          shutil.rmtree(file_path)
-      except Exception, e:
-        print e
+      self.delete_path(file_path)
+  
+  def delete_path(self, path):
+    """Remove file or directory at path."""
+    import shutil
+    try:
+      if os.path.isfile(path):
+        os.unlink(path)
+      else:
+        shutil.rmtree(path)
+    except Exception, e:
+      print e
 
   def parse_date(self, date_string):
     """Gets the permalink parameters based on the item's info."""
@@ -350,19 +354,20 @@ class SiteBuilder:
 
   def archive_output(self, item):
     """Moves the output specified by this item to an archive directory."""
-    path = item['info']['permalink']
+    path = item['info']['permalink'].strip('/')
     # Move it from the output dir into the archive dir.
     src = os.path.join(self.output_root, path)
     dst = os.path.join(self.archive_path, path)
     # Ensure target archive directory exists.
-    try:
-      dst_dir = os.path.dirname(dst)
-      if not os.path.exists(dst_dir):
-        dir_util.mkpath(dst_dir)
+    dst_dir = os.path.dirname(dst)
+    if not os.path.exists(dst_dir):
+      dir_util.mkpath(dst_dir)
 
-      os.rename(src, dst)
-    except:
-      print "Note: error archiving."
+    # If there's already an archived thing with that name, just remove it. 
+    if os.path.exists(dst):
+      self.delete_path(dst)
+
+    os.rename(src, dst)
 
 
   def get_list(self, type_filter, limit):
