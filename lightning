@@ -355,11 +355,11 @@ class SiteBuilder:
     src = os.path.join(self.output_root, path)
     dst = os.path.join(self.archive_path, path)
     # Ensure target archive directory exists.
-    dst_dir = os.path.dirname(dst)
-    if not os.path.exists(dst_dir):
-      dir_util.mkpath(dst_dir)
-
     try:
+      dst_dir = os.path.dirname(dst)
+      if not os.path.exists(dst_dir):
+        dir_util.mkpath(dst_dir)
+
       os.rename(src, dst)
     except:
       print "Note: error archiving."
