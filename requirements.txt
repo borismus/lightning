@@ -2,3 +2,4 @@ PyYAML>=3.10
 markdown2>=1.1.1
 pystache>=0.4.1
 pyinotify>=0.9.3
+watchdog>=0.6

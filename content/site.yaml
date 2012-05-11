@@ -1,4 +1,4 @@
-site_title: Boris Smus
+site_title: Lightning-powered Blog
 date_format: '%d %B %Y'
 verbs:
   post: 'Published'
@@ -7,9 +7,7 @@ verbs:
 permalink_format:
   post: '{{slug}}'
   page: '{{slug}}'
-  talk: 'talk/{{year}}/{{slug}}'
-  link: 'link/{{year}}/{{slug}}'
   draft: 'drafts/{{slug}}'
-  archive: 'archive/{{slug}}'
+  archive: '{{slug}}'
   feed: '{{slug}}'
   index: ''

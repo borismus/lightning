@@ -6,69 +6,18 @@
   <meta name="viewport" content="width=device-width">
   <meta name="description" content="{{snip}}">
 
-  <!-- Icons -->
-  <link rel="icon" type="image/x-icon" href="/static/icons/favicon.ico" />
-  <link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
-
-  <!-- Styles -->
-  <link href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:700|PT+Sans|Inconsolata' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="/static/stylesheets/screen.css" type="text/css" media="screen" charset="utf-8">
-
-  <!-- Feed -->
-  <link href="http://feeds.feedburner.com/smuscom" rel="alternate" title="Boris Smus" type="application/atom+xml"/>
 </head>
 <body>
-  <header>
-    <span class="left">
-      <a href="/" class="name">Boris Smus</a>
-    </span>
-    <span class="right">
-      <a href="/archive/posts/">Archives</a>
-      <a href="/about/">About</a>
-      <a href="http://twitter.com/borismus">Twitter</a>
-    </span>
-  </header>
-
   <div id="main">
+    <header><a href="/">{{site_title}}</a></header>
+
     <section id="articles">
       {{{template}}}
     </section>
-    <aside>
-      <img src="/static/images/me.jpg" alt="Headshot of Author" title="Headshot of Author">
-      <p>
-        I'm Boris Smus, a software engineer and UI prototyper from
-        Vancouver, Canada. I recently moved to San Francisco to work at
-        Google in Chrome developer relations.
-        <a href="/about/" class="readmore">&rarr;</a>
-      </p>
-    </aside>
   </div>
 
-  <div id="push"></div>
-
   <footer>
-    <p>
-      &copy; 2008 - 2012 Boris Smus<br>
-      Powered by <a href="/site/">Lightning</a>
-    </p>
-
-    <a href="http://feeds.feedburner.com/smuscom" class="social rss" title="RSS" rel="external me">RSS</a>
-    <a href="http://github.com/borismus" class="social github" title="GitHub" rel="external me">GitHub</a>
-    <a href="http://profiles.google.com/borissmus" class="social plus" title="Google Plus" rel="external me">Google Plus</a>
-    <a href="http://twitter.com/borismus" class="social twitter" title="Twitter" rel="external me">Twitter</a>
+    Powered by <a href="https://github.com/borismus/lightning">Lightning</a>.
   </footer>
-
-
-  <script src="/static/javascripts/highlight.pack.js"></script>
-  <script>
-    // Google Analytics
-    var _gaq=[["_setAccount","UA-17930798-22"],["_trackPageview"]];
-    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
-      g.src=("https:"==location.protocol?"//ssl":"//www")+".google-analytics.com/ga.js";
-      s.parentNode.insertBefore(g,s)}(document,"script"));
-
-    // Syntax highlighting for code.
-    hljs.tabReplace = '  ';
-    hljs.initHighlightingOnLoad();
-  </script>
 </body>

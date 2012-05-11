@@ -4,4 +4,4 @@ list:
 type: index
 limit: 10
 
-Welcome
+Welcome to my awesome blog!

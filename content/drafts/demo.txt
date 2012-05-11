@@ -1,3 +1,6 @@
+Demo draft
+==========
+
 Lightning is a static blogging engine designed to make it painless to
 author and update large blogs. Key features are:
 
