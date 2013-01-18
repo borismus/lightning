@@ -1,23 +1,27 @@
-{{#posts}}
+{% extends "base.html" %}
+
+{% block content %}
+{% for post in posts %}
 <article>
-  <h1><a href="{{computed_link}}">{{title}}</a></h1>
+  <h1><a href="{{post.computed_link}}">{{post.title}}</a></h1>
   <div class="subtitle">
-  {{#posted_info}}
-  <time>{{verb}} on {{formatted}}</time>
-  {{/posted_info}}
-  {{#link}}
+  {% if post.posted_info %}
+  <time>{{verb}} on {{post.posted_info.formatted}}</time>
+  {% endif %}
+  {% if post.link %}
   <a class="permalink" href="{{permalink}}">&#8734;</a>
-  {{/link}}
+  {% endif %}
   </div>
   <p>
-    {{{snip}}}
+  {{post.snip}}
   </p>
-  {{#is_long}}
-  <a href="{{permalink}}" class="readmore">&#8618;</a>
-  {{/is_long}}
+  {% if post.is_long %}
+  <a href="{{post.permalink}}" class="readmore">&#8618;</a>
+  {% endif %}
 </article>
 
 <hr/>
-{{/posts}}
+{% endfor %}
 
 <a class="older-posts" href="/archive/">Older posts &rarr;</a>
+{% endblock %}

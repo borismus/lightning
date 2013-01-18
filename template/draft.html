@@ -1,7 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
 <article>
   <h1><a href="{{link}}">{{title}} (draft)</a></h1>
   <p>Note: this is a draft.</p>
   <p>
-    {{{content}}}
+    {{content}}
   </p>
 </article>
+{% endblock %}

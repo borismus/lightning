@@ -2,23 +2,23 @@
 <feed xmlns="http://www.w3.org/2005/Atom"
       xml:lang="en"
       xml:base="http://smus.com">
-  <title>{{title}}</title>
+  <title>{{ title }}</title>
   <link href="http://smus.com/atom.xml" rel="self"/>
   <link href="http://smus.com"/>
-  <updated>{{rfc}}</updated>
+  <updated>{{ rfc }}</updated>
   <id>http://smus.com/atom.xml</id>
-  {{#posts}}
+  {% for post in posts %}
   <entry>
-    <title>{{title}}</title>
+    <title>{{ post.title }}</title>
     <author><name>Boris Smus</name></author>
-    <link href="{{permalink}}"/>
-    {{#posted_info}}
-    <updated>{{rfc}}</updated>
-    {{/posted_info}}
-    <id>{{permalink}}</id>
+    <link href="{{ post.permalink }}"/>
+    {% if post.posted_info %}
+    <updated>{{ post.rfc }}</updated>
+    {% endif %}
+    <id>{{ post.permalink }}</id>
     <content type="html">
-      {{content}}
+      {{ post.content }}
     </content>
   </entry>
-  {{/posts}}
+  {% endfor %}
 </feed>

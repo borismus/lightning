@@ -1,14 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
 <p>
-{{{content}}}
+{{content}}
 </p>
 
 <div id="archives">
-{{#posts}}
-<article>
-  {{#posted_info}}
-  <span class="time">{{formatted}}</span>
-  {{/posted_info}}
-  <span class="title"><a href="{{permalink}}">{{title}}</a></span>
-</article>
-{{/posts}}
+  {% for post in posts %}
+  <article>
+    {% if post.posted_info %}
+    <span class="time">{{ post.formatted }}</span>
+    {% endif %}
+    <span class="title"><a href="{{ post.permalink }}">{{ post.title }}</a></span>
+  </article>
+  {% endfor %}
 </div>
+{% endblock %}

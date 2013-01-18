@@ -1,15 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
 <article>
   <h1><a href="{{computed_link}}">{{title}}</a></h1>
   <div class="subtitle">
-  {{#posted_info}}
-  <time>{{verb}} on {{formatted}}</time>
-  {{/posted_info}}
-  {{#link}}
+  {% if posted_info %}
+  <time>{{verb}} on {{posted_info.formatted}}</time>
+  {% endif %}
+  {% if link %}
   <a class="permalink" href="{{permalink}}">&#8734;</a>
-  {{/link}}
+  {% endif %}
   </div>
   <p>
-    {{{content}}}
+    {{content}}
   </p>
 </article>
-
+{% endblock %}
