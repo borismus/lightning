@@ -3,11 +3,11 @@ import os
 import pickle
 import datetime
 import time
+import re
 from distutils import dir_util
 
 import yaml
 import markdown2
-import pystache
 import sys
 
 PREVIEW_ADDR = '127.0.0.1'
@@ -31,6 +31,9 @@ class SiteBuilder:
       raise Exception('Invalid content root. Fix lightning.yaml')
     self.content_root = build['content']
     self.output_root = build['output']
+
+    # Figure out deploy buckets.
+    self.deploy = 'deploy' in build and build['deploy']
 
     # Figure out the pathes.
     self.archive_path = os.path.join(self.output_root, '.archived/')
@@ -142,7 +145,7 @@ class SiteBuilder:
     # Then populate the contents of the base template with the desired
     # template.
     template = open(os.path.join(self.template_root, name + '.html')).read()
-    return base.replace('{{{template}}}', template)
+    return base.replace('{{template}}', template)
 
   def parse_item(self, path):
     """Parses markup from files like this:
@@ -192,7 +195,8 @@ class SiteBuilder:
     data = yaml.load(''.join(yaml_lines)) or {}
     # Process the rest of the post as Markdown.
     markdown_lines = lines[separator_index+1:]
-    content = markdown2.markdown(''.join(markdown_lines))
+    markdown_body = ''.join(markdown_lines).decode('utf-8')
+    content = markdown2.markdown(markdown_body)
     # If there's no snip specified, try to parse it before the <!--more--> tag.
     snip = 'snip' in data and markdown2.markdown(data['snip']) \
                            or self.parse_snip(content)
@@ -207,6 +211,7 @@ class SiteBuilder:
     type_name = 'type' in data and data['type'] or self.parse_type(path)
     data['slug'] = slug
     data['type'] = type_name
+    data['summary'] = markdown_body[:markdown_body.find('.')+1]
     # Parse the date if it's specified.
     posted_info = None
     if 'posted' in data:
@@ -283,7 +288,53 @@ class SiteBuilder:
     # If there's date information associated, include it in the permalink data.
     if posted_info:
       permalink_data = dict(permalink_data.items() + posted_info.items())
-    return '/' + pystache.render(permalink_template, permalink_data)
+    return '/' + self.render_template_string(permalink_template, permalink_data)
+
+  def render_template_string(self, template_string, data):
+    from jinja2 import Template
+    template = Template(template_string)
+    out = template.render(data)
+    return out
+
+  def render_template(self, filename, data):
+    from jinja2 import Environment, FileSystemLoader
+    env = Environment(loader=FileSystemLoader(self.template_root))
+    template = env.get_template(filename)
+    out = template.render(data)
+    return out
+
+  def fix_broken_links(self, items):
+    """
+    Given a list of items for creating a list, filters all references (img src
+    and a href), looking for relative pathes and rewriting the URLs to work
+    from the parent page.
+    """
+    out = []
+
+    for item in items:
+      newItem = item.copy()
+      # Parse the item content for links.
+      slug = item['slug']
+      newItem['content'] = self.prefix_links(newItem['content'], slug)
+      newItem['snip'] = self.prefix_links(newItem['snip'], slug)
+      out.append(newItem)
+
+    return out
+
+  def prefix_links(self, content, prefix):
+    links = re.findall(r'<a href="(.*?)"', content, re.DOTALL) + \
+            re.findall(r'<img src="(.*?)"', content, re.DOTALL)
+
+    # Check if they are relative.
+    for link in links:
+      # If it starts with a http or /, it's a relative URL.
+      if not link.startswith('/') and not link.startswith('http'):
+        # If they are relative, rewrite them using the slug as a prefix.
+        newLink = os.path.join(prefix, link)
+        content = content.replace(link, newLink)
+
+    return content
+
 
   def build(self, item):
     """Builds a single item."""
@@ -296,13 +347,16 @@ class SiteBuilder:
       limit = 'limit' in info and info['limit'] or 10
       type_filter = 'filter' in info and info['filter']
       items = self.get_list(type_filter, limit)
+      # For lists, there may be broken links which were specified in relative
+      # format. These links need to be rewritten with the correct pathes.
+      items = self.fix_broken_links(items)
       template_data['posts'] = items
 
     # Get the type and load the appropriate template.
     type_name = info['type']
-    template = self.load_template(type_name)
+    template_path = type_name + '.html'
     # Evaluate the template with data.
-    html = pystache.render(template, template_data)
+    html = self.render_template(template_path, template_data)
     # Compute the final path based on permalink config.
     path = info['permalink']
     # Create the directory for the parsed HTML.
@@ -322,13 +376,12 @@ class SiteBuilder:
     limit = 'limit' in info and info['limit'] or 10
     type_filter = 'filter' in info and info['filter']
     items = self.get_list(type_filter, limit)
+    items = self.fix_broken_links(items)
     template_data['posts'] = items
     # Get the current date in RFC format.
     template_data['rfc'] = self.rfcformat(datetime.datetime.now())
-    # Get the template for the feed.
-    template = open(os.path.join(self.template_root, 'feed.xml')).read()
     # Fill template with data.
-    xml = pystache.render(template, template_data)
+    xml = self.render_template('feed.xml', template_data)
     # Get the right path and make container directory if needed.
     abs_path = self.output_root + info['permalink'] + '.xml'
     dir_util.mkpath(os.path.dirname(abs_path))
@@ -511,6 +564,7 @@ class Command:
   PREVIEW = 3
   WATCH = 4
   PURGE = 5
+  DEPLOY = 6
 
 command_map = {
   'build': Command.BUILD,
@@ -518,11 +572,12 @@ command_map = {
   'preview': Command.PREVIEW,
   'watch': Command.WATCH,
   'purge': Command.PURGE,
+  'deploy': Command.DEPLOY,
 }
 
 def error(msg):
   valid_commands = ', '.join(command_map.keys())
-  print "%s. Valid commands: %s." % (msg, valid_commands)
+  print "Error: %s.\nValid commands: %s." % (msg, valid_commands)
   sys.exit(1)
 
 from watchdog.observers import Observer
@@ -536,10 +591,35 @@ class BuildHandler(FileSystemEventHandler):
     builder.build_incremental()
     os.chdir(builder.output_root)
 
+
+class S3Uploader:
+
+  def upload(self, local_directory, s3_bucket):
+    import boto
+    from boto.s3.key import Key
+
+    # Establish connection.
+    c = boto.connect_s3()
+
+    # Get or create bucket with proper permissions.
+    try:
+      b = c.get_bucket(s3_bucket)
+    except Exception:
+      b = c.create_bucket(s3_bucket)
+    k = Key(b)
+
+    # Upload directory recursively.
+    for path, dir, files in os.walk(local_directory):
+      for file in files:
+        k.key = os.path.relpath(os.path.join(path, file), local_directory)
+        k.set_contents_from_filename(os.path.join(path, file))
+        b.set_acl('public-read', k.key)
+        print 'Uploading %s.' % k.key
+
 if __name__ == '__main__':
-  if len(sys.argv) > 2:
-    error("Specify at most one command.")
-  command_name = len(sys.argv) is 2 and sys.argv[1] or 'build'
+  if len(sys.argv) <= 1:
+    error("Specify at least one command.")
+  command_name = sys.argv[1] or 'build'
   try:
     command = command_map[command_name]
   except Exception:
@@ -580,3 +660,15 @@ if __name__ == '__main__':
     httpd = HTTPServer(server_info, SimpleHTTPRequestHandler)
     print "Starting preview server on %s." % str(server_info)
     httpd.serve_forever()
+
+  elif command is Command.DEPLOY:
+    # Check if deploy pathes are set. If not, error out.
+    if not builder.deploy:
+      error('Deploy bucket is not set')
+    # Build incrementally to make sure we're up to date.
+    builder.build_incremental()
+    print 'Deploying to %s.' % builder.deploy
+    # Create an S3 uploader.
+    uploader = S3Uploader()
+    # Upload.
+    uploader.upload(builder.output_root, builder.deploy)
