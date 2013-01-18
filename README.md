@@ -38,12 +38,20 @@ to the output directory.
 
     > ./lightning preview
 
+Deploy the site to the specified S3 bucket.
+
+    > ./lightning deploy
+
+
 # Configuration
 
-1. `lightning.yaml` specifies where to look for content, template and
-   where to dump output.
-2. `site.yaml` in your content directory specifies site-specific
-   configuration.
+`lightning.yaml` specifies where to look for content, template and where
+to dump output. It also specifies where to deploy the site.
+
+`site.yaml` specifies metadata about the site itself, including
+permalinks, verbs, site title, date format. It belongs in the content
+root.
+
 
 # For production
 
