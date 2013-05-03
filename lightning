@@ -212,6 +212,9 @@ class SiteBuilder:
     data['slug'] = slug
     data['type'] = type_name
     data['summary'] = markdown_body[:markdown_body.find('.')+1]
+    description = 'description' in data and markdown2.markdown(data['description']) \
+                                        or None
+    data['description'] = description
     # Parse the date if it's specified.
     posted_info = None
     if 'posted' in data:
@@ -610,11 +613,27 @@ class S3Uploader:
 
     # Upload directory recursively.
     for path, dir, files in os.walk(local_directory):
-      for file in files:
-        k.key = os.path.relpath(os.path.join(path, file), local_directory)
-        k.set_contents_from_filename(os.path.join(path, file))
+      for filename in files:
+        filepath = os.path.join(path, filename)
+        key = os.path.relpath(os.path.join(path, filename), local_directory)
+        # Check if a file with this key already exists.
+        remote_key = b.get_key(key)
+        if remote_key:
+          # If it does, check if the files are identical.
+          # Note: S3 stores uses MD5 for their ETags. http://goo.gl/rGVXM
+          local_md5 = k.compute_md5(open(filepath))[0]
+          remote_md5 = remote_key.etag.strip('"')
+          if local_md5 == remote_md5:
+            print '%s is already uploaded. Skipping.' % key
+            # If the files are identical, do nothing.
+            continue;
+
+        # Otherwise if no file exists, or if they are different, upload.
+        k.key = key
+        k.set_contents_from_filename(filepath)
         b.set_acl('public-read', k.key)
         print 'Uploading %s.' % k.key
+
 
 if __name__ == '__main__':
   if len(sys.argv) <= 1:
