@@ -1,5 +1,5 @@
 template: template
 content: content
-output: www
+output: /Library/WebServer/Documents
 
 deploy: static-lightning

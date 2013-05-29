@@ -11,7 +11,7 @@
     {% if post.posted_info %}
     <span class="time">{{ post.formatted }}</span>
     {% endif %}
-    <span class="title"><a href="{{ post.permalink }}">{{ post.title }}</a></span>
+    <span class="title"><a href="{{ post.permalink }}">{{ post.title }}</a></span>{{ post.posted }}
   </article>
   {% endfor %}
 </div>
