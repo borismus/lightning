@@ -1,27 +1,43 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% for post in posts %}
-<article>
-  <h1><a href="{{post.computed_link}}">{{post.title}}</a></h1>
-  <div class="subtitle">
-  {% if post.posted_info %}
-  <time>{{verb}} on {{post.posted_info.formatted}}</time>
-  {% endif %}
-  {% if post.link %}
-  <a class="permalink" href="{{permalink}}">&#8734;</a>
-  {% endif %}
-  </div>
-  <p>
-  {{post.snip}}
-  </p>
-  {% if post.is_long %}
-  <a href="{{post.permalink}}" class="readmore">&#8618;</a>
-  {% endif %}
-</article>
+<blockquote>
+  I number the friends & the family that love me<br />
+  I welcome the ring of the moonlight above me<br />
+  and I wander, and lay in whatever old bed<br />
+  with good, earthly music singing into my head<br />
+  <p>- Easy Does It, Bonnie 'Prince' Billy</p>
+</blockquote>
 
-<hr/>
-{% endfor %}
 
-<a class="older-posts" href="/archive/">Older posts &rarr;</a>
+{% if posts %}
+  <h2><em>The most recent posts</em></h2>
+  {% for post in posts %}
+  <article id="frontpage">
+    <h4>
+      <a href="{{post.computed_link}}">{{post.title}}</a>
+    </h4>
+    {# <div class="subtitle"> #}
+    {% if post.posted_info %}
+    <time>{{verb}} on {{post.posted_info.formatted}}</time>
+    {% endif %}
+    {# {% if post.link %} #}
+    {# <a class="permalink" href="{{permalink}}">&#8734;</a> #}
+    {# {% endif %} #}
+    {# </div> #}
+    {# <p> #}
+    {# {{post.snip}} #}
+    {# </p> #}
+    {# {% if post.is_long %} #}
+    {# <a href="{{post.permalink}}" class="readmore">&#8618;</a> #}
+    {# {% endif %} #}
+  </article>
+  {% endfor %}
+{% else %}
+  <p><em>There are no posts</em></p>
+{% endif %}
+
+
+
+<p><a class="older-posts" href="/archive/">Older posts &rarr;</a></p>
 {% endblock %}

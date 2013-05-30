@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom"
       xml:lang="en"
-      xml:base="http://smus.com">
+      xml:base="http://metajungle.net">
   <title>{{ title }}</title>
-  <link href="http://smus.com/atom.xml" rel="self"/>
-  <link href="http://smus.com"/>
+  <link href="http://metajungle.net/atom.xml" rel="self"/>
+  <link href="http://metajungle.net"/>
   <updated>{{ rfc }}</updated>
-  <id>http://smus.com/atom.xml</id>
+  <id>http://metajungle.net/atom.xml</id>
   {% for post in posts %}
   <entry>
     <title>{{ post.title }}</title>
-    <author><name>Boris Smus</name></author>
+    <author><name>Jakob Henriksson</name></author>
     <link href="{{ post.permalink }}"/>
     {% if post.posted_info %}
     <updated>{{ post.rfc }}</updated>

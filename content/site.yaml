@@ -1,11 +1,11 @@
-site_title: Lightning-powered Blog
+site_title: metajungle
 date_format: '%d %B %Y'
 verbs:
   post: 'Published'
   talk: 'Presented'
   link: 'Linked'
 permalink_format:
-  post: '{{slug}}'
+  post: '{{year}}/{{month}}/{{slug}}'
   page: '{{slug}}'
   draft: 'drafts/{{slug}}'
   archive: '{{slug}}'
