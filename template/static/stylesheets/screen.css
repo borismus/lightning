@@ -1,10 +1,10 @@
 *{margin:0;padding:0;}
+
 body {
-/*    font:13.34px helvetica,arial,freesans,clean,sans-serif;
-*/    color:black;
-/*    line-height:1.4em;*/
+/*    font:13.34px helvetica,arial,freesans,clean,sans-serif;*/
+  /*    line-height:1.4em;*/
+    color:black;
     background-color: #F8F8F8;
-/*    padding: 0.7em;*/
     padding: 0px;
     margin: 0px;
 }
@@ -72,12 +72,14 @@ dd{margin-left:2em;margin-bottom:1em;}
 
 header { 
   width: 100%;
+  background-color: #f0f0f0;
 /*  background-color: #845454;*/
-  background-color: #457E11;
+/*  background-color: #457E11;*/
   color: #ffffff;
   padding-top: 10px;
   padding-bottom: 10px;
-  border-bottom: 2px solid #c0c0c0;
+  border-bottom: 1px solid #000000;
+  border-top: 6px solid #457E11;
 }
 
 header img {
@@ -99,6 +101,22 @@ header h1 {
   line-height: 1.2em;
   padding: 0px;
   margin: 0px;
+  color: #000;
+}
+
+#menu a {
+  padding: 2px 5px;
+}
+
+#menu a:first-child {
+  padding-left: -5px;
+}
+
+#logo {
+  float: left; 
+  width: 73px; 
+  height: 73px; 
+  margin-right: 20px;
 }
 
 #link_home {
@@ -107,7 +125,8 @@ header h1 {
 
 #main {
   width: 940px;
-  margin: 20px 40px;
+/*  margin: 20px 40px;*/
+  padding: 20px 40px;
   min-height: 100px;
   overflow: hidden;
 }
@@ -115,23 +134,32 @@ header h1 {
 #articles {
   float: left;
   width: 640px;
-  padding-right: 40px;
-  margin-right: 40px;
   overflow: hidden;
+}
+
+#frontpage {
+  margin-bottom: 10px;
 }
 
 time {
   color: #808080;
+  font-style: italic;
+  font-size: 0.95em;
 }
 
 aside {
   float: right;
   width: 200px;
-/*  background-color: #808080;*/
+  background-color: #f0f0f0;
+  border: 1px solid #d0d0d0;
+  margin: 20px auto 5px auto;
+  min-height: 80px;
+  padding: 5px 10px 0px 10px;
 }
 
-aside img {
-  border: 1px solid #000;
+img.twitter {
+  width: 32px;
+  height: 32px;
 }
 
 footer { 
@@ -145,60 +173,55 @@ footer {
   padding: 40px 0px;
 }
 
-/*@media screen and (min-width: 768px) {
-    body {
-        margin: 0px auto;
-    }
-    
-    #main {
-    }
+#archives article {
+  padding-bottom: 5px;
 }
-*/
+
+#archives .time {
+  color: #808080;
+}
+
+#archives .title {
+  padding-left: 10px;
+}
 
 @media screen and (max-width: 979px) {
 
-  footer {
-  }
-  
+  /* fill up the screen */
   #main {
-/*    width: 640px;*/
-    width: 90%;
+    width: auto;
   }
   
+  /* avoid floating and fill up the screen */
   #articles {
+    width: auto;
     float: none;
   }
   
+  /* avoid floating and fill up the screen */
   aside {
-    float: left;
-    width: 640px;
-    margin-right: 40px;
+    float: none;
+    width: auto;
   }
 }
 
 @media screen and (max-width: 768px) {
   
-  #main {
-    width: 90%;
-  }
-  
-  #articles {
-    width: 90%;
-  }
-  
-  aside {
-    float: left;
-    width: 100%;
-  }
-  
 }
 
 @media screen and (max-width: 480px) {
 
+  /* hide the title */
   #title {
     display: none;
   }
   
+  /* hide the logo */
+  #logo {
+    display: none;
+  }
+  
+  /* show the extra menu item */
   #link_home {
     display: inline;
   }

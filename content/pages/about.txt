@@ -1,4 +1,6 @@
-About this blog
-===============
+# About
 
-This blog uses Lightning!
+Hey, you can find me on twitter. 
+
+<a href="http://twitter.com/metajungle"><img           src="/static/images/twitter-bird-light-bgs.png"></img></a>
+

@@ -12,10 +12,12 @@
 
   <header>
     <div id="header">
+      <img id="logo" 
+        src="/static/images/metajungle-logo-medium-smaller.png"></img>
       <p id="menu">
-        <a id="link_home" href="/">Home</a>
-        <a href="/archive/">Posts</a>
-        <a href="/about">About</a> 
+        <a href="/" id="link_home" >home</a>
+        <a href="/archive/">posts</a>
+        <a href="/about">about</a> 
       </p>
       <div id="title">
         <h1><a href="/">{{ site_title }}</a></h1>
@@ -28,8 +30,11 @@
       {% block content %}{% endblock %}
     </section>
     <aside>
-      <p>This site is about this:</p>
-      <img src="/static/metajungle-logo-medium-smaller.png"></img>
+      <p>This is a metajungle, written by <a href="/about/">Jakob Henriksson</a></p>
+      <p>
+        <a href="http://twitter.com/metajungle"><img class="twitter"     
+          src="/static/images/twitter-bird-light-bgs.png"></img></a>
+      </p>
     </aside>
   </div>
 
