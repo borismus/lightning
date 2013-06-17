@@ -317,9 +317,9 @@ class SiteBuilder:
     for item in items:
       newItem = item.copy()
       # Parse the item content for links.
-      slug = item['slug']
-      newItem['content'] = self.prefix_links(newItem['content'], slug)
-      newItem['snip'] = self.prefix_links(newItem['snip'], slug)
+      permalink = item['permalink']
+      newItem['content'] = self.prefix_links(newItem['content'], permalink)
+      newItem['snip'] = self.prefix_links(newItem['snip'], permalink)
       out.append(newItem)
 
     return out
