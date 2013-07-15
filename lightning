@@ -254,6 +254,8 @@ class SiteBuilder:
       return 'link'
     if path.find('/talks/') >= 0:
       return 'talk'
+    if path.find('/projects/') >= 0:
+      return 'project'
 
   def parse_snip(self, content):
     """Return the snippet based on the content."""
@@ -320,6 +322,8 @@ class SiteBuilder:
       slug = item['slug']
       newItem['content'] = self.prefix_links(newItem['content'], slug)
       newItem['snip'] = self.prefix_links(newItem['snip'], slug)
+      if 'image' in item:
+        newItem['image'] = os.path.join(slug, item['image'])
       out.append(newItem)
 
     return out
@@ -429,13 +433,24 @@ class SiteBuilder:
   def get_list(self, type_filter, limit):
     """Gets list of posts with the given options."""
     # Only care about items with a posted attribute.
-    out = [i['info'] for i in self.cache if 'posted' in i['info']]
+    # Doesn't matter if it was posted or not.
+    out = [i['info'] for i in self.cache]# if 'posted' in i['info']]
     # Filter the list of all posts with the given parameters.
     if type_filter:
-      out = [i for i in out if i['type'] == type_filter]
+      if type(type_filter) != list:
+        type_filter = [type_filter]
+
+      out = [i for i in out if i['type'] in type_filter]
     # Order it correctly.
-    out = sorted(out, cmp=lambda a, b:
-        b['posted_info']['unix'] - a['posted_info']['unix'])
+    def order_by_date(a, b):
+      if 'posted_info' in a and 'posted_info' in b:
+        return b['posted_info']['unix'] - a['posted_info']['unix']
+      if 'posted_info' in a and not 'posted_info' in b:
+        return 1
+      if 'posted_info' in b and not 'posted_info' in a:
+        return -1
+      return 1
+    out = sorted(out, cmp=order_by_date)
     # Limit the number of results.
     return out[:limit]
 
