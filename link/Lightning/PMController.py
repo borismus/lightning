@@ -8,10 +8,13 @@
 #
 
 from objc import YES, NO, IBAction, IBOutlet
-from Foundation import *
-from AppKit import *
+#from Foundation import *
+from Foundation import NSLog
+#from AppKit import *
+from AppKit import NSWindowController, NSFont, NSOnState, NSApp, NSNotificationCenter, NSApplicationWillTerminateNotification
 
 from LinkTextProcessor import *
+from Syndicator import *
 
 class PMController(NSWindowController):
 
@@ -20,8 +23,15 @@ class PMController(NSWindowController):
     bodyField = IBOutlet()
     charCountLabel = IBOutlet()
     actionButton = IBOutlet()
+    twitterCheckbox = IBOutlet()
+    gplusCheckbox = IBOutlet()
+    confirmTokenSheet = IBOutlet()
+    confirmTokenField = IBOutlet()
 
+    twitter = TwitterSyndicator()
+    gplus = GPlusSyndicator()
     ltp = LinkTextProcessor()
+    
 
     def awakeFromNib(self):
         NSLog("Awake from nib.")
@@ -34,13 +44,38 @@ class PMController(NSWindowController):
         self.bodyField.setFont_(NSFont.fontWithName_size_("Monaco", 13))
         self.bodyField.setRichText_(NO)
         self.bodyField.setUsesFontPanel_(NO)
+    
+        # Authenticate to twitter if we can.
+        if self.twitter.is_authenticated():
+            self.twitter.login()
+            self.twitterCheckbox.setState_(NSOnState)
+            self.ltp.syndicators.append(self.twitter)
+        
+        # Authenticate to G+ if we can.
+        if self.gplus.is_authenticated():
+            self.gplus.login()
+            self.gplusCheckbox.setState_(NSOnState)
+            self.ltp.syndicators.append(self.gplus)
+
+        # Listen to the NSApplicationWillTerminateNotification.
+        center = NSNotificationCenter.defaultCenter()
+        center.addObserver_selector_name_object_(self, "applicationWillTerminateNotification:", NSApplicationWillTerminateNotification, None)
+
+        self.didPublish = False
+
+    def applicationWillTerminateNotification_(self, notification):
+        # Cleanup if the app did not publish.
+        if not self.didPublish:
+            self.ltp.clean()
+        NSLog("applicationWillTerminateNotification_")
+
 
     @IBAction
     def post_(self, sender):
-        url = unicode(self.urlField.stringValue())
-        title = unicode(self.titleField.stringValue())
-        body = unicode(self.bodyField.string())
-        NSLog(u"Post: %s" % body)
+        url = self.urlField.stringValue()
+        title = self.titleField.stringValue()
+        body = self.bodyField.string()
+        NSLog(u"Title: %s" % title)
         # TODO(smus): Validate all fields.
 
         if self.isPreview:
@@ -52,7 +87,10 @@ class PMController(NSWindowController):
             self.setPreviewMode(False)
         else:
             # If in publish mode, push to S3, publish to twitter & G+.
+            print 'Syndicators: ' + str(self.ltp.syndicators)
             self.ltp.publish()
+            self.didPublish = True
+            self.quit()
 
     @IBAction
     def cancel_(self, sender):
@@ -61,6 +99,60 @@ class PMController(NSWindowController):
         self.ltp.clean()
         # Exit the application.
         self.quit()
+    
+    @IBAction
+    def twitterChecked_(self, sender):
+        if self.twitterCheckbox.state() == NSOnState:
+            self.twitter.login()
+            if not self.twitter.is_authenticated():
+                self.currentService = self.twitter
+                self.showTheSheet_(sender)
+
+        isTwitterEnabled = bool(self.twitterCheckbox.state() == NSOnState)
+        if isTwitterEnabled:
+            self.ltp.syndicators.append(self.twitter)
+        else:
+            self.ltp.syndicators.remove(self.twitter)
+
+    @IBAction
+    def gplusChecked_(self, sender):
+        if self.gplusCheckbox.state() == NSOnState:
+            self.gplus.login()
+            print self.gplus.is_authenticated()
+            if not self.gplus.is_authenticated():
+                self.currentService = self.gplus
+                self.showTheSheet_(sender)
+        
+        isGPlusEnabled = bool(self.gplusCheckbox.state() == NSOnState)
+        if isGPlusEnabled:
+            self.ltp.syndicators.append(self.gplus)
+        else:
+            self.ltp.syndicators.remove(self.gplus)
+
+    @IBAction
+    def confirmToken_(self, sender):
+        NSLog("Confirmed token")
+        verifier = self.confirmTokenField.stringValue()
+
+        if self.currentService == self.twitter:
+            self.twitter.confirm_verifier(verifier)
+        elif self.currentService == self.gplus:
+            self.gplus.confirm_verifier(verifier)
+                
+        self.endTheSheet_(sender)
+
+    @IBAction
+    def cancelToken_(self, sender):
+        self.endTheSheet_(sender)
+
+
+    def showTheSheet_(self, sender):
+        NSApp.beginSheet_modalForWindow_modalDelegate_didEndSelector_contextInfo_(
+                self.confirmTokenSheet, NSApp.mainWindow(), self, None, None)
+
+    def endTheSheet_(self, sender):
+        NSApp.endSheet_(self.confirmTokenSheet)
+        self.confirmTokenSheet.orderOut_(sender)
 
     def setPreviewMode(self, isPreview):
         self.isPreview = isPreview

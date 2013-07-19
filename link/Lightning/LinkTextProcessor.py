@@ -14,6 +14,7 @@ import re
 import os
 import datetime
 import webbrowser
+import codecs
 
 import unidecode
 
@@ -45,11 +46,11 @@ class LinkTextProcessor:
     BLOG_ROOT = '/Users/smus/Projects/smus.com/'
     LINK_ROOT = os.path.join(BLOG_ROOT, 'content/links')
 
-    def __init__(self):
+    def __init__(self, syndicators=[]):
         self.is_first_run = True
         self.is_browser_open = False
         # The syndication services which to publish to.
-        self.syndicators = [TwitterSyndicator, GPlusSyndicator]
+        self.syndicators = syndicators
 
 
     def set_content(self, url, title, body):
@@ -65,6 +66,7 @@ class LinkTextProcessor:
         self.url = url
         self.title = title
         self.body = body
+        print('set_content %s %s %s' % (url, title, body))
         # Get a simple slug out of the title.
         self.slug = self.generate_slug(self.title)
         # Create a link file.
@@ -94,9 +96,9 @@ class LinkTextProcessor:
         # Publish the blog to S3.
         self.publish_blog()
         print('Published new link to: ' + blog_url)
-        for syndicator in self.syndicators:
-            s = syndicator(self.url, blog_url, self.title, self.body)
-            s.publish()
+        for syn in self.syndicators:
+            syn.set_info(self.url, blog_url, self.title, self.body)
+            syn.publish()
 
 
     def clean(self):
@@ -145,7 +147,8 @@ class LinkTextProcessor:
             return False
 
         # Create a file and start writing things to it.
-        f = open(path, 'w')
+        #f = open(path, 'w')
+        f = codecs.open(path, 'w', encoding='utf-8')
         # First write the title.
         print(title, file=f)
         # Next a separator.
@@ -157,6 +160,7 @@ class LinkTextProcessor:
         print('link: %s' % url, file=f)
         # Lastly, write the body of the link.
         print('\n' + body, file=f)
+        print('Printed to file')
         f.close()
         return True
 
@@ -166,7 +170,7 @@ class LinkTextProcessor:
 
 
     def publish_blog(self):
-        os.system('cd %s && ./lightning/lightning deplo' % self.BLOG_ROOT)
+        os.system('cd %s && ./lightning/lightning deploy' % self.BLOG_ROOT)
 
 
     def get_published_url(self, slug):

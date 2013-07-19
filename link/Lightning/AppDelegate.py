@@ -7,8 +7,8 @@
 #  Copyright Boris Smus 2013. All rights reserved.
 #
 
-from Foundation import *
-from AppKit import *
+#from Foundation import *
+from Foundation import NSObject, NSLog
 
 class AppDelegate(NSObject):
     def applicationDidFinishLaunching_(self, sender):
@@ -16,6 +16,6 @@ class AppDelegate(NSObject):
 
     def applicationWillTerminate_(self,sender):
         NSLog("Application will terminate.")
-    
+
     def applicationShouldTerminateAfterLastWindowClosed_(self, sender):
         return True
