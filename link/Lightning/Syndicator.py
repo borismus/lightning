@@ -103,14 +103,8 @@ class TwitterSyndicator(Syndicator):
     auth = tweepy.OAuthHandler(consumer_token, consumer_secret)
 
     def publish(self):
-        # TODO(smus): Heuristics for shortening the post.
-        # If the body is too long, truncate it, leaving room for a URL.
-        plainbody = self.markdown_to_plaintext(self.body)
-        if len(plainbody) < 120:
-            status = plainbody + ' ' + self.link_url
-        else:
-            # Try to find a word boundary, leaving room for a URL.
-            status = self.truncate_words(plainbody, 110) + '... ' + self.blog_url
+        # If the title is too long, truncate it, leaving room for a URL.
+        status = self.truncate_words(self.title, 110) + ' ' + self.blog_url
 
         api = tweepy.API(self.auth)
         api.update_status(status)
@@ -121,11 +115,11 @@ class TwitterSyndicator(Syndicator):
         buf = ''
         count = 0
         for word in words:
-            if count > char_limit:
-                return buf.strip(string.punctuation + ' ')
-            buf += word + ' '
             count += len(word) + 1
-        return buf
+            if count > char_limit:
+                return buf.strip(string.punctuation + ' ') + '...'
+            buf += word + ' '
+        return buf.strip()
 
     def is_authenticated(self):
         key = self.get('key')

@@ -18,7 +18,8 @@
 		CA76C4E61791256200CF5775 /* PMController.py in Resources */ = {isa = PBXBuildFile; fileRef = CA76C4E51791256200CF5775 /* PMController.py */; };
 		CA76C4EC179139A300CF5775 /* LinkTextProcessor.py in Resources */ = {isa = PBXBuildFile; fileRef = CA76C4EB179139A300CF5775 /* LinkTextProcessor.py */; };
 		CA76C4EE179387FC00CF5775 /* Syndicator.py in Resources */ = {isa = PBXBuildFile; fileRef = CA76C4ED179387FC00CF5775 /* Syndicator.py */; };
-		CAFA57581795CD9E00EC051C /* Lightning.iconset in Resources */ = {isa = PBXBuildFile; fileRef = CAFA57571795CD9E00EC051C /* Lightning.iconset */; };
+		CAAEE74417A23D9800CEF86E /* open-chrome-tab.scpt in Resources */ = {isa = PBXBuildFile; fileRef = CAAEE74317A23AF500CEF86E /* open-chrome-tab.scpt */; };
+		CAAEE74617A23FCE00CEF86E /* Lightning.iconset in Resources */ = {isa = PBXBuildFile; fileRef = CAAEE74517A23FCE00CEF86E /* Lightning.iconset */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,7 +40,8 @@
 		CA76C4E51791256200CF5775 /* PMController.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = PMController.py; sourceTree = "<group>"; };
 		CA76C4EB179139A300CF5775 /* LinkTextProcessor.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = LinkTextProcessor.py; sourceTree = "<group>"; };
 		CA76C4ED179387FC00CF5775 /* Syndicator.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = Syndicator.py; sourceTree = "<group>"; };
-		CAFA57571795CD9E00EC051C /* Lightning.iconset */ = {isa = PBXFileReference; lastKnownFileType = folder.iconset; path = Lightning.iconset; sourceTree = "<group>"; };
+		CAAEE74317A23AF500CEF86E /* open-chrome-tab.scpt */ = {isa = PBXFileReference; lastKnownFileType = file; path = "open-chrome-tab.scpt"; sourceTree = "<group>"; };
+		CAAEE74517A23FCE00CEF86E /* Lightning.iconset */ = {isa = PBXFileReference; lastKnownFileType = folder.iconset; path = Lightning.iconset; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,12 +111,13 @@
 		CA76C4C917911F0E00CF5775 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				CAAEE74517A23FCE00CEF86E /* Lightning.iconset */,
 				CA76C4CA17911F0E00CF5775 /* Lightning-Info.plist */,
 				CA76C4CB17911F0E00CF5775 /* InfoPlist.strings */,
 				CA76C4CE17911F0E00CF5775 /* main.m */,
 				CA76C4D017911F0E00CF5775 /* Lightning-Prefix.pch */,
 				CA76C4D117911F0E00CF5775 /* Credits.rtf */,
-				CAFA57571795CD9E00EC051C /* Lightning.iconset */,
+				CAAEE74317A23AF500CEF86E /* open-chrome-tab.scpt */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -178,7 +181,8 @@
 				CA76C4E61791256200CF5775 /* PMController.py in Resources */,
 				CA76C4EC179139A300CF5775 /* LinkTextProcessor.py in Resources */,
 				CA76C4EE179387FC00CF5775 /* Syndicator.py in Resources */,
-				CAFA57581795CD9E00EC051C /* Lightning.iconset in Resources */,
+				CAAEE74417A23D9800CEF86E /* open-chrome-tab.scpt in Resources */,
+				CAAEE74617A23FCE00CEF86E /* Lightning.iconset in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

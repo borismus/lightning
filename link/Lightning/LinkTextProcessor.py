@@ -13,8 +13,8 @@ from Syndicator import *
 import re
 import os
 import datetime
-import webbrowser
 import codecs
+import subprocess
 
 import unidecode
 
@@ -41,14 +41,13 @@ class LinkTextProcessor:
     - If the slug changes, renames directory.
     """
 
-    PREVIEW_URL = 'http://localhost'
+    PREVIEW_URL = 'http://localhost/'
     BLOG_URL = 'http://smus.com/link/'
     BLOG_ROOT = '/Users/smus/Projects/smus.com/'
     LINK_ROOT = os.path.join(BLOG_ROOT, 'content/links')
 
     def __init__(self, syndicators=[]):
         self.is_first_run = True
-        self.is_browser_open = False
         # The syndication services which to publish to.
         self.syndicators = syndicators
 
@@ -80,9 +79,10 @@ class LinkTextProcessor:
         # Rebuild the blog locally.
         self.build_blog()
         # Open a browser to see the local preview.
-        if not self.is_browser_open:
-            webbrowser.open(self.PREVIEW_URL, new=False)
-            self.is_browser_open = True
+        from Foundation import NSBundle
+        bundle = NSBundle.mainBundle()
+        script_path = bundle.pathForResource_ofType_('open-chrome-tab', 'scpt')
+        self.run_command('osascript %s %s' % (script_path, self.PREVIEW_URL))
 
 
     def publish(self):
@@ -166,17 +166,29 @@ class LinkTextProcessor:
 
 
     def build_blog(self):
-        os.system('cd %s && ./lightning/lightning build' % self.BLOG_ROOT)
+        self.run_command('cd %s && ./lightning/lightning build' % self.BLOG_ROOT)
 
 
     def publish_blog(self):
-        os.system('cd %s && ./lightning/lightning deploy' % self.BLOG_ROOT)
+        self.run_command('cd %s && ./lightning/lightning deploy' % self.BLOG_ROOT)
 
 
     def get_published_url(self, slug):
         # TODO(smus): Make this actually respect the blog configuration.
         path = os.path.join(str(datetime.datetime.now().year), slug)
         return os.path.join(self.BLOG_URL, path)
+
+    def run_command(self, cmd):
+        process = subprocess.Popen(cmd, shell=True, env={},
+                           stdout=subprocess.PIPE,
+                           stderr=subprocess.PIPE)
+        # Wait for the process to terminate.
+        out, err = process.communicate()
+        errcode = process.returncode
+        # Debug only: output results of the command.
+        from Foundation import NSLog
+        NSLog("Ran command: %s. Output: %s." % (cmd, out))
+ 
 
 
 if __name__ == '__main__':
