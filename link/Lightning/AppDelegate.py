@@ -9,13 +9,16 @@
 
 #from Foundation import *
 from Foundation import NSObject, NSLog
+from Cocoa import NSWindowController
+
 
 class AppDelegate(NSObject):
-    def applicationDidFinishLaunching_(self, sender):
-        NSLog("Application did finish launching.")
 
     def applicationWillTerminate_(self,sender):
         NSLog("Application will terminate.")
 
     def applicationShouldTerminateAfterLastWindowClosed_(self, sender):
-        return True
+        return False
+    
+    def applicationDidFinishLaunching_(self, sender):
+        NSLog("Application did finish launching.")

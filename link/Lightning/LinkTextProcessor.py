@@ -15,8 +15,11 @@ import os
 import datetime
 import codecs
 import subprocess
+import threading
 
 import unidecode
+
+from Foundation import NSLog, NSBundle
 
 class LinkTextProcessor:
     """
@@ -42,9 +45,12 @@ class LinkTextProcessor:
     """
 
     PREVIEW_URL = 'http://localhost/'
-    BLOG_URL = 'http://smus.com/link/'
+    BLOG_URL = 'http://smus.com/'
     BLOG_ROOT = '/Users/smus/Projects/smus.com/'
     LINK_ROOT = os.path.join(BLOG_ROOT, 'content/links')
+    PYTHON = '/usr/bin/python'
+    LIGHTNING = './lightning/lightning'
+    LOG_PATH = 'lightning-gui.log'
 
     def __init__(self, syndicators=[]):
         self.is_first_run = True
@@ -65,40 +71,50 @@ class LinkTextProcessor:
         self.url = url
         self.title = title
         self.body = body
-        print('set_content %s %s %s' % (url, title, body))
         # Get a simple slug out of the title.
         self.slug = self.generate_slug(self.title)
         # Create a link file.
         return self.create_link_file(self.slug, self.url, self.title, self.body)
 
 
-    def preview(self):
+    def preview(self, url=PREVIEW_URL):
         """
         Preview the link to see how it would look locally.
         """
+        NSLog("Starting a preview.")
         # Rebuild the blog locally.
         self.build_blog()
         # Open a browser to see the local preview.
-        from Foundation import NSBundle
         bundle = NSBundle.mainBundle()
         script_path = bundle.pathForResource_ofType_('open-chrome-tab', 'scpt')
-        self.run_command('osascript %s %s' % (script_path, self.PREVIEW_URL))
-
+        self.run_command_async('osascript', script_path, url)
+    
+    def preview_content(self):
+        self.preview(self.get_preview_url())
 
     def publish(self):
+        # Rebuild the blog locally.
+        self.build_blog()
+        # Publish the blog to S3.
+        self.publish_blog()
+
+    def publish_syndicate(self):
         """
         Called when the publish button is clicked.
         """
         # Rebuild the blog locally.
         self.build_blog()
         # Get the URL of the published link.
-        blog_url = self.get_published_url(self.slug)
-        # Publish the blog to S3.
-        self.publish_blog()
+        blog_url = self.get_published_url()
+        # Publish the blog to S3 (but just the permalink and archives).
+        self.publish_permalink(self.get_relative_permalink())
         print('Published new link to: ' + blog_url)
         for syn in self.syndicators:
-            syn.set_info(self.url, blog_url, self.title, self.body)
-            syn.publish()
+            try:
+                syn.set_info(self.url, blog_url, self.title, self.body)
+                syn.publish()
+            except Exception as e:
+                NSLog("Exception: %s" % str(e))
 
 
     def clean(self):
@@ -166,29 +182,58 @@ class LinkTextProcessor:
 
 
     def build_blog(self):
-        self.run_command('cd %s && ./lightning/lightning build' % self.BLOG_ROOT)
+        self.run_command_async(self.PYTHON, self.LIGHTNING, 'build')
 
 
     def publish_blog(self):
-        self.run_command('cd %s && ./lightning/lightning deploy' % self.BLOG_ROOT)
+        self.run_command_async(self.PYTHON, self.LIGHTNING, 'deploy')
+    
+    def publish_permalink(self, path):
+        self.run_command_async(self.PYTHON, self.LIGHTNING, 'deploy_permalink', path)
 
-
-    def get_published_url(self, slug):
+    def get_published_url(self):
+        return os.path.join(self.BLOG_URL, self.get_relative_permalink())
+    
+    def get_preview_url(self):
+        return os.path.join(self.PREVIEW_URL, self.get_relative_permalink())
+    
+    def get_relative_permalink(self):
         # TODO(smus): Make this actually respect the blog configuration.
-        path = os.path.join(str(datetime.datetime.now().year), slug)
-        return os.path.join(self.BLOG_URL, path)
+        return 'link/%s/' % os.path.join(str(datetime.datetime.now().year), self.slug)
 
-    def run_command(self, cmd):
-        process = subprocess.Popen(cmd, shell=True, env={},
-                           stdout=subprocess.PIPE,
-                           stderr=subprocess.PIPE)
+    def run_command_async(self, *args):
+        task = CommandLineTask(args)
+        task.set_cwd(self.BLOG_ROOT)
+        task.start()
+        while task.isAlive():
+            pass
+        # Periodically poll the task thread to see if it's done.
+        # While polling, continuously call the callback with stdout.
+
+class CommandLineTask(threading.Thread):
+    def __init__(self, args):
+        self.args = args
+        self.out = None
+        self.err = None
+        threading.Thread.__init__(self)
+    
+    def set_cwd(self, cwd):
+        self.cwd = cwd
+
+    def run(self):
+        NSLog("Running command: %s" % ' '.join(self.args))
+        logfile = open(LinkTextProcessor.LOG_PATH, 'w')
+        process = subprocess.Popen(self.args, shell=False, cwd=self.cwd, env={},
+                                   stdout=logfile,
+                                   stderr=subprocess.PIPE)
         # Wait for the process to terminate.
-        out, err = process.communicate()
-        errcode = process.returncode
+        self.out, self.err = process.communicate()
+        returncode = process.returncode
         # Debug only: output results of the command.
-        from Foundation import NSLog
-        NSLog("Ran command: %s. Output: %s." % (cmd, out))
- 
+        if returncode == 0:
+            NSLog("Ran command: %s. Output: %s." % (' '.join(self.args), self.out))
+        else:
+            NSLog("Failed command: %s. Error: %s." % (' '.join(self.args), self.err))
 
 
 if __name__ == '__main__':

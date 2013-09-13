@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA37DED017DB889400E643DA /* status-hi.png in Resources */ = {isa = PBXBuildFile; fileRef = CA37DECE17DB889400E643DA /* status-hi.png */; };
+		CA37DED117DB889400E643DA /* status.png in Resources */ = {isa = PBXBuildFile; fileRef = CA37DECF17DB889400E643DA /* status.png */; };
 		CA76C4C117911F0E00CF5775 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA76C4C017911F0E00CF5775 /* Cocoa.framework */; };
 		CA76C4C317911F0E00CF5775 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA76C4C217911F0E00CF5775 /* Python.framework */; };
 		CA76C4CD17911F0E00CF5775 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CA76C4CB17911F0E00CF5775 /* InfoPlist.strings */; };
@@ -23,6 +25,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CA37DECE17DB889400E643DA /* status-hi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "status-hi.png"; sourceTree = "<group>"; };
+		CA37DECF17DB889400E643DA /* status.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = status.png; sourceTree = "<group>"; };
 		CA76C4BD17911F0E00CF5775 /* Lightning.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lightning.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA76C4C017911F0E00CF5775 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		CA76C4C217911F0E00CF5775 /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = System/Library/Frameworks/Python.framework; sourceTree = SDKROOT; };
@@ -114,6 +118,8 @@
 				CAAEE74517A23FCE00CEF86E /* Lightning.iconset */,
 				CA76C4CA17911F0E00CF5775 /* Lightning-Info.plist */,
 				CA76C4CB17911F0E00CF5775 /* InfoPlist.strings */,
+				CA37DECE17DB889400E643DA /* status-hi.png */,
+				CA37DECF17DB889400E643DA /* status.png */,
 				CA76C4CE17911F0E00CF5775 /* main.m */,
 				CA76C4D017911F0E00CF5775 /* Lightning-Prefix.pch */,
 				CA76C4D117911F0E00CF5775 /* Credits.rtf */,
@@ -183,6 +189,8 @@
 				CA76C4EE179387FC00CF5775 /* Syndicator.py in Resources */,
 				CAAEE74417A23D9800CEF86E /* open-chrome-tab.scpt in Resources */,
 				CAAEE74617A23FCE00CEF86E /* Lightning.iconset in Resources */,
+				CA37DED017DB889400E643DA /* status-hi.png in Resources */,
+				CA37DED117DB889400E643DA /* status.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

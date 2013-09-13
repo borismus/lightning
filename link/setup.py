@@ -10,6 +10,7 @@ ICON = "Lightning"
 plist = {
     "CFBundleIconFile" : ICON,
     "CFBundleIdentifier" : "com.smus.%s" % PROJECT,
+    "LSUIElement" : 1,
 }
 
 

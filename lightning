@@ -10,6 +10,10 @@ import yaml
 import markdown2
 import sys
 
+import boto
+from boto.s3.key import Key
+
+
 PREVIEW_ADDR = '127.0.0.1'
 PREVIEW_PORT = 8000
 
@@ -63,6 +67,7 @@ class SiteBuilder:
           })
 
     return files
+
 
   def get_cache(self):
     """Gets all of the files involved in the previously built version of the
@@ -204,21 +209,21 @@ class SiteBuilder:
     data['is_long'] = bool(snip)
     data['snip'] = snip or content
     # Put everything in a dict.
-    data['title'] = title
+    data['title'] = unicode(title, 'utf8')
     data['content'] = content
     # Infer slug and type from path.
     slug = 'slug' in data and data['slug'] or self.parse_slug(path)
     type_name = 'type' in data and data['type'] or self.parse_type(path)
     data['slug'] = slug
     data['type'] = type_name
-    data['summary'] = markdown_body[:markdown_body.find('.')+1]
+    summary = markdown_body[:markdown_body.find('.')+1]
+    data['summary'] = summary
     description = 'description' in data and markdown2.markdown(data['description']) \
                                         or None
     data['description'] = description
     # Parse the date if it's specified.
     posted_info = None
     if 'posted' in data:
-      print title
       posted_info = self.parse_date(data['posted'])
       data['posted_info'] = posted_info
     # Compute the permalink.
@@ -349,6 +354,8 @@ class SiteBuilder:
     # TODO: validate the item!
     # Combine the parsed information into template data.
     template_data = dict(info.items() + self.site_info.items())
+    # Compute the final path based on permalink config.
+    path = info['permalink']
     # If it's a list, also get the list parameters.
     if 'list' in info:
       limit = 'limit' in info and info['limit'] or 10
@@ -364,8 +371,6 @@ class SiteBuilder:
     template_path = type_name + '.html'
     # Evaluate the template with data.
     html = self.render_template(template_path, template_data)
-    # Compute the final path based on permalink config.
-    path = info['permalink']
     # Create the directory for the parsed HTML.
     abs_path = self.output_root + path
     dir_util.mkpath(abs_path)
@@ -521,7 +526,7 @@ class SiteBuilder:
 
     # If nothing changed, we're done.
     if not created and not updated and not deleted:
-      print 'Nothing to do.'
+      print 'Incremental build: nothing to do.'
       return
     else:
       print 'Created %d, updated %d, deleted %d.' % \
@@ -576,6 +581,28 @@ class SiteBuilder:
     # Write out the new cache to disk.
     self.save_cache(cache)
 
+  def get_list_pathes(self):
+    out = []
+    cache = self.get_cache()
+    lists = [i for i in cache if 'list' in i['info']]
+    for item in lists:
+      item_info = item['info']
+      if 'permalink' in item_info:
+        item_type = item_info['type']
+        permalink = item_info['permalink']
+        # Ignore image_index pages.
+        if item_type == 'image_index':
+          continue
+        path = permalink
+        if item_type == 'feed':
+          path = permalink + '.xml'
+        elif item_type == 'index':
+          path = permalink + 'index.html'
+        elif item_type == 'archive':
+          path = os.path.join(permalink, 'index.html')
+        out.append(path)
+    return out
+
 class Command:
   BUILD = 1     # Incremental build.
   REBUILD = 2
@@ -583,6 +610,7 @@ class Command:
   WATCH = 4
   PURGE = 5
   DEPLOY = 6
+  DEPLOY_PERMALINK = 7
 
 command_map = {
   'build': Command.BUILD,
@@ -591,6 +619,7 @@ command_map = {
   'watch': Command.WATCH,
   'purge': Command.PURGE,
   'deploy': Command.DEPLOY,
+  'deploy_permalink': Command.DEPLOY_PERMALINK,
 }
 
 def error(msg):
@@ -612,42 +641,65 @@ class BuildHandler(FileSystemEventHandler):
 
 class S3Uploader:
 
-  def upload(self, local_directory, s3_bucket):
-    import boto
-    from boto.s3.key import Key
+  def __init__(self, local_directory, s3_bucket): 
+    self.local_directory = local_directory
+    self.s3_bucket = s3_bucket
 
+  def upload(self, pathes=None):
+    keys = []
+    # Get the list of files to upload.
+    if pathes:
+      for path in pathes:
+        # Build up the key to upload based on this permalink.
+        key = path.strip('/')
+        keys.append(key)
+    else:
+      # Upload directory recursively.
+      for path, dir, files in os.walk(self.local_directory):
+        for filename in files:
+          filepath = os.path.join(path, filename)
+          key = os.path.relpath(os.path.join(path, filename), self.local_directory)
+          keys.append(key)
+
+    self.upload_keys(keys)
+
+  def upload_keys(self, keys):
     # Establish connection.
     c = boto.connect_s3()
 
     # Get or create bucket with proper permissions.
     try:
-      b = c.get_bucket(s3_bucket)
+      b = c.get_bucket(self.s3_bucket)
     except Exception:
-      b = c.create_bucket(s3_bucket)
+      print 'No bucket %s found.' % self.s3_bucket
+      b = c.create_bucket(self.s3_bucket)
     k = Key(b)
 
-    # Upload directory recursively.
-    for path, dir, files in os.walk(local_directory):
-      for filename in files:
-        filepath = os.path.join(path, filename)
-        key = os.path.relpath(os.path.join(path, filename), local_directory)
-        # Check if a file with this key already exists.
-        remote_key = b.get_key(key)
-        if remote_key:
-          # If it does, check if the files are identical.
-          # Note: S3 stores uses MD5 for their ETags. http://goo.gl/rGVXM
-          local_md5 = k.compute_md5(open(filepath))[0]
-          remote_md5 = remote_key.etag.strip('"')
-          if local_md5 == remote_md5:
-            print '%s is already uploaded. Skipping.' % key
-            # If the files are identical, do nothing.
-            continue;
+    for key in keys:
+      filepath = os.path.join(self.local_directory, key.strip('/'))
+      print filepath
+      # Check if a file with this key already exists.
+      remote_key = b.get_key(key)
+      if remote_key:
+        # If it does, check if the files are identical.
+        # Note: S3 stores uses MD5 for their ETags. http://goo.gl/rGVXM
+        local_md5 = k.compute_md5(open(filepath))[0]
+        remote_md5 = remote_key.etag.strip('"')
+        if local_md5 == remote_md5:
+          print '%s is already uploaded. Skipping.' % key
+          # If the files are identical, do nothing.
+          continue;
 
-        # Otherwise if no file exists, or if they are different, upload.
-        k.key = key
-        k.set_contents_from_filename(filepath)
-        b.set_acl('public-read', k.key)
-        print 'Uploading %s.' % k.key
+      # Otherwise if no file exists, or if they are different, upload.
+      k.key = key
+      k.set_contents_from_filename(filepath)
+      b.set_acl('public-read', k.key)
+      print 'Uploading %s.' % k.key
+
+  def verify_path(self, permalink):
+    path = os.path.join(self.local_directory, permalink.strip('/'))
+    return os.path.exists(path)
+
 
 
 if __name__ == '__main__':
@@ -703,6 +755,26 @@ if __name__ == '__main__':
     builder.build_incremental()
     print 'Deploying to %s.' % builder.deploy
     # Create an S3 uploader.
-    uploader = S3Uploader()
+    uploader = S3Uploader(builder.output_root, builder.deploy)
     # Upload.
-    uploader.upload(builder.output_root, builder.deploy)
+    uploader.upload()
+
+  elif command is Command.DEPLOY_PERMALINK:
+    # First, parse out the permalink to deploy.
+    permalink = os.path.join(sys.argv[2], 'index.html')
+    if len(sys.argv) != 3:
+      error('deploy_permalink requires you to specify exactly one permalink path.')
+    uploader = S3Uploader(builder.output_root, builder.deploy)
+    # Verify that the permalink points to a file that exists.
+    if not uploader.verify_path(permalink):
+      error('No file found at specified permalink: %s.' % permalink)
+    # Build incrementally to make sure we're up to date.
+    builder.build_incremental()
+    # Put the permalink into the list of pathes to update.
+    pathes = [permalink]
+    # Get all of the index files that may have also updated.
+    pathes += builder.get_list_pathes()
+    # Tell the uploader to do a selective upload (just the permalink that was
+    # specified and all of the indexes).
+    print 'Doing partial deploy of just %s and index pages to S3.' % permalink
+    uploader.upload(pathes)

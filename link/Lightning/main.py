@@ -18,5 +18,6 @@ from PyObjCTools import AppHelper
 import AppDelegate
 import PMController
 
-# pass control to AppKit
-AppHelper.runEventLoop()
+if __name__ == "__main__":
+    # pass control to AppKit
+    AppHelper.runEventLoop()

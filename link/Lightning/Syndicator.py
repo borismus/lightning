@@ -104,7 +104,7 @@ class TwitterSyndicator(Syndicator):
 
     def publish(self):
         # If the title is too long, truncate it, leaving room for a URL.
-        status = self.truncate_words(self.title, 110) + ' ' + self.blog_url
+        status = self.truncate_words(self.title, 110) + ' ' + self.link_url
 
         api = tweepy.API(self.auth)
         api.update_status(status)
@@ -228,13 +228,11 @@ class GPlusSyndicator(Syndicator):
 
 
 if __name__ == '__main__':
-    """
     # Make a G+ syndicator.
     synd = GPlusSyndicator()
-    synd.clear_all()
     synd.login()
-    code = raw_input("Code: ")
-    synd.confirm_verifier(code)
+    #code = raw_input("Code: ")
+    #synd.confirm_verifier(code)
     print 'authenticated: ' + str(synd.is_authenticated())
     synd.set_info(
             link_url='http://pythonhosted.org/tweepy/html/auth_tutorial.html',
@@ -242,8 +240,7 @@ if __name__ == '__main__':
             title='Authenticating',
             body='Testing 1.')
     synd.publish()
-    """
-
+"""
     B = '''Read Scott Jenson's webapp UX paper. First part goes into a native app replacement, along the lines of [my previous blog post](http://smus.com/installable-webapps/). 
 
 Next, a plea for an open web integrated wireless discovery service, ideally supporting multiple protocols including Bluetooth Low Energy. Fundamentally,
@@ -253,11 +250,13 @@ Next, a plea for an open web integrated wireless discovery service, ideally supp
 Lastly, with some cross-device link in place, we can enter a world of multi-device interactions, which is, in my opinion, the key UX area to streamline in the near future.
 '''
 
-    synd = GPlusSyndicator()
+    synd = TwitterSyndicator()
     synd.login()
     synd.set_info(
             link_url='https://docs.google.com/document/d/1wcXubh-yUtViwtUG4o43v3jeO6P1T63EWTh4iw2iHy8/edit',
             blog_url='http://smus.com/link/2013/web-apps-position-paper/',
             title='Web Apps Position paper',
             body=B)
+
     synd.publish()
+        """
