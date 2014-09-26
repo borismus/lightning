@@ -828,14 +828,20 @@ if __name__ == '__main__':
 
   builder = SiteBuilder()
   if command is Command.BUILD:
-    builder.build_incremental()
+    try:
+      builder.build_incremental()
+    except BuildException as e:
+      builder.handle_error(e)
 
   elif command is Command.PURGE:
     builder.delete_output();
 
   elif command is Command.REBUILD:
     builder.delete_output();
-    builder.build_incremental()
+    try:
+      builder.build_incremental()
+    except BuildException as e:
+      builder.handle_error(e)
 
   elif command is Command.WATCH:
     observer = Observer()
