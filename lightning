@@ -20,10 +20,20 @@ PREVIEW_PORT = 8000
 DEFAULT_TIME = datetime.time(9, 0)
 PWD = os.getcwd()
 
+should_deploy = False
+
+
+class BuildException:
+  def __init__(self, error):
+    self.error = error
+
+  def __str__(self):
+    return self.error
+
 
 class SiteBuilder:
 
-  def __init__(self):
+  def __init__(self, include_staging=True):
     # Parse lightning.yaml.
     f = open('lightning.yaml')
     build = yaml.load(f)
@@ -34,7 +44,9 @@ class SiteBuilder:
     if not os.path.exists(build['content']):
       raise Exception('Invalid content root. Fix lightning.yaml')
     self.content_root = build['content']
-    self.output_root = build['output']
+    self.staging_root = os.path.join(self.content_root, 'staging')
+    self.output_root = include_staging and build['output'] or \
+        build['output_deploy']
 
     # Figure out deploy buckets.
     self.deploy = 'deploy' in build and build['deploy']
@@ -42,7 +54,9 @@ class SiteBuilder:
     # Figure out the pathes.
     self.archive_path = os.path.join(self.output_root, '.archived/')
     self.cache_path = os.path.join(self.output_root, '.last_build')
+    self.error_js_path = os.path.join(self.output_root, 'lightning_error.js')
     self.site_config_path = os.path.join(self.content_root, 'site.yaml')
+    self.include_staging = include_staging
 
 
   def get_items(self):
@@ -50,21 +64,49 @@ class SiteBuilder:
 
     Returns an array of item infos of files in the site, in the format:
     {
-      "path": "relative/post.txt",
+      "path": "relative/post.md",
       "modified": NNNNNN
     }
     """
     files = []
-    # Get all files that end with .txt.
+
+    # Get all files that end with .md.
     for dirpath, dirnames, filenames in os.walk(self.content_root):
       for fname in filenames:
-        if fname.endswith(".txt"):
-          # Get the file's path and modified time
+        if fname.endswith('.md'):
           path = os.path.join(dirpath, fname)
+
+          # Ignore files that are for staging.
+          if path.startswith(self.staging_root):
+            continue
+
+          # Save the file's path and modified time.
           files.append({
             'path': path,
             'modified': os.stat(path).st_mtime
           })
+
+    if self.include_staging:
+      # Go through staging directory, replacing or adding any files that are
+      # found.
+      for dirpath, dirnames, filenames in os.walk(self.staging_root):
+        for fname in filenames:
+          if fname.endswith('.md'):
+            path = os.path.join(dirpath, fname)
+
+            # If there's a file in our list with the same unstaged path,
+            # remove it.
+            path_no_staging = path.replace('staging/', '')
+            for i, f in enumerate(files):
+              if f['path'] == path_no_staging:
+                del files[i]
+                break
+
+            # Save the file's path and modified time.
+            files.append({
+              'path': path,
+              'modified': os.stat(path).st_mtime
+            })
 
     return files
 
@@ -86,7 +128,7 @@ class SiteBuilder:
 
     Cache should be a list of objects like the following: {
       "modified": DDDD,
-      "path": "/path/to-foo.txt"
+      "path": "/path/to-foo.md"
       "info": {
         "title": "My new post",
         ... (other parsed data except the content).
@@ -105,7 +147,7 @@ class SiteBuilder:
     for f in os.listdir(self.output_root):
       file_path = os.path.join(self.output_root, f)
       self.delete_path(file_path)
-  
+
   def delete_path(self, path):
     """Remove file or directory at path."""
     import shutil
@@ -117,9 +159,9 @@ class SiteBuilder:
     except Exception, e:
       print e
 
-  def parse_date(self, date_string):
+  def parse_date(self, date):
     """Gets the permalink parameters based on the item's info."""
-    t = datetime.datetime.combine(date_string, DEFAULT_TIME)
+    t = datetime.datetime.combine(date, DEFAULT_TIME)
 
     return {
       'year': t.year,
@@ -129,6 +171,16 @@ class SiteBuilder:
       'formatted': t.strftime(self.site_info['date_format']),
       'rfc': self.rfcformat(t)
     }
+
+  def get_date_from_path(self, path):
+    """Based on the filesystem structure (eg. blah/2014/09/20/foo-bar.md),
+    extracts the date."""
+    regex = '.*\/([0-9]{4})\/([0-9]{2})\/([0-9]{2})\/.*'
+    match = re.match(regex, path)
+    if match:
+      date_tuple = map(int, match.groups())
+      date = datetime.datetime(*date_tuple)
+      return self.parse_date(date)
 
   def rfcformat(self, dt):
     """Output datetime in RFC 3339 format that is also valid ISO 8601 timestamp
@@ -197,7 +249,12 @@ class SiteBuilder:
     # Get the key: value pairs after the title.
     separator_index = lines.index('\n')
     yaml_lines = lines[2:separator_index]
-    data = yaml.load(''.join(yaml_lines)) or {}
+    try:
+      data = yaml.load(''.join(yaml_lines)) or {}
+    except Exception:
+      return {'error': 'YAML header parsing failed for %s.' % path}
+    if type(data) != dict:
+      return {'error': 'Expected dictionary YAML header for %s.' % path}
     # Process the rest of the post as Markdown.
     markdown_lines = lines[separator_index+1:]
     markdown_body = ''.join(markdown_lines).decode('utf-8')
@@ -221,11 +278,14 @@ class SiteBuilder:
     description = 'description' in data and markdown2.markdown(data['description']) \
                                         or None
     data['description'] = description
-    # Parse the date if it's specified.
     posted_info = None
     if 'posted' in data:
+      # Parse the date if it's specified.
       posted_info = self.parse_date(data['posted'])
       data['posted_info'] = posted_info
+    else:
+      # Otherwise, guess the date based on the directory structure.
+      posted_info = self.get_date_from_path(path)
     # Compute the permalink.
     permalink = self.compute_permalink(type_name, slug, posted_info)
     data['permalink'] = permalink
@@ -238,7 +298,7 @@ class SiteBuilder:
 
   def parse_slug(self, path):
     """Returns the slug."""
-    if path.endswith('index.txt'):
+    if path.endswith('index.md'):
       # If it ends with index, get the second last path component.
       return path.split('/')[-2]
     else:
@@ -266,7 +326,6 @@ class SiteBuilder:
     """Return the snippet based on the content."""
     found = content.find('<!--more-->')
     if found >= 0:
-      print content[:found]
       return content[:found]
 
   def parse_site(self):
@@ -404,17 +463,17 @@ class SiteBuilder:
   def copy_assets(self, item):
     """If the item is an index file, and there are assets in its directory,
     copy them over."""
-    if not item['path'].endswith('index.txt'):
+    if not item['path'].endswith('index.md'):
       # Not an index file, so there's nothing to do.
       return
 
     src = os.path.dirname(item['path'])
     dst = self.output_root + item['info']['permalink']
-    print (src, dst)
+    #print (src, dst)
     # Copy everything in the item path to the destination path.
     dir_util.copy_tree(src, dst)
-    # Remove the raw index.txt.
-    os.remove(dst + '/index.txt')
+    # Remove the raw index.md.
+    os.remove(dst + '/index.md')
 
 
   def archive_output(self, item):
@@ -432,6 +491,7 @@ class SiteBuilder:
     if os.path.exists(dst):
       self.delete_path(dst)
 
+    print 'Renaming %s to %s' % (src, dst)
     os.rename(src, dst)
 
 
@@ -526,7 +586,6 @@ class SiteBuilder:
 
     # If nothing changed, we're done.
     if not created and not updated and not deleted:
-      print 'Incremental build: nothing to do.'
       return
     else:
       print 'Created %d, updated %d, deleted %d.' % \
@@ -536,8 +595,10 @@ class SiteBuilder:
     for item in updated:
       # Update permalink if necessary.
       path = item['path']
-      new_info = self.parse_item(path)
-      item['info'] = new_info
+      info = self.parse_item(path)
+      if 'error' in info:
+        raise BuildException(info['error'])
+      item['info'] = info
       # Remove this item in the cache.
       cache[:] = [i for i in cache if i['path'] != path]
       # Update the file entry.
@@ -547,6 +608,8 @@ class SiteBuilder:
     for item in created:
       path = item['path']
       info = self.parse_item(path)
+      if 'error' in info:
+        raise BuildException(info['error'])
       item['info'] = info
       # Add to cache.
       cache.append(item)
@@ -581,6 +644,10 @@ class SiteBuilder:
     # Write out the new cache to disk.
     self.save_cache(cache)
 
+    # Remove the error file if it exists.
+    if os.path.exists(self.error_js_path):
+      os.remove(self.error_js_path)
+
   def get_list_pathes(self):
     out = []
     cache = self.get_cache()
@@ -603,28 +670,39 @@ class SiteBuilder:
         out.append(path)
     return out
 
+  def handle_error(self, e):
+    # Write out the lightning_error.json file to the root of the build.
+    error_data = 'alert("%s");' % str(e)
+    f = open(self.error_js_path, 'w')
+    f.write(error_data)
+
+    # Print out the exception.
+    print 'Error: %s' % e
+
+
 class Command:
   BUILD = 1     # Incremental build.
   REBUILD = 2
   PREVIEW = 3
   WATCH = 4
-  PURGE = 5
-  DEPLOY = 6
-  DEPLOY_PERMALINK = 7
+  WATCH_AND_DEPLOY = 5
+  PURGE = 6
+  DEPLOY = 7
+  DEPLOY_PERMALINK = 8
 
 command_map = {
   'build': Command.BUILD,
   'rebuild': Command.REBUILD,
   'preview': Command.PREVIEW,
   'watch': Command.WATCH,
+  'watch_and_deploy': Command.WATCH_AND_DEPLOY,
   'purge': Command.PURGE,
   'deploy': Command.DEPLOY,
   'deploy_permalink': Command.DEPLOY_PERMALINK,
 }
 
 def error(msg):
-  valid_commands = ', '.join(command_map.keys())
-  print "Error: %s.\nValid commands: %s." % (msg, valid_commands)
+  print 'Error:', msg
   sys.exit(1)
 
 from watchdog.observers import Observer
@@ -635,8 +713,27 @@ class BuildHandler(FileSystemEventHandler):
   def on_any_event(self, event):
     os.chdir(PWD)
     builder = SiteBuilder()
-    builder.build_incremental()
+    try:
+      builder.build_incremental()
+    except BuildException as e:
+      return builder.handle_error(e)
     os.chdir(builder.output_root)
+
+
+class BuildDeployHandler(FileSystemEventHandler):
+
+  def on_any_event(self, event):
+    global should_deploy
+    print 'BuildDeployHandler, %s %s' \
+        % (event.src_path, event.event_type)
+    # First, build the site locally, using staging.
+    builder = SiteBuilder()
+    try:
+      builder.build_incremental()
+    except BuildException as e:
+      return builder.handle_error(e)
+    should_deploy = True
+
 
 
 class S3Uploader:
@@ -701,9 +798,27 @@ class S3Uploader:
     return os.path.exists(path)
 
 
+def deploy():
+  builder = SiteBuilder(include_staging=False)
+  if not builder.deploy:
+    error('Deploy bucket is not set')
+  # Build incrementally to make sure we're up to date.
+  try:
+    builder.build_incremental()
+  except BuildException as e:
+    return builder.handle_error(e)
+  print 'Deploying to %s.' % builder.deploy
+  # Create an S3 uploader.
+  uploader = S3Uploader(builder.output_root, builder.deploy)
+  # Upload.
+  #uploader.upload()
+
+
 
 if __name__ == '__main__':
   if len(sys.argv) <= 1:
+    valid_commands = ', '.join(command_map.keys())
+    print 'Valid commands: ', valid_commands
     error("Specify at least one command.")
   command_name = sys.argv[1] or 'build'
   try:
@@ -733,6 +848,21 @@ if __name__ == '__main__':
       observer.stop()
     observer.join()
 
+  elif command is Command.WATCH_AND_DEPLOY:
+    observer = Observer()
+    observer.schedule(BuildDeployHandler(), builder.content_root, recursive=True)
+    observer.start()
+    try:
+      while True:
+        time.sleep(20)
+        # Check if we have pending changes.
+        if should_deploy:
+          deploy()
+          should_deploy = False
+    except KeyboardInterrupt:
+      observer.stop()
+    observer.join()
+
   elif command is Command.PREVIEW:
     observer = Observer()
     observer.schedule(BuildHandler(), builder.content_root, recursive=True)
@@ -748,16 +878,7 @@ if __name__ == '__main__':
     httpd.serve_forever()
 
   elif command is Command.DEPLOY:
-    # Check if deploy pathes are set. If not, error out.
-    if not builder.deploy:
-      error('Deploy bucket is not set')
-    # Build incrementally to make sure we're up to date.
-    builder.build_incremental()
-    print 'Deploying to %s.' % builder.deploy
-    # Create an S3 uploader.
-    uploader = S3Uploader(builder.output_root, builder.deploy)
-    # Upload.
-    uploader.upload()
+    deploy()
 
   elif command is Command.DEPLOY_PERMALINK:
     # First, parse out the permalink to deploy.

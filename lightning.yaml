@@ -1,5 +1,5 @@
 template: template
 content: content
+output_deploy: www_deploy
 output: www
-
 deploy: static-lightning
