@@ -23,7 +23,7 @@ PWD = os.getcwd()
 should_deploy = False
 
 
-class BuildException:
+class BuildException(Exception):
   def __init__(self, error):
     self.error = error
 
@@ -252,9 +252,9 @@ class SiteBuilder:
       yaml_lines = lines[2:separator_index]
       data = yaml.load(''.join(yaml_lines)) or {}
     except Exception:
-      return {'error': 'YAML header parsing failed for %s.' % path}
+      raise BuildException('YAML header parsing failed for %s.' % path)
     if type(data) != dict:
-      return {'error': 'Expected dictionary YAML header for %s.' % path}
+      raise BuildException('Expected dictionary YAML header for %s.' % path)
     # Process the rest of the post as Markdown.
     markdown_lines = lines[separator_index+1:]
     markdown_body = ''.join(markdown_lines).decode('utf-8')
@@ -287,7 +287,10 @@ class SiteBuilder:
       # Otherwise, guess the date based on the directory structure.
       posted_info = self.get_date_from_path(path)
     # Compute the permalink.
-    permalink = self.compute_permalink(type_name, slug, posted_info)
+    try:
+      permalink = self.compute_permalink(type_name, slug, posted_info)
+    except Exception:
+      raise BuildException('Failed to compute permalink for %s.' % slug)
     data['permalink'] = permalink
     data['computed_link'] = 'link' in data and data['link'] or permalink
     # Compute the verb.
@@ -597,8 +600,6 @@ class SiteBuilder:
       # Update permalink if necessary.
       path = item['path']
       info = self.parse_item(path)
-      if 'error' in info:
-        raise BuildException(info['error'])
       item['info'] = info
       # Remove this item in the cache.
       cache[:] = [i for i in cache if i['path'] != path]
@@ -609,8 +610,6 @@ class SiteBuilder:
     for item in created:
       path = item['path']
       info = self.parse_item(path)
-      if 'error' in info:
-        raise BuildException(info['error'])
       item['info'] = info
       # Add to cache.
       cache.append(item)
