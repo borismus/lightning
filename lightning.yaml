@@ -1,5 +1,5 @@
-template: template
-content: content
+template: /home/smus/Dropbox/smus.com-template
+content: /home/smus/Dropbox/smus.com-content
 output_deploy: www_deploy
-output: www
-deploy: static-lightning
+output: /var/www
+deploy: smus.com

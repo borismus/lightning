@@ -352,6 +352,7 @@ class SiteBuilder:
 
   def compute_permalink(self, type_name, slug, posted_info=None):
     """Returns the permalink for the given item."""
+    print slug, type_name
     permalink_template = self.site_info['permalink_format'][type_name]
     permalink_data = {'slug': slug}
     # If there's date information associated, include it in the permalink data.
