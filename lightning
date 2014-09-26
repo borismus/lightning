@@ -286,6 +286,7 @@ class SiteBuilder:
     else:
       # Otherwise, guess the date based on the directory structure.
       posted_info = self.get_date_from_path(path)
+      data['posted_info'] = posted_info
     # Compute the permalink.
     try:
       permalink = self.compute_permalink(type_name, slug, posted_info)
