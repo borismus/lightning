@@ -247,9 +247,9 @@ class SiteBuilder:
     # Extract the title.
     title = lines[0].strip()
     # Get the key: value pairs after the title.
-    separator_index = lines.index('\n')
-    yaml_lines = lines[2:separator_index]
     try:
+      separator_index = lines.index('\n')
+      yaml_lines = lines[2:separator_index]
       data = yaml.load(''.join(yaml_lines)) or {}
     except Exception:
       return {'error': 'YAML header parsing failed for %s.' % path}
