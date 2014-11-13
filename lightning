@@ -399,7 +399,8 @@ class SiteBuilder:
 
   def prefix_links(self, content, prefix):
     links = re.findall(r'<a href="(.*?)"', content, re.DOTALL) + \
-            re.findall(r'<img src="(.*?)"', content, re.DOTALL)
+            re.findall(r'<img src="(.*?)"', content, re.DOTALL) + \
+            re.findall(r'<video src="(.*?)"', content, re.DOTALL)
 
     # Check if they are relative.
     for link in links:
@@ -812,7 +813,7 @@ def deploy():
   # Create an S3 uploader.
   uploader = S3Uploader(builder.output_root, builder.deploy)
   # Upload.
-  #uploader.upload()
+  uploader.upload()
 
 
 
