@@ -241,7 +241,7 @@ class SiteBuilder:
       specified)
     """
     # Load the file.
-    f = open(path, 'r')
+    f = open(path, 'rU')
     lines = f.readlines()
     # TODO: Perform some basic validation.
     # Extract the title.
@@ -251,7 +251,8 @@ class SiteBuilder:
       separator_index = lines.index('\n')
       yaml_lines = lines[2:separator_index]
       data = yaml.load(''.join(yaml_lines)) or {}
-    except Exception:
+    except Exception as e:
+      print e
       raise BuildException('YAML header parsing failed for %s.' % path)
     if type(data) != dict:
       raise BuildException('Expected dictionary YAML header for %s.' % path)
@@ -498,7 +499,8 @@ class SiteBuilder:
       self.delete_path(dst)
 
     print 'Renaming %s to %s' % (src, dst)
-    os.rename(src, dst)
+    if os.path.exists(src):
+      os.rename(src, dst)
 
 
   def get_list(self, type_filter, limit):
@@ -813,7 +815,7 @@ def deploy():
   # Create an S3 uploader.
   uploader = S3Uploader(builder.output_root, builder.deploy)
   # Upload.
-  #uploader.upload()
+  uploader.upload()
 
 
 
