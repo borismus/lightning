@@ -1,17 +1,25 @@
 #!/usr/bin/env python
+import boto
 import os
 import pickle
 import datetime
-import time
-import re
-from distutils import dir_util
-
-import yaml
+import logging
 import markdown2
+import re
+import shutil
+import signal
 import sys
+import time
+import threading
+import yaml
 
-import boto
 from boto.s3.key import Key
+from distutils import dir_util
+from jinja2 import Template
+from jinja2 import Environment, FileSystemLoader
+from livereload import Server, shell
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 
 
 PREVIEW_ADDR = '127.0.0.1'
@@ -150,7 +158,6 @@ class SiteBuilder:
 
   def delete_path(self, path):
     """Remove file or directory at path."""
-    import shutil
     try:
       if os.path.isfile(path):
         os.unlink(path)
@@ -367,13 +374,11 @@ class SiteBuilder:
     return '/' + self.render_template_string(permalink_template, permalink_data)
 
   def render_template_string(self, template_string, data):
-    from jinja2 import Template
     template = Template(template_string)
     out = template.render(data)
     return out
 
   def render_template(self, filename, data):
-    from jinja2 import Environment, FileSystemLoader
     env = Environment(loader=FileSystemLoader(self.template_root))
     template = env.get_template(filename)
     out = template.render(data)
@@ -690,55 +695,31 @@ class Command:
   REBUILD = 2
   PREVIEW = 3
   WATCH = 4
-  WATCH_AND_DEPLOY = 5
   PURGE = 6
   DEPLOY = 7
-  DEPLOY_PERMALINK = 8
 
 command_map = {
   'build': Command.BUILD,
   'rebuild': Command.REBUILD,
   'preview': Command.PREVIEW,
   'watch': Command.WATCH,
-  'watch_and_deploy': Command.WATCH_AND_DEPLOY,
   'purge': Command.PURGE,
   'deploy': Command.DEPLOY,
-  'deploy_permalink': Command.DEPLOY_PERMALINK,
 }
 
 def error(msg):
   print 'Error:', msg
   sys.exit(1)
 
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
-
 class BuildHandler(FileSystemEventHandler):
 
   def on_any_event(self, event):
-    os.chdir(PWD)
+    print event.src_path, event.event_type
     builder = SiteBuilder()
     try:
       builder.build_incremental()
     except BuildException as e:
       return builder.handle_error(e)
-    os.chdir(builder.output_root)
-
-
-class BuildDeployHandler(FileSystemEventHandler):
-
-  def on_any_event(self, event):
-    global should_deploy
-    print 'BuildDeployHandler, %s %s' \
-        % (event.src_path, event.event_type)
-    # First, build the site locally, using staging.
-    builder = SiteBuilder()
-    try:
-      builder.build_incremental()
-    except BuildException as e:
-      return builder.handle_error(e)
-    should_deploy = True
-
 
 
 class S3Uploader:
@@ -819,6 +800,25 @@ def deploy():
   uploader.upload()
 
 
+class LightningWatchThread(threading.Thread):
+  def __init__(self):
+    super(LightningWatchThread, self).__init__()
+    self._stop = threading.Event()
+
+  def run(self):
+    observer = Observer()
+    observer.schedule(BuildHandler(), builder.content_root, recursive=True)
+    observer.start()
+
+    while not self._stop.isSet():
+      time.sleep(1)
+
+    observer.stop()
+    observer.join()
+
+  def stop(self):
+    print 'Stopping LightningWatchThread'
+    self._stop.set()
 
 if __name__ == '__main__':
   if len(sys.argv) <= 1:
@@ -848,65 +848,27 @@ if __name__ == '__main__':
     except BuildException as e:
       builder.handle_error(e)
 
-  elif command is Command.WATCH:
-    observer = Observer()
-    observer.schedule(BuildHandler(), builder.content_root, recursive=True)
-    observer.start()
-    try:
-      while True:
-        time.sleep(1)
-    except KeyboardInterrupt:
-      observer.stop()
-    observer.join()
-
-  elif command is Command.WATCH_AND_DEPLOY:
-    observer = Observer()
-    observer.schedule(BuildDeployHandler(), builder.content_root, recursive=True)
-    observer.start()
-    try:
-      while True:
-        time.sleep(20)
-        # Check if we have pending changes.
-        if should_deploy:
-          deploy()
-          should_deploy = False
-    except KeyboardInterrupt:
-      observer.stop()
-    observer.join()
-
   elif command is Command.PREVIEW:
-    observer = Observer()
-    observer.schedule(BuildHandler(), builder.content_root, recursive=True)
-    observer.start()
+    # On a separate thread, start a livereload server.
+    lightning_thread = LightningWatchThread()
+    lightning_thread.start()
 
-    # Starts a webserver in the output directory.
-    from BaseHTTPServer import HTTPServer
-    from SimpleHTTPServer import SimpleHTTPRequestHandler
-    server_info = ('127.0.0.1', 8000)
-    os.chdir(builder.output_root)
-    httpd = HTTPServer(server_info, SimpleHTTPRequestHandler)
-    print "Starting preview server on %s." % str(server_info)
-    httpd.serve_forever()
+    def signal_handler(signal, frame):
+      print('You pressed Ctrl+C!')
+      lightning_thread.stop();
+      sys.exit(0)
+
+    signal.signal(signal.SIGINT, signal_handler)
+
+    # On main thread, run livereload
+    server = Server()
+    server.serve(root=builder.output_root, port=PREVIEW_PORT, host=PREVIEW_ADDR)
+
 
   elif command is Command.DEPLOY:
-    deploy()
-
-  elif command is Command.DEPLOY_PERMALINK:
-    # First, parse out the permalink to deploy.
-    permalink = os.path.join(sys.argv[2], 'index.html')
-    if len(sys.argv) != 3:
-      error('deploy_permalink requires you to specify exactly one permalink path.')
-    uploader = S3Uploader(builder.output_root, builder.deploy)
-    # Verify that the permalink points to a file that exists.
-    if not uploader.verify_path(permalink):
-      error('No file found at specified permalink: %s.' % permalink)
-    # Build incrementally to make sure we're up to date.
-    builder.build_incremental()
-    # Put the permalink into the list of pathes to update.
-    pathes = [permalink]
-    # Get all of the index files that may have also updated.
-    pathes += builder.get_list_pathes()
-    # Tell the uploader to do a selective upload (just the permalink that was
-    # specified and all of the indexes).
-    print 'Doing partial deploy of just %s and index pages to S3.' % permalink
-    uploader.upload(pathes)
+    # Build the site without staging.
+    builder = SiteBuilder(include_staging=False)
+    try:
+      builder.build_incremental()
+    except BuildException as e:
+      builder.handle_error(e)
