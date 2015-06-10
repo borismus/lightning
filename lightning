@@ -168,11 +168,15 @@ class SiteBuilder:
 
   def parse_date(self, date):
     """Gets the permalink parameters based on the item's info."""
-    t = datetime.datetime.combine(date, DEFAULT_TIME)
+    try:
+      t = datetime.datetime.combine(date, DEFAULT_TIME)
+    except TypeError as e:
+      raise BuildException('Failed to parse date')
 
     return {
       'year': t.year,
       'month': t.month,
+      'month_name': t.strftime('%b'),
       'day': t.day,
       'unix': int(time.mktime(t.timetuple())),
       'formatted': t.strftime(self.site_info['date_format']),
@@ -250,6 +254,8 @@ class SiteBuilder:
     # Load the file.
     f = open(path, 'rU')
     lines = f.readlines()
+    if len(lines) == 0:
+      raise BuildException('%s: content missing' % path)
     # TODO: Perform some basic validation.
     # Extract the title.
     title = lines[0].strip()
@@ -366,7 +372,12 @@ class SiteBuilder:
   def compute_permalink(self, type_name, slug, posted_info=None):
     """Returns the permalink for the given item."""
     print slug, type_name
-    permalink_template = self.site_info['permalink_format'][type_name]
+    formats = self.site_info['permalink_format']
+    if type_name in formats:
+      permalink_template = formats[type_name]
+    else:
+      permalink_template = formats['default']
+    print 'Using template %s' % permalink_template
     permalink_data = {'slug': slug}
     # If there's date information associated, include it in the permalink data.
     if posted_info:
@@ -380,8 +391,14 @@ class SiteBuilder:
 
   def render_template(self, filename, data):
     env = Environment(loader=FileSystemLoader(self.template_root))
-    template = env.get_template(filename)
-    out = template.render(data)
+    try:
+      template = env.get_template(filename)
+    except Exception:
+      raise BuildException('Failed to find template %s.' % filename)
+    try:
+      out = template.render(data)
+    except Exception:
+      raise BuildException('Failed to render template %s.' % filename)
     return out
 
   def fix_broken_links(self, items):
@@ -581,8 +598,9 @@ class SiteBuilder:
     src = os.path.join(self.template_root, 'static/')
     dst = os.path.join(self.output_root, 'static/')
 
-    if not os.path.exists(dst):
-      dir_util.copy_tree(src, dst)
+    #if not os.path.exists(dst):
+    print 'Copying static directory from %s to %s' % (src, dst)
+    dir_util.copy_tree(src, dst)
 
   def build_incremental(self):
     """Performs an incremental build."""
@@ -597,6 +615,9 @@ class SiteBuilder:
     # Compare the two lists and get pathes that have been created/updated/etc.
     (created, updated, deleted) = self.compare_items(items, cache)
     #print 'Created', created, 'updated', updated, 'deleted', deleted
+
+    # Copy over the static template files if necessary.
+    self.copy_static()
 
     # If nothing changed, we're done.
     if not created and not updated and not deleted:
@@ -647,9 +668,6 @@ class SiteBuilder:
         self.build_feed(info)
       else:
         self.build(info)
-
-    # Copy over the static template files if necessary.
-    self.copy_static()
 
     # Write out the new cache to disk.
     self.save_cache(cache)
@@ -715,7 +733,12 @@ class BuildHandler(FileSystemEventHandler):
 
   def on_any_event(self, event):
     print event.src_path, event.event_type
+    # Only care about .md changes.
+    if not event.src_path.endswith('.md'):
+      return
     builder = SiteBuilder()
+    # Uncomment the following to do a full rebuild every time.
+    #builder.delete_output();
     try:
       builder.build_incremental()
     except BuildException as e:
@@ -808,6 +831,8 @@ class LightningWatchThread(threading.Thread):
   def run(self):
     observer = Observer()
     observer.schedule(BuildHandler(), builder.content_root, recursive=True)
+    # Uncomment following line for template development.
+    observer.schedule(BuildHandler(), builder.template_root, recursive=True)
     observer.start()
 
     while not self._stop.isSet():
