@@ -153,6 +153,9 @@ class SiteBuilder:
   def delete_output(self):
     """Removes the contents of the output directory entirely."""
     for f in os.listdir(self.output_root):
+      # Leave the .git directory intact.
+      if f == '.git' or f == 'CNAME':
+        continue
       file_path = os.path.join(self.output_root, f)
       self.delete_path(file_path)
 
@@ -265,7 +268,6 @@ class SiteBuilder:
       yaml_lines = lines[2:separator_index]
       data = yaml.load(''.join(yaml_lines)) or {}
     except Exception as e:
-      print e
       raise BuildException('YAML header parsing failed for %s.' % path)
     if type(data) != dict:
       raise BuildException('Expected dictionary YAML header for %s.' % path)
@@ -377,7 +379,7 @@ class SiteBuilder:
       permalink_template = formats[type_name]
     else:
       permalink_template = formats['default']
-    print 'Using template %s' % permalink_template
+    #print 'Using template %s' % permalink_template
     permalink_data = {'slug': slug}
     # If there's date information associated, include it in the permalink data.
     if posted_info:
@@ -422,9 +424,9 @@ class SiteBuilder:
     return out
 
   def prefix_links(self, content, prefix):
-    links = re.findall(r'<a href="(.*?)"', content, re.DOTALL) + \
-            re.findall(r'<img src="(.*?)"', content, re.DOTALL) + \
-            re.findall(r'<video src="(.*?)"', content, re.DOTALL)
+    links = re.findall(r'<a href="(.+?)"', content, re.DOTALL) + \
+            re.findall(r'<img src="(.+?)"', content, re.DOTALL) + \
+            re.findall(r'<video src="(.+?)"', content, re.DOTALL)
 
     # Check if they are relative.
     for link in links:
@@ -432,6 +434,8 @@ class SiteBuilder:
       if not link.startswith('/') and not link.startswith('http'):
         # If they are relative, rewrite them using the slug as a prefix.
         newLink = os.path.join(prefix, link)
+        if len(link) < 3:
+          print 'link: "%s", content: "%s"' % (link, content)
         content = content.replace(link, newLink)
 
     return content
@@ -481,6 +485,7 @@ class SiteBuilder:
     template_data['posts'] = items
     # Get the current date in RFC format.
     template_data['rfc'] = self.rfcformat(datetime.datetime.now())
+
     # Fill template with data.
     xml = self.render_template('feed.xml', template_data)
     # Get the right path and make container directory if needed.
@@ -893,6 +898,7 @@ if __name__ == '__main__':
   elif command is Command.DEPLOY:
     # Build the site without staging.
     builder = SiteBuilder(include_staging=False)
+    builder.delete_output();
     try:
       builder.build_incremental()
     except BuildException as e:
