@@ -4,3 +4,4 @@ pystache>=0.4.1
 Jinja2>=2.7
 watchdog>=0.6
 boto>=2.32
+livereload>=2.4.0

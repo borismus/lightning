@@ -14,6 +14,7 @@ import threading
 import yaml
 
 from boto.s3.key import Key
+from boto.s3.connection import OrdinaryCallingFormat
 from distutils import dir_util
 from jinja2 import Template
 from jinja2 import Environment, FileSystemLoader
@@ -281,6 +282,7 @@ class SiteBuilder:
     # If there's no snip, juse use the content, but remember that it's short.
     data['is_long'] = bool(snip)
     data['snip'] = snip or content
+    data['meta_description'] = self.strip_html_tags(snip or content)
     # Put everything in a dict.
     data['title'] = unicode(title, 'utf8')
     data['content'] = content
@@ -349,6 +351,9 @@ class SiteBuilder:
     if found >= 0:
       return content[:found]
 
+  def strip_html_tags(self, html):
+    return re.sub('<[^<]+?>|\n', ' ', html)
+
   def parse_site(self):
     """Parses a site.yaml like this:
 
@@ -399,8 +404,8 @@ class SiteBuilder:
       raise BuildException('Failed to find template %s.' % filename)
     try:
       out = template.render(data)
-    except Exception:
-      raise BuildException('Failed to render template %s.' % filename)
+    except Exception as e:
+      raise BuildException('Failed to render template %s: "%s".' % (filename, e))
     return out
 
   def fix_broken_links(self, items):
@@ -434,8 +439,6 @@ class SiteBuilder:
       if not link.startswith('/') and not link.startswith('http'):
         # If they are relative, rewrite them using the slug as a prefix.
         newLink = os.path.join(prefix, link)
-        if len(link) < 3:
-          print 'link: "%s", content: "%s"' % (link, content)
         content = content.replace(link, newLink)
 
     return content
@@ -720,6 +723,7 @@ class Command:
   WATCH = 4
   PURGE = 6
   DEPLOY = 7
+  DEPLOY_S3 = 8
 
 command_map = {
   'build': Command.BUILD,
@@ -728,6 +732,7 @@ command_map = {
   'watch': Command.WATCH,
   'purge': Command.PURGE,
   'deploy': Command.DEPLOY,
+  'deploy-s3': Command.DEPLOY_S3,
 }
 
 def error(msg):
@@ -738,8 +743,9 @@ class BuildHandler(FileSystemEventHandler):
 
   def on_any_event(self, event):
     print event.src_path, event.event_type
+    path = event.src_path
     # Only care about .md changes.
-    if not event.src_path.endswith('.md'):
+    if not (path.endswith('.md') or path.endswith('.html')):
       return
     builder = SiteBuilder()
     # Uncomment the following to do a full rebuild every time.
@@ -776,7 +782,9 @@ class S3Uploader:
 
   def upload_keys(self, keys):
     # Establish connection.
-    c = boto.connect_s3()
+    c = boto.connect_s3(
+            calling_format = OrdinaryCallingFormat()
+    )
 
     # Get or create bucket with proper permissions.
     try:
@@ -903,3 +911,7 @@ if __name__ == '__main__':
       builder.build_incremental()
     except BuildException as e:
       builder.handle_error(e)
+
+  elif command is Command.DEPLOY_S3:
+    deploy()
+
