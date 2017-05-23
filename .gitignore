@@ -1,4 +1,8 @@
 .DS_Store
+www_deploy
 www
 *.pyc
 *.egg
+.cache
+.eggs
+*.swp
