@@ -1,0 +1,7 @@
+>>> from Utils import *
+
+>>> Pairwise([1, 2, 3])
+[(1, 2), (2, 3)]
+
+>>> FindSplitIndices(['foo', '\n', 'This is a title', '===', '\n', '\n', 'bar'])
+[1]
