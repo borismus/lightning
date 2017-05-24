@@ -23,8 +23,11 @@ class Date:
       'month': dt.month,
       'month_name': dt.strftime('%b'),
       'day': dt.day,
-      'unix': int(time.mktime(dt.timetuple())),
+      'unix': self.Unix(),
     }
+
+  def Unix(self):
+    return int(time.mktime(self.datetime.timetuple()))
 
   def Format(self, template):
     return self.datetime.strftime(template)
@@ -37,6 +40,9 @@ class Date:
       suffix = dt.strftime("%z")
       suffix = suffix[:-2] + ":" + suffix[-2:]
     return dt.strftime("%Y-%m-%dT%H:%M:%S") + suffix
+
+  def __sub__(self, to_subtract):
+    return self.Unix() - to_subtract.Unix()
 
 
 

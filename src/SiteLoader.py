@@ -2,6 +2,7 @@ import os
 import yaml
 
 from ArticleLoader import ArticleLoader
+from Article import IndexArticle
 from Site import *
 
 REQUIRED_CONFIG_FIELDS = ['template', 'content', 'output']
@@ -74,12 +75,36 @@ class SiteLoader:
     loader = ArticleLoader(self.site_config)
     articles = [loader.LoadAny(path) for path in markdown_files]
 
+    def IsMatchingSingle(article, type_filter):
+      is_single = not isinstance(a, IndexArticle)
+      is_matching = (type_filter == '*') or a.type_name == type_filter
+      return is_single and is_matching
+
+    def ByDate(a, b):
+      if not a.date_created and not b.date_created:
+        return 0
+      if a.date_created and not b.date_created:
+        return 1
+      elif not a.date_created and b.date_created:
+        return -1
+      return b.date_created - a.date_created
+
     # After loading all of the articles, populate sub-articles for all of the
     # index articles.
     index_articles = [a for a in articles if isinstance(a, IndexArticle)]
     for index in index_articles:
-      # TODO(smus): For this IndexArticle, get articles matching the filter.
+      # Filter articles by type.
+      matching_articles = [a for a in articles if \
+          IsMatchingSingle(a, index.type_filter)]
+
+      # Order articles by date, then apply a limit.
+      print [a.__dict__ for a in matching_articles]
+      matching_articles = sorted(matching_articles, cmp=ByDate)
+      matching_articles = matching_articles[:index.limit]
+
       index.SetArticles(matching_articles)
+
+    return articles
 
 
 def EnsureFieldsExist(data, fields):

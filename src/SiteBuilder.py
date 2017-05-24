@@ -1,6 +1,6 @@
 import os
 
-from Article import SplitArticle
+from Article import SplitArticle, IndexArticle
 from Utils import *
 
 class SiteBuilder:
@@ -19,9 +19,16 @@ class SiteBuilder:
       else:
         self.BuildArticle(article)
 
+
   def BuildArticle(self, article):
-    html = RenderTemplate(self.build_config.template_root, article.GetTemplatePath(),
-        article.__dict__)
+    params = article.__dict__
+    if isinstance(article, IndexArticle):
+      posts = [a.__dict__ for a in article.articles]
+      params['posts'] = posts
+
+    html = RenderTemplate(self.build_config.template_root,
+        article.GetTemplatePath(), params)
+
 
     # Create the directory for the parsed HTML.
     dir_path = os.path.join(self.build_config.output_root, article.permalink)
