@@ -1,3 +1,5 @@
+from Article import SplitArticle
+
 class SiteConfig:
   """A class to hold all of the information about the site, including permalink
   formats."""
@@ -16,9 +18,19 @@ class SiteConfig:
     self.articles = articles
 
 
-  def GetIndexArticles(self):
-    """Only return the index articles."""
-    pass
+  def GetFlattenedArticles(self):
+    articles = []
+    for article in self.articles:
+      if isinstance(article, SplitArticle):
+        articles += article.children
+      else:
+        articles.append(article)
+
+    return articles
+
+
+  def ToDict(self):
+    return self.__dict__
 
 
 class BuildConfig:

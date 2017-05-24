@@ -3,13 +3,13 @@
 {% block content %}
 {% for post in posts %}
 <article>
-  <h1><a href="{{post.computed_link}}">{{post.title}}</a></h1>
+  <h1><a href="{{post.permalink}}">{{post.title}}</a></h1>
   <div class="subtitle">
-  {% if post.posted_info %}
-  <time>{{verb}} on {{post.posted_info.formatted}}</time>
+  {% if post.date_created %}
+  <time>Posted on {{post.date_created.Format()}}</time>
   {% endif %}
-  {% if post.link %}
-  <a class="permalink" href="{{permalink}}">&#8734;</a>
+  {% if post.permalink %}
+  <a class="permalink" href="{{post.permalink}}">&#8734;</a>
   {% endif %}
   </div>
   <p>

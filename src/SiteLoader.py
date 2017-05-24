@@ -1,9 +1,11 @@
 import os
+import warnings
 import yaml
 
 from ArticleLoader import ArticleLoader
 from Article import IndexArticle
 from Site import *
+from Utils import *
 
 REQUIRED_CONFIG_FIELDS = ['template', 'content', 'output']
 REQUIRED_SITE_FIELDS = ['site_title', 'date_format', 'permalink_formats',
@@ -20,8 +22,7 @@ class SiteLoader:
 
 
   def Load(self):
-    articles = self.LoadContent()
-    self.site_config.SetArticles(articles)
+    self.LoadContent()
 
 
   def LoadBuildConfig(self, path):
@@ -74,6 +75,15 @@ class SiteLoader:
 
     loader = ArticleLoader(self.site_config)
     articles = [loader.LoadAny(path) for path in markdown_files]
+    self.site_config.SetArticles(articles)
+
+    all_articles = self.site_config.GetFlattenedArticles()
+    #warnings.warn(str([a.type_name for a in all_articles]))
+
+    # Set date format on all articles.
+    for article in all_articles:
+      if article.date_created:
+        article.date_created.SetDateFormat(self.site_config.date_format)
 
     def IsMatchingSingle(article, type_filter):
       is_single = not isinstance(a, IndexArticle)
@@ -91,20 +101,27 @@ class SiteLoader:
 
     # After loading all of the articles, populate sub-articles for all of the
     # index articles.
-    index_articles = [a for a in articles if isinstance(a, IndexArticle)]
+    index_articles = [a for a in all_articles if isinstance(a, IndexArticle)]
     for index in index_articles:
       # Filter articles by type.
-      matching_articles = [a for a in articles if \
+      matching_articles = [a for a in all_articles if \
           IsMatchingSingle(a, index.type_filter)]
 
       # Order articles by date, then apply a limit.
-      print [a.__dict__ for a in matching_articles]
       matching_articles = sorted(matching_articles, cmp=ByDate)
-      matching_articles = matching_articles[:index.limit]
+      if index.limit:
+        matching_articles = matching_articles[:index.limit]
+
+      #warnings.warn('Index %s has matching articles %s.' % (index.title,
+      #  [a.permalink for a in matching_articles]) )
 
       index.SetArticles(matching_articles)
 
-    return articles
+    # Fix all broken links in the articles.
+    for article in all_articles:
+      article.content = FixBrokenLinks(article.content, article.permalink)
+      article.snip = FixBrokenLinks(article.snip, article.permalink)
+
 
 
 def EnsureFieldsExist(data, fields):

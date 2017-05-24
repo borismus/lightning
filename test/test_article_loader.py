@@ -17,7 +17,7 @@ def test_simple():
   assert article.title == 'My new post'
 
 def test_any():
-  path = 'content/split.md'
+  path = 'content/books_all.md'
   article = loader.LoadAny(path)
   assert article.source_path == path
   assert isinstance(article, SplitArticle)

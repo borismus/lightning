@@ -15,6 +15,7 @@ MAX_SLUG_LENGTH = 30
 class Date:
   def __init__(self, datetime):
     self.datetime = datetime
+    self.date_format = '%b'
 
   def GetDict(self):
     dt = self.datetime
@@ -29,8 +30,8 @@ class Date:
   def Unix(self):
     return int(time.mktime(self.datetime.timetuple()))
 
-  def Format(self, template):
-    return self.datetime.strftime(template)
+  def Format(self):
+    return self.datetime.strftime(self.date_format)
 
   def Rfc(self):
     dt = self.datetime
@@ -40,6 +41,9 @@ class Date:
       suffix = dt.strftime("%z")
       suffix = suffix[:-2] + ":" + suffix[-2:]
     return dt.strftime("%Y-%m-%dT%H:%M:%S") + suffix
+
+  def SetDateFormat(self, date_format):
+    self.date_format = date_format
 
   def __sub__(self, to_subtract):
     return self.Unix() - to_subtract.Unix()
@@ -155,7 +159,7 @@ def FindSplitIndices(lines):
 
   # Look for patterns of NTDN in the coded lines string. If such a pattern is
   # found, output the index.
-  return [m.start() for m in re.finditer('NTDN', coded)]
+  return [m.start() for m in re.finditer('NTD', coded)]
 
 
 def GetYamlMetadata(lines):
@@ -195,3 +199,25 @@ def DeletePath(path):
     os.unlink(path)
   else:
     shutil.rmtree(path)
+
+
+def FixBrokenLinks(content, permalink):
+  """Given content (HTML or RSS), this will make all relative links into
+  absolute ones referring to the permalink."""
+  links = re.findall(r'<a href="(.+?)"', content, re.DOTALL) + \
+          re.findall(r'<img src="(.+?)"', content, re.DOTALL) + \
+          re.findall(r'<video src="(.+?)"', content, re.DOTALL)
+
+  # If the links are relative, make them absolute.
+  for link in links:
+    # If it doesn't have http or / at the beginning, it's a relative URL.
+    if not link.startswith('/') and not link.startswith('http'):
+      # If they are relative, rewrite them using the permalink
+      absolute_link = os.path.join(permalink, link)
+      content = content.replace(link, absolute_link)
+
+      #warnings.warn('Making relative link %s into absolute %s.' % (link,
+      #  absolute_link))
+
+  return content
+

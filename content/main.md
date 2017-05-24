@@ -1,7 +1,8 @@
 Welcome
 =======
+class: home
 type: index
-class: index
-limit: 10
+filter: post
+limit: 3
 
 Welcome to my awesome blog!

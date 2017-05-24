@@ -27,6 +27,8 @@ class ArticleLoader:
 
     if class_name == 'index':
       return self.LoadIndexArticle(path)
+    elif class_name == 'home':
+      return self.LoadHomeArticle(path)
     elif class_name == 'split':
       return self.LoadSplitArticle(path)
     else:
@@ -50,15 +52,22 @@ class ArticleLoader:
     split_indices = FindSplitIndices(lines)
 
     # Separate the file based on split indices, and load an article for each.
-    split_indices.insert(0, 0)
     split_indices.append(len(lines) - 1)
 
+    # The first part of the split article becomes its own article which is never
+    # rendered. But we should propagate the type_name to the rest of the
+    # articles.
+    first_part = lines[0:split_indices[0]]
+    first_metadata = self.GetArticleMetadata(path, lines=first_part)
+
     articles = []
-    for start, end in Pairwise(split_indices[1:]):
+    for start, end in Pairwise(split_indices):
       subset = lines[start:end]
       metadata = self.GetArticleMetadata(path, lines=subset)
-      metadata.update(self.GetPermalink(metadata,
-        GuessSlugFromTitle(metadata['title'])))
+      # Autogenerate the slug from the title.
+      metadata['slug'] = GuessSlugFromTitle(metadata['title'])
+      metadata['type_name'] = first_metadata['type_name']
+      metadata.update(self.GetPermalinkMetadata(metadata))
 
       article = Article(**metadata)
 
@@ -67,12 +76,11 @@ class ArticleLoader:
 
       articles.append(article)
 
-    first_part = lines[split_indices[0]:split_indices[1]]
-    metadata = self.GetArticleMetadata(path, lines=first_part)
+    #warnings.warn('Creating SplitArticle with %s' % str([a.permalink for a in articles]))
     return SplitArticle(articles, **metadata)
 
 
-  def LoadIndexArticle(self, path):
+  def GetIndexArticleMetadata(self, path):
     metadata = self.GetArticleMetadata(path)
 
     f = open(path, 'rU')
@@ -80,8 +88,17 @@ class ArticleLoader:
     data = GetYamlMetadata(lines)
     metadata['type_filter'] = data['filter'] if ('filter' in data) else '*'
     metadata['limit'] = data['limit'] if ('limit' in data) else DEFAULT_LIMIT
+    return metadata
 
+
+  def LoadIndexArticle(self, path):
+    metadata = self.GetIndexArticleMetadata(path)
     return IndexArticle(**metadata)
+
+
+  def LoadHomeArticle(self, path):
+    metadata = self.GetIndexArticleMetadata(path)
+    return HomeArticle(**metadata)
 
 
   def GetArticleMetadata(self, path, lines=[]):
@@ -157,24 +174,26 @@ class ArticleLoader:
       'type_name': type_name,
       'source_path': source_path
     }
-    metadata.update(self.GetPermalink(metadata, metadata['slug']))
+    permalink = self.GetPermalinkMetadata(metadata)
+    metadata.update(permalink)
     return metadata
 
 
-  def GetPermalink(self, metadata, new_slug):
+  def GetPermalinkMetadata(self, metadata):
     # Compute the permalink.
-    permalink = new_slug
+    slug = metadata['slug']
+    permalink = slug
     type_name = metadata['type_name']
     date_created = metadata['date_created']
     if self.site_config:
       formats = self.site_config.permalink_formats
       permalink_template = type_name in formats and formats[type_name] \
           or '{{slug}}'
-      permalink = ComputePermalink(type_name, new_slug, date_created,
+      permalink = ComputePermalink(type_name, slug, date_created,
           permalink_template=permalink_template)
 
     return {
-      'slug': new_slug,
-      'permalink': permalink
+      'permalink': '/' + permalink,
+      'output_path': permalink,
     }
 

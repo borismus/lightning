@@ -6,6 +6,7 @@ permalink_formats:
   draft: 'drafts/{{slug}}'
   archive: '{{slug}}'
   feed: '{{slug}}'
+  book: 'books/{{slug}}'
 type_mapping:
   /pages/: 'page'
   /posts/: 'post'

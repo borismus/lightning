@@ -27,7 +27,7 @@ def test_post():
 
 
 def test_split():
-  article = loader.LoadArticle('content/split.md')
+  article = loader.LoadArticle('content/books.md')
   builder.BuildArticle(article)
 
 
@@ -48,4 +48,4 @@ def teardown_module(module):
   """Teardown any state that was previously setup with a setup_module
   method."""
   print('teardown_module')
-  #builder.Clean()
+  builder.Clean()
