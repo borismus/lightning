@@ -1,10 +1,43 @@
 import datetime
 from itertools import tee, izip
 from jinja2 import Template, Environment, FileSystemLoader
+import os
 import re
+import shutil
+import time
+import warnings
 import yaml
 
 DEFAULT_TIME = datetime.time(9, 0)
+MAX_SLUG_LENGTH = 30
+
+
+class Date:
+  def __init__(self, datetime):
+    self.datetime = datetime
+
+  def GetDict(self):
+    dt = self.datetime
+    return {
+      'year': dt.year,
+      'month': dt.month,
+      'month_name': dt.strftime('%b'),
+      'day': dt.day,
+      'unix': int(time.mktime(dt.timetuple())),
+    }
+
+  def Format(self, template):
+    return self.datetime.strftime(template)
+
+  def Rfc(self):
+    dt = self.datetime
+    if dt.tzinfo is None:
+      suffix = "-00:00"
+    else:
+      suffix = dt.strftime("%z")
+      suffix = suffix[:-2] + ":" + suffix[-2:]
+    return dt.strftime("%Y-%m-%dT%H:%M:%S") + suffix
+
 
 
 def ComputePermalink(type_name, slug, created_date, permalink_template='{{slug}}'):
@@ -12,8 +45,9 @@ def ComputePermalink(type_name, slug, created_date, permalink_template='{{slug}}
   permalink_data = {'slug': slug}
   # If there's date information associated, include it in the permalink data.
   if created_date:
-    permalink_data = dict(permalink_data.items() + created_date.items())
-  return '/' + RenderTemplateString(permalink_template, permalink_data)
+    permalink_data = dict(permalink_data.items() +
+        created_date.GetDict().items())
+  return RenderTemplateString(permalink_template, permalink_data)
 
 
 def ParseSnip(content):
@@ -26,19 +60,10 @@ def ParseSnip(content):
 def ParseDate(date):
   """Gets the permalink parameters based on the item's info."""
   try:
-    t = datetime.datetime.combine(date, DEFAULT_TIME)
+    dt = datetime.datetime.combine(date, DEFAULT_TIME)
+    return Date(dt)
   except TypeError as e:
-    return False
-
-  return {
-    'year': t.year,
-    'month': t.month,
-    'month_name': t.strftime('%b'),
-    'day': t.day,
-    'unix': int(time.mktime(t.timetuple())),
-    'formatted': t.strftime(self.site_info['date_format']),
-    'rfc': self.rfcformat(t)
-  }
+    return None
 
 
 def GuessDate(path):
@@ -52,25 +77,15 @@ def GuessDate(path):
     return ParseDate(date)
 
 
-def GuessType(path):
-  """Return the type. These are a bunch of defaults..."""
-  if path.find('/pages/') >= 0:
-    return 'page'
-  elif path.find('/posts/') >= 0:
-    return 'post'
-  elif path.find('/drafts/') >= 0:
-    return 'draft'
-  elif path.find('/archives/') >= 0:
-    return 'archive'
-  if path.find('/links/') >= 0:
-    return 'link'
-  if path.find('/talks/') >= 0:
-    return 'talk'
-  if path.find('/projects/') >= 0:
-    return 'project'
+def GuessType(path, mappings):
+  """Return the type based on the path. The site config provides automatic
+  mappings based on path."""
+  for type_path, type_name in mappings.items():
+    if path.find(type_path) >= 0:
+      return type_name
 
 
-def GuessSlug(path):
+def GuessSlugFromPath(path):
   """Returns the slug."""
   if path.endswith('index.md'):
     # If it ends with index, get the second last path component.
@@ -80,9 +95,36 @@ def GuessSlug(path):
     return path.split('/')[-1].split('.')[0]
 
 
+def GuessSlugFromTitle(title):
+  """Return an automatically generated slug from title. Turn spaces into dashes,
+  lowercase everything, limit length."""
+  def IsValidChar(c):
+    return c.isalnum() or c == '-'
+
+  lower = title.lower()
+  slug = lower.replace(' ', '-')
+  slug = ''.join([c for c in slug if IsValidChar(c)])
+  slug = re.sub("-+", "-", slug)
+  return slug
+
+
 def RenderTemplateString(template_string, data):
   template = Template(template_string)
   return template.render(data)
+
+
+def RenderTemplate(template_root, filename, data):
+  env = Environment(loader=FileSystemLoader(template_root))
+  try:
+    template = env.get_template(filename)
+  except Exception:
+    raise Exception('Failed to find template %s.' % filename)
+  try:
+    out = template.render(data)
+  except Exception as e:
+    raise Exception('Failed to render template %s: "%s".' % (filename, e))
+
+  return out
 
 
 def FindSplitIndices(lines):
@@ -103,12 +145,21 @@ def FindSplitIndices(lines):
   coded_lines = [CodeLine(line) for line in lines]
   coded = ''.join(coded_lines)
 
+  #warnings.warn(coded)
+
   # Look for patterns of NTDN in the coded lines string. If such a pattern is
   # found, output the index.
   return [m.start() for m in re.finditer('NTDN', coded)]
 
 
 def GetYamlMetadata(lines):
+  # Ignore empty leading lines.
+  for i, line in enumerate(lines):
+    if line == '\n':
+      del lines[i]
+    else:
+      break
+
   # Extract the title.
   title = lines[0].strip()
   # Get the key: value pairs after the title.
@@ -125,3 +176,16 @@ def Pairwise(iterable):
   next(b, None)
   return list(izip(a, b))
 
+
+def CopyAndOverwrite(from_path, to_path):
+  if os.path.exists(to_path):
+    shutil.rmtree(to_path)
+  shutil.copytree(from_path, to_path)
+
+
+def DeletePath(path):
+  """Remove file or directory at path."""
+  if os.path.isfile(path):
+    os.unlink(path)
+  else:
+    shutil.rmtree(path)

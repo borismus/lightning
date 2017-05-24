@@ -1,14 +1,17 @@
 import markdown2
 import re
+import warnings
 import yaml
 
 from Article import *
 from BuildException import BuildException
 from Utils import *
 
+DEFAULT_LIMIT = 10
+
 class ArticleLoader:
-  def __init__(self):
-    pass
+  def __init__(self, site_config):
+    self.site_config = site_config
 
 
   def LoadAny(self, path):
@@ -30,7 +33,58 @@ class ArticleLoader:
       return self.LoadArticle(path)
 
 
-  def LoadArticle(self, path, lines=[]):
+  def LoadArticle(self, path):
+    metadata = self.GetArticleMetadata(path)
+    article = Article(**metadata)
+    return article
+
+
+  def LoadSplitArticle(self, path):
+    """If we're dealing with a split article, we have to split the file into
+    separate files, and handling each one separately, and then creating an
+    Article for each and linking them together in a SplitArticle."""
+    f = open(path, 'rU')
+    lines = f.readlines()
+
+    # Look for splits in the file, in the form \nTITLE\n=====\n\n.
+    split_indices = FindSplitIndices(lines)
+
+    # Separate the file based on split indices, and load an article for each.
+    split_indices.insert(0, 0)
+    split_indices.append(len(lines) - 1)
+
+    articles = []
+    for start, end in Pairwise(split_indices[1:]):
+      subset = lines[start:end]
+      metadata = self.GetArticleMetadata(path, lines=subset)
+      metadata.update(self.GetPermalink(metadata,
+        GuessSlugFromTitle(metadata['title'])))
+
+      article = Article(**metadata)
+
+      # Generate an auto-slug for each article, based on its title.
+      #warnings.warn('Generated slug for article: %s.' % article.slug)
+
+      articles.append(article)
+
+    first_part = lines[split_indices[0]:split_indices[1]]
+    metadata = self.GetArticleMetadata(path, lines=first_part)
+    return SplitArticle(articles, **metadata)
+
+
+  def LoadIndexArticle(self, path):
+    metadata = self.GetArticleMetadata(path)
+
+    f = open(path, 'rU')
+    lines = f.readlines()
+    data = GetYamlMetadata(lines)
+    metadata['type_filter'] = data['filter'] if ('filter' in data) else '*'
+    metadata['limit'] = data['limit'] if ('limit' in data) else DEFAULT_LIMIT
+
+    return IndexArticle(**metadata)
+
+
+  def GetArticleMetadata(self, path, lines=[]):
     """Parses markup from files like this:
 
       My new post
@@ -42,7 +96,7 @@ class ArticleLoader:
 
       Just **testing**
 
-    into an Article representing it.
+    into an dict bundle representing it.
     """
     source_path = path
     if not lines:
@@ -73,9 +127,18 @@ class ArticleLoader:
     snip = snip or content
     title = unicode(data['title'], 'utf8')
     content = content
+
     # Infer slug and type from path.
-    slug = 'slug' in data and data['slug'] or GuessSlug(path)
-    type_name = 'type' in data and data['type'] or GuessType(path)
+    slug = 'slug' in data and data['slug'] or GuessSlugFromPath(path)
+    type_name = None
+
+    # Get the type of guess it based on the path.
+    if 'type' in data:
+      type_name = data['type']
+    elif self.site_config:
+      type_name = GuessType(path, self.site_config.type_mapping) or \
+          self.site_config.default_type
+
     summary = markdown_body[:markdown_body.find('.')+1]
     date_created = None
     if 'posted' in data:
@@ -84,44 +147,34 @@ class ArticleLoader:
     else:
       # Otherwise, guess the date based on the directory structure.
       date_created = GuessDate(path)
-      if not date_created:
-        raise BuildException('No date specified and failed to guess date from \
-            path %s.' % source_path)
+
+    metadata = {
+      'title': title,
+      'content': content,
+      'slug': slug,
+      'snip': snip,
+      'date_created': date_created,
+      'type_name': type_name,
+      'source_path': source_path
+    }
+    metadata.update(self.GetPermalink(metadata, metadata['slug']))
+    return metadata
+
+
+  def GetPermalink(self, metadata, new_slug):
     # Compute the permalink.
-    try:
-      permalink = ComputePermalink(type_name, slug, date_created)
-    except Exception as e:
-      raise BuildException('Failed to compute permalink for %s: %s' % (slug, e))
+    permalink = new_slug
+    type_name = metadata['type_name']
+    date_created = metadata['date_created']
+    if self.site_config:
+      formats = self.site_config.permalink_formats
+      permalink_template = type_name in formats and formats[type_name] \
+          or '{{slug}}'
+      permalink = ComputePermalink(type_name, new_slug, date_created,
+          permalink_template=permalink_template)
 
-    return Article(title=title, type_name=type_name, slug=slug, permalink=permalink,
-        content=content, date_created=date_created, source_path=source_path)
+    return {
+      'slug': new_slug,
+      'permalink': permalink
+    }
 
-
-  def LoadSplitArticle(self, path):
-    """If we're dealing with a split article, we have to split the file into
-    separate files, and handling each one separately, and then creating an
-    Article for each and linking them together in a SplitArticle."""
-    f = open(path, 'rU')
-    lines = f.readlines()
-
-    # Look for splits in the file, in the form \nTITLE\n=====\n\n.
-    split_indices = FindSplitIndices(lines)
-
-    # Separate the file based on split indices, and load an article for each.
-    split_indices.insert(0, 0)
-    split_indices.append(len(lines) - 1)
-
-    articles = []
-    for start, end in Pairwise(split_indices):
-      subset = lines[start:end]
-      article = self.LoadArticle(path, lines=subset)
-      articles.append(article)
-
-    return SplitArticle(articles, source_path=path)
-
-  def LoadIndexArticle(self, path):
-    pass
-
-if __name__ == '__main__':
-  import doctest
-  doctest.testmod()

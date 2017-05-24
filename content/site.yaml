@@ -1,13 +1,12 @@
-site_title: Lightning-powered Blog
+site_title: Sample Lightning Blog
 date_format: '%d %B %Y'
-verbs:
-  post: 'Published'
-  talk: 'Presented'
-  link: 'Linked'
-permalink_format:
+permalink_formats:
   post: '{{slug}}'
   page: '{{slug}}'
   draft: 'drafts/{{slug}}'
   archive: '{{slug}}'
   feed: '{{slug}}'
-  index: ''
+type_mapping:
+  /pages/: 'page'
+  /posts/: 'post'
+default_type: 'page'

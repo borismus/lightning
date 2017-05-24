@@ -1,6 +1,6 @@
 Blog RSS
 ========
-list:
 limit: 50
-type: feed
+type: feed.xml
+class: index
 

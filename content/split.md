@@ -10,7 +10,8 @@ more active reader and listener.
 Rather than rating books, I just say whether it was worth the time.
 
 
-# Finite and Infinite Games by James Carse (no) - May 2017
+Finite and Infinite Games by James Carse (no) - May 2017
+===
 
 I was intrigued by the premise of the book, which introduces a theory of games
 (emphatically not the game theory of economics), in which there are two kinds of
@@ -36,7 +37,8 @@ Lastly, given the author's definition, infinite games seem hardly game-like at
 all.
 
 
-# Homo Deus by Harari (yes, if you haven't read Sapiens) - May 2017
+Homo Deus by Harari (yes, if you haven't read Sapiens) - May 2017
+===
 
 I decided to read Homo Deus because I enjoyed Harari's previous book, Sapiens.
 The first 2/3 of Homo Deus is basically a rehash and more succinct version of
@@ -208,7 +210,8 @@ stuff in the first 2/3 of the book is a rehash of Sapiens. The last part was
 stimulating but mainly to get me thinking about why I disagree. 
 
 
-# Understanding Japan: A Cultural History (Yes, audio) - May 2017
+Understanding Japan: A Cultural History (Yes, audio) - May 2017
+===
 
 Overall an engaging lecturer and super interesting subject. Would have greatly
 informed my trips to Japan. Most of these are quick notes about things that were

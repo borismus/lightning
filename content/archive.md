@@ -1,6 +1,6 @@
 All posts
 =========
-list:
+class: index
 limit: 1000
 type: archive
 

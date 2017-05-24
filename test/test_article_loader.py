@@ -3,9 +3,12 @@ sys.path.insert(0, './src')
 
 from ArticleLoader import ArticleLoader
 from Article import *
+from Site import SiteConfig
 
 
-loader = ArticleLoader()
+site_config = SiteConfig(type_mapping={'/pages/': 'page', '/posts/': 'post'},
+    default_type='page', permalink_formats={'post': 'blog/{{slug}}'})
+loader = ArticleLoader(site_config)
 
 def test_simple():
   path = 'content/simple.md'
