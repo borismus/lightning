@@ -1,4 +1,5 @@
 import datetime
+from dateutil import parser
 from itertools import tee, izip
 from jinja2 import Template, Environment, FileSystemLoader
 import os
@@ -30,8 +31,10 @@ class Date:
   def Unix(self):
     return int(time.mktime(self.datetime.timetuple()))
 
-  def Format(self):
-    return self.datetime.strftime(self.date_format)
+  def Format(self, date_format=None):
+    if not date_format:
+      date_format = self.date_format
+    return self.datetime.strftime(date_format)
 
   def Rfc(self):
     dt = self.datetime
@@ -47,6 +50,10 @@ class Date:
 
   def __sub__(self, to_subtract):
     return self.Unix() - to_subtract.Unix()
+
+  @staticmethod
+  def Now():
+    return Date(datetime.datetime.now())
 
 
 
@@ -70,9 +77,15 @@ def ParseSnip(content):
 def ParseDate(date):
   """Gets the permalink parameters based on the item's info."""
   try:
+    if type(date) == str:
+      date_string = date
+      date = parser.parse(date_string)
+      #warnings.warn('Parsed %s into %s.' % (date_string, date))
+
     dt = datetime.datetime.combine(date, DEFAULT_TIME)
     return Date(dt)
   except TypeError as e:
+    warnings.warn('Failed to parse date: %s.' % e)
     return None
 
 
@@ -211,7 +224,8 @@ def FixBrokenLinks(content, permalink):
   # If the links are relative, make them absolute.
   for link in links:
     # If it doesn't have http or / at the beginning, it's a relative URL.
-    if not link.startswith('/') and not link.startswith('http'):
+    if not link.startswith('/') and not link.startswith('http') and not \
+        link.startswith('mailto'):
       # If they are relative, rewrite them using the permalink
       absolute_link = os.path.join(permalink, link)
       content = content.replace(link, absolute_link)
@@ -221,3 +235,6 @@ def FixBrokenLinks(content, permalink):
 
   return content
 
+
+def StripHtmlTags(html):
+  return re.sub('<[^<]+?>|\n', ' ', html)

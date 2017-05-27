@@ -1,78 +1,60 @@
-Lightning is a static blogging engine designed to make it painless to
-author and update large blogs. Key features are:
+Lightning is a static blogging engine designed to make it painless to author and
+update large blogs. 
 
-- Standalone content directory.
+- Clear separation between content and templating.
+- Assets that you can store alongside content (in the same directory).
+- Split posts so that you can write multiple shortform articles in the same
+  markdown file.
 - Incremental building.
-- Easy-to-author configuration.
 - Use your favorite editor for everything.
-
-Here's a preview of [publishing using lightning][flow] once you're set up.
 
 # Installation
 
 1. Clone the repository via `git clone git@github.com:borismus/lightning.git`
 2. Run `cd lightning` to get to your newly cloned repository.
 2. Install all required dependencies by running `pip install -r requirements.txt`.
-3. Run `./lightning` to build and `./lightning preview` to run a
-   webserver.
-4. Open <http://localhost:8000> in your browser.
+4. Take a look at [template][] and [content][] for my blog at <http://smus.com>.
+
+[template]: https://github.com/borismus/smus.com-template
+[content]: https://github.com/borismus/smus.com
 
 # Usage
 
-Build incrementally.
+Build your site by running ./lightning in the current working directory. This
+will read your lightning.yaml and go from there.
 
-    > ./lightning
+I used livereload to build a preview script:
 
-Forcibly rebuild everything regardless of whether or not there have been
-changes made to the content. This is useful if you change your template.
+    #!/usr/bin/env python
+    from livereload import Server, shell
 
-    > ./lightning rebuild
+    server = Server()
+    server.watch('content', shell('../lightning/lightning -o www'))
+    server.serve(root='www')
 
-Start watching for local changes to the content, rebuilding
-incrementally based on that.
+And host my static site on github pages, which I deploy to using this script:
 
-    > ./lightning watch
+    #!/usr/bin/env sh
 
-Start a really simple local web server with its document root pointing
-to the output directory.
+    DEPLOY_PATH=/Users/smus/Projects/smus.com-deploy
 
-    > ./lightning preview
+    # Do a deploy build to the smus.com gh-pages repo.
+    ../lightning/lightning --out=$DEPLOY_PATH
 
-Deploy the site to the specified S3 bucket.
-
-    > ./lightning deploy
+    # Commit the updated contents there, and push it upstream.
+    pushd $DEPLOY_PATH
+    git add -A
+    git commit -m "Updating smus.com with new content."
+    git push origin gh-pages
+    popd
 
 
 # Configuration
 
 `lightning.yaml` specifies where to look for content, template and where
-to dump output. It also specifies where to deploy the site.
+to dump output.
 
-`site.yaml` specifies metadata about the site itself, including
-permalinks, verbs, site title, date format. It belongs in the content
-root.
+`site.yaml` specifies metadata about the site itself. A [simple
+example][site.yaml] is at [content/site.yaml][site.yaml].
 
-
-# For production
-
-I use a combination of Dropbox and Lightning (which uses inotify-tools)
-to make for a [pleasant blogging experience][flow]. Here are the steps to get
-Lightning working on your server.
-
-0. Install Dropbox on your [server][dropbox].
-1. Install Lightning on your server (see above).
-2. Customize your theme.
-3. Configure `lightning.yaml` to look for your content on Dropbox (eg.
-   `~/Dropbox/my-blog/`)
-4. Setup a watcher on your server via `lightning watch`. It's useful to
-   run the watcher using `nohup`.
-5. Make some changes to your content directory from any Dropbox client
-   (I sometimes use [Nebulous][nebulous] on iPad).
-6. You're done.
-
-[Enjoy][flow].
-
-[dropbox]: https://www.dropbox.com/install?os=lnx
-[nebulous]: http://nebulousapps.net/
-[flow]: http://www.youtube.com/watch?v=z6ZH2DyURU4
-
+[site.yaml]: https://github.com/borismus/smus.com/blob/master/site.yaml

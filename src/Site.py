@@ -18,6 +18,15 @@ class SiteConfig:
     self.articles = articles
 
 
+  def ReplaceArticle(self, article):
+    """Given an article, find the one already loaded, and replace it."""
+    for index, a in enumerate(self.articles):
+      if a.permalink == article.permalink:
+        print 'Replaced article %s at index %s.' % (a, index)
+        self.articles[index] = article
+
+
+
   def GetFlattenedArticles(self):
     articles = []
     for article in self.articles:

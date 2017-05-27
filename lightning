@@ -1,14 +1,68 @@
 #!/usr/bin/env python
+import argparse
+import os
 import sys
-sys.path.insert(0, 'src')
+import time
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
 from Site import BuildConfig, SiteConfig
 from ArticleLoader import ArticleLoader
 from SiteLoader import SiteLoader
 from SiteBuilder import SiteBuilder
 
-if __name__ == '__main__':
+DEFAULT_COMMAND = 'build'
+
+
+parser = argparse.ArgumentParser(description='Build a Lightning static site.')
+parser.add_argument('command', type=str, nargs='?', help='The command to run.')
+parser.add_argument('--output-root', '-o', dest='output_root',
+    help='Alternative output path.')
+parser.add_argument('--changed-file', '-f', dest='changed_files',
+    action='append', help='Specifically which files have need to be rebuilt.')
+
+
+args = parser.parse_args()
+
+def BuildSite(output_root=None):
+  start = time.time()
   site_loader = SiteLoader()
   site_loader.Load()
-  builder = SiteBuilder(site_loader.build_config, is_incremental=False)
+  end = time.time()
+  print 'Loaded site in %.2f seconds.' % (end - start)
+
+  if output_root:
+    site_loader.build_config.output_root = output_root
+
+  start = time.time()
+  builder = SiteBuilder(site_loader.build_config)
+  # Clean the old site before building the new one.
+  builder.Clean()
   builder.BuildSite(site_loader.site_config)
+  end = time.time()
+  print 'Built site in %.2f seconds.' % (end - start)
+
+
+def BuildIncrementalSite(output_root=None, changed_files=[]):
+  start = time.time()
+  site_loader = SiteLoader()
+  changed_articles = site_loader.LoadForIncremental(changed_files)
+
+  builder = SiteBuilder(site_loader.build_config)
+  builder.BuildPartialSite(site_loader.site_config, changed_articles)
+  end = time.time()
+  print 'Built site incrementally in %.2f seconds.' % (end - start)
+
+
+if __name__ == '__main__':
+  # Parse arguments.
+  command = DEFAULT_COMMAND
+  if args and args.command:
+    command = args.command
+
+  is_incremental = bool(args.changed_files)
+
+  if command == 'build':
+    if is_incremental:
+      BuildIncrementalSite(args.output_root, args.changed_files)
+    else:
+      BuildSite(args.output_root)

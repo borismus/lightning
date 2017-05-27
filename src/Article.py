@@ -1,6 +1,8 @@
+import warnings
+
 class Article(object):
   def __init__(self, title, type_name, content, date_created, source_path, slug,
-      permalink, snip, output_path):
+      permalink, snip, output_path, meta_description):
     # The title of this article.
     self.title = title
     # Name of the template to use for this article.
@@ -19,29 +21,29 @@ class Article(object):
     self.permalink = permalink
     # Snippet.
     self.snip = snip
+    # Is it a long article or not?
+    self.is_long = (self.snip != self.content)
+    # Description used in head <meta> tags.
+    self.meta_description = meta_description
 
   def GetTemplatePath(self):
     if self.type_name.find('.') >= 0:
       return self.type_name
     return self.type_name + '.html'
 
+  def GetFilename(self):
+    return 'index.html'
+
   def ToDict(self):
     params = self.__dict__
     return params
 
-  def ToShortDict(self):
-    params = self.__dict__
-    del params['content']
-    del params['snip']
-    if 'posts' in params:
-      del params['posts']
-    return params
-
-
+  def __str__(self):
+    return self.permalink
 
 
 class IndexArticle(Article):
-  def __init__(self, type_filter, limit, *args, **kwargs):
+  def __init__(self, type_filter, limit=None, *args, **kwargs):
     super(IndexArticle, self).__init__(*args, **kwargs)
 
     # Which type of item to filter on.
@@ -50,6 +52,10 @@ class IndexArticle(Article):
     self.limit = limit
     # List of related articles.
     self.articles = []
+    # Whether or not it's an XML feed.
+    self.is_feed = self.type_name.endswith('.xml')
+
+    #warnings.warn('Made a new IndexArticle: %s' % str(self.__dict__))
 
   def SetArticles(self, articles):
     self.articles = articles
@@ -59,6 +65,12 @@ class IndexArticle(Article):
     posts = [a.ToDict() for a in self.articles]
     params['posts'] = posts
     return params
+
+  def GetFilename(self):
+    return self.is_feed and 'feed.xml' or 'index.html'
+
+  def Match(self, type_name):
+    return self.type_filter == '*' or type_name in self.type_filter
 
 
 class SplitArticle(Article):

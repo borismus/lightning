@@ -7,11 +7,11 @@ from Article import *
 from BuildException import BuildException
 from Utils import *
 
-DEFAULT_LIMIT = 10
 
 class ArticleLoader:
-  def __init__(self, site_config):
+  def __init__(self, site_config, is_metadata_only=False):
     self.site_config = site_config
+    self.is_metadata_only = is_metadata_only
 
 
   def LoadAny(self, path):
@@ -52,7 +52,7 @@ class ArticleLoader:
     split_indices = FindSplitIndices(lines)
 
     # Separate the file based on split indices, and load an article for each.
-    split_indices.append(len(lines) - 1)
+    split_indices.append(len(lines))
 
     # The first part of the split article becomes its own article which is never
     # rendered. But we should propagate the type_name to the rest of the
@@ -77,7 +77,7 @@ class ArticleLoader:
       articles.append(article)
 
     #warnings.warn('Creating SplitArticle with %s' % str([a.permalink for a in articles]))
-    return SplitArticle(articles, **metadata)
+    return SplitArticle(articles, **first_metadata)
 
 
   def GetIndexArticleMetadata(self, path):
@@ -86,8 +86,14 @@ class ArticleLoader:
     f = open(path, 'rU')
     lines = f.readlines()
     data = GetYamlMetadata(lines)
-    metadata['type_filter'] = data['filter'] if ('filter' in data) else '*'
-    metadata['limit'] = data['limit'] if ('limit' in data) else DEFAULT_LIMIT
+    type_filter = ('filter' in data) and data['filter'] or '*'
+    # Expect type_filter to be a list of filters.
+    if type_filter and type(type_filter) != list:
+      type_filter = [type_filter]
+
+    metadata['type_filter'] = type_filter
+    if 'limit' in data:
+      metadata['limit'] = data['limit']
     return metadata
 
 
@@ -135,10 +141,10 @@ class ArticleLoader:
     separator_index = lines.index('\n')
     markdown_lines = lines[separator_index+1:]
     markdown_body = ''.join(markdown_lines).decode('utf-8')
-    content = markdown2.markdown(markdown_body)
+    content = self.is_metadata_only and '' or markdown2.markdown(markdown_body)
     # If there's no snip specified, try to parse it before the <!--more--> tag.
-    snip = 'snip' in data and markdown2.markdown(data['snip']) \
-                           or ParseSnip(content)
+    snip = self.is_metadata_only and '' or \
+        'snip' in data and markdown2.markdown(data['snip']) or ParseSnip(content)
 
     # Save a bunch of properties.
     snip = snip or content
@@ -172,7 +178,8 @@ class ArticleLoader:
       'snip': snip,
       'date_created': date_created,
       'type_name': type_name,
-      'source_path': source_path
+      'source_path': source_path,
+      'meta_description': StripHtmlTags(snip).strip(),
     }
     permalink = self.GetPermalinkMetadata(metadata)
     metadata.update(permalink)

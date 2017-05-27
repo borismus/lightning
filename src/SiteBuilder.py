@@ -6,27 +6,47 @@ from Utils import *
 
 class SiteBuilder:
 
-  def __init__(self, build_config, is_incremental=False):
+  def __init__(self, build_config):
     self.build_config = build_config
-    self.is_incremental = is_incremental
 
   def BuildSite(self, site):
     # Render each article into HTML.
     for article in site.GetFlattenedArticles():
       self.BuildArticle(article, site)
 
+    # Copy static assets.
+    self.CopyStatic()
+
+
+  def BuildPartialSite(self, site, changed_articles):
+    # Render only the specified articles.
+    for article in changed_articles:
+      self.BuildArticle(article, site)
+
 
   def BuildArticle(self, article, site=None):
-    html = RenderTemplate(self.build_config.template_root,
-        article.GetTemplatePath(), article.ToDict())
+    template_data = article.ToDict()
+    if site:
+      template_data['site'] = site.ToDict()
+      template_data['site_title'] = site.title
+    template_data['date_generated'] = Date.Now()
 
-    #warnings.warn('Rendering article %s.' % article.ToShortDict())
+    html = RenderTemplate(self.build_config.template_root,
+        article.GetTemplatePath(), template_data)
+
+    #if isinstance(article, IndexArticle):
+    #  print('Index %s has %s children.' % (article.title,
+    #    len(article.articles)))
+    #print('Rendering article %s.' % article)
 
     # Create the directory for the parsed HTML.
     dir_path = os.path.join(self.build_config.output_root, article.output_path)
-    if not os.path.exists(dir_path):
-      os.makedirs(dir_path)
-    index_path = os.path.join(dir_path, 'index.html')
+    if isinstance(article, IndexArticle) and article.is_feed:
+      index_path = dir_path + '.xml'
+    else:
+      if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
+      index_path = os.path.join(dir_path, 'index.html')
 
     # Copy any assets that should be copied.
     self.CopyAssets(article)
@@ -50,6 +70,17 @@ class SiteBuilder:
 
     # Remove the raw index.md.
     os.remove(os.path.join(dst, 'index.md'))
+
+
+  def CopyStatic(self):
+    """Copies the static part of the template directory into the output
+    root (only if it's not there yet)."""
+    src = os.path.join(self.build_config.template_root, 'static/')
+    dst = os.path.join(self.build_config.output_root, 'static/')
+
+    #if not os.path.exists(dst):
+    print 'Copying static directory from %s to %s' % (src, dst)
+    CopyAndOverwrite(src, dst)
 
 
   def Clean(self):

@@ -25,6 +25,24 @@ class SiteLoader:
     self.LoadContent()
 
 
+  def LoadForIncremental(self, changed_files):
+    self.LoadContent(is_metadata_only=True)
+    loader = ArticleLoader(self.site_config, is_metadata_only=False)
+    changed_articles = []
+    for path in changed_files:
+      article = loader.LoadAny(path)
+      changed_articles.append(article)
+      self.site_config.ReplaceArticle(article)
+
+      # Also see if there are any indexes referencing this article.
+      index_articles = self.GetIndexArticles(article)
+      for index in index_articles:
+        changed_articles.append(index)
+        self.site_config.ReplaceArticle(index)
+
+    return changed_articles
+
+
   def LoadBuildConfig(self, path):
     config = yaml.load(open(path))
     EnsureFieldsExist(config, REQUIRED_CONFIG_FIELDS)
@@ -53,7 +71,7 @@ class SiteLoader:
         type_mapping=site['type_mapping'], default_type=site['default_type'])
 
 
-  def LoadContent(self, staging_prefix='staging'):
+  def LoadContent(self, staging_prefix='staging', is_metadata_only=False):
     """Load all of the articles found in the content root, ultimately returning
     a list of articles."""
     content_root = self.build_config.content_root
@@ -73,7 +91,7 @@ class SiteLoader:
 
           markdown_files.append(path)
 
-    loader = ArticleLoader(self.site_config)
+    loader = ArticleLoader(self.site_config, is_metadata_only=is_metadata_only)
     articles = [loader.LoadAny(path) for path in markdown_files]
     self.site_config.SetArticles(articles)
 
@@ -85,9 +103,9 @@ class SiteLoader:
       if article.date_created:
         article.date_created.SetDateFormat(self.site_config.date_format)
 
-    def IsMatchingSingle(article, type_filter):
+    def IsMatchingSingle(article, index):
       is_single = not isinstance(a, IndexArticle)
-      is_matching = (type_filter == '*') or a.type_name == type_filter
+      is_matching = index.Match(a.type_name)
       return is_single and is_matching
 
     def ByDate(a, b):
@@ -105,7 +123,7 @@ class SiteLoader:
     for index in index_articles:
       # Filter articles by type.
       matching_articles = [a for a in all_articles if \
-          IsMatchingSingle(a, index.type_filter)]
+          IsMatchingSingle(a, index)]
 
       # Order articles by date, then apply a limit.
       matching_articles = sorted(matching_articles, cmp=ByDate)
@@ -122,6 +140,14 @@ class SiteLoader:
       article.content = FixBrokenLinks(article.content, article.permalink)
       article.snip = FixBrokenLinks(article.snip, article.permalink)
 
+
+  def GetIndexArticles(self, article):
+    """Get all of the index articles referencing the specified argument."""
+    index_articles = [a for a in self.site_config.GetFlattenedArticles() if \
+        isinstance(a, IndexArticle)]
+    out = [i for i in index_articles if i.Match(article.type_name)]
+
+    return out
 
 
 def EnsureFieldsExist(data, fields):

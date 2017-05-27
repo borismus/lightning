@@ -23,4 +23,6 @@ def test_any():
   assert isinstance(article, SplitArticle)
 
 def test_index():
-  pass
+  path = 'content/books.md'
+  article = loader.LoadAny(path)
+  assert isinstance(article, IndexArticle)

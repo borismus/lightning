@@ -8,8 +8,8 @@
 <div id="archives">
   {% for post in posts %}
   <article>
-    {% if post.posted_info %}
-    <span class="time">{{ post.formatted }}</span>
+    {% if post.date_created %}
+    <span class="time">{{ post.date_created.Format() }}</span>
     {% endif %}
     <span class="title"><a href="{{ post.permalink }}">{{ post.title }}</a></span>
   </article>
