@@ -54,7 +54,6 @@ And host my static site on github pages, which I deploy to using this script:
 `lightning.yaml` specifies where to look for content, template and where
 to dump output.
 
-`site.yaml` specifies metadata about the site itself. A [simple
-example][site.yaml] is at [content/site.yaml][site.yaml].
+`site.yaml` specifies metadata about the site itself.
 
-[site.yaml]: https://github.com/borismus/smus.com/blob/master/site.yaml
+An example site can be found in the example directory of this repository.
