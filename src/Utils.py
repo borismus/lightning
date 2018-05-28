@@ -219,6 +219,7 @@ def FixBrokenLinks(content, permalink):
   absolute ones referring to the permalink."""
   links = re.findall(r'<a href="(.+?)"', content, re.DOTALL) + \
           re.findall(r'<img src="(.+?)"', content, re.DOTALL) + \
+          re.findall(r'<audio src="(.+?)"', content, re.DOTALL) + \
           re.findall(r'<video src="(.+?)"', content, re.DOTALL)
 
   # If the links are relative, make them absolute.

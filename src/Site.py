@@ -22,7 +22,7 @@ class SiteConfig:
     """Given an article, find the one already loaded, and replace it."""
     for index, a in enumerate(self.articles):
       if a.permalink == article.permalink:
-        print 'Replaced article %s at index %s.' % (a, index)
+        print('Replaced article %s at index %s.' % (a, index))
         self.articles[index] = article
 
 

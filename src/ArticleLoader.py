@@ -180,6 +180,7 @@ class ArticleLoader:
       'type_name': type_name,
       'source_path': source_path,
       'meta_description': StripHtmlTags(snip).strip(),
+      'yaml': data
     }
     permalink = self.GetPermalinkMetadata(metadata)
     metadata.update(permalink)

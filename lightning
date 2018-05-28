@@ -1,9 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 import argparse
 import os
 import sys
 import time
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+realpath = os.path.dirname(os.path.realpath(__file__))
+sys.path.insert(0, os.path.join(realpath, 'src'))
 
 from Site import BuildConfig, SiteConfig
 from ArticleLoader import ArticleLoader
@@ -28,7 +29,7 @@ def BuildSite(output_root=None):
   site_loader = SiteLoader()
   site_loader.Load()
   end = time.time()
-  print 'Loaded site in %.2f seconds.' % (end - start)
+  print('Loaded site in %.2f seconds.' % (end - start))
 
   if output_root:
     site_loader.build_config.output_root = output_root
@@ -39,7 +40,7 @@ def BuildSite(output_root=None):
   builder.Clean()
   builder.BuildSite(site_loader.site_config)
   end = time.time()
-  print 'Built site in %.2f seconds.' % (end - start)
+  print('Built site in %.2f seconds.' % (end - start))
 
 
 def BuildIncrementalSite(output_root=None, changed_files=[]):
@@ -50,7 +51,7 @@ def BuildIncrementalSite(output_root=None, changed_files=[]):
   builder = SiteBuilder(site_loader.build_config)
   builder.BuildPartialSite(site_loader.site_config, changed_articles)
   end = time.time()
-  print 'Built site incrementally in %.2f seconds.' % (end - start)
+  print('Built site incrementally in %.2f seconds.' % (end - start))
 
 
 if __name__ == '__main__':

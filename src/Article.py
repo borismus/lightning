@@ -2,7 +2,7 @@ import warnings
 
 class Article(object):
   def __init__(self, title, type_name, content, date_created, source_path, slug,
-      permalink, snip, output_path, meta_description):
+      permalink, snip, output_path, meta_description, yaml):
     # The title of this article.
     self.title = title
     # Name of the template to use for this article.
@@ -25,6 +25,8 @@ class Article(object):
     self.is_long = (self.snip != self.content)
     # Description used in head <meta> tags.
     self.meta_description = meta_description
+    # The raw yaml, for exotic uses.
+    self.yaml = yaml
 
   def GetTemplatePath(self):
     if self.type_name.find('.') >= 0:

@@ -79,12 +79,16 @@ class SiteBuilder:
     dst = os.path.join(self.build_config.output_root, 'static/')
 
     #if not os.path.exists(dst):
-    print 'Copying static directory from %s to %s' % (src, dst)
+    print('Copying static directory from %s to %s' % (src, dst))
     CopyAndOverwrite(src, dst)
 
 
   def Clean(self):
     """Removes the contents of the output directory entirely."""
+    # If there's nothing to clean, do nothing.
+    if not os.path.exists(self.build_config.output_root):
+      return
+
     for f in os.listdir(self.build_config.output_root):
       # Leave the .git directory intact.
       if f == '.git' or f == 'CNAME':

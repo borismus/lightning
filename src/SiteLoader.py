@@ -135,9 +135,8 @@ class SiteLoader:
 
       index.SetArticles(matching_articles)
 
-    # Fix all broken links in the articles.
+    # Fix all broken links in the article summaries.
     for article in all_articles:
-      article.content = FixBrokenLinks(article.content, article.permalink)
       article.snip = FixBrokenLinks(article.snip, article.permalink)
 
 
