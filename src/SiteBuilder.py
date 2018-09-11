@@ -28,7 +28,6 @@ class SiteBuilder:
     template_data = article.ToDict()
     if site:
       template_data['site'] = site.ToDict()
-      template_data['site_title'] = site.title
     template_data['date_generated'] = Date.Now()
 
     html = RenderTemplate(self.build_config.template_root,

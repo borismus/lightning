@@ -4,9 +4,11 @@ class SiteConfig:
   """A class to hold all of the information about the site, including permalink
   formats."""
 
-  def __init__(self, title='Blog Title', date_format='%B', permalink_formats=[],
-      type_mapping={}, default_type=None):
+  def __init__(self, title='Blog Title', domain='https://example.com',
+      date_format='%B', permalink_formats=[], type_mapping={},
+      default_type=None):
     self.title = title
+    self.domain = domain
     self.date_format = date_format
     self.permalink_formats = permalink_formats
     self.type_mapping = type_mapping

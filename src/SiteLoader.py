@@ -66,7 +66,8 @@ class SiteLoader:
     site = yaml.load(open(site_config_path))
     EnsureFieldsExist(site, REQUIRED_SITE_FIELDS)
 
-    return SiteConfig(title=site['site_title'], date_format=site['date_format'],
+    return SiteConfig(title=site['site_title'], domain=site['site_domain'],
+        date_format=site['date_format'],
         permalink_formats=site['permalink_formats'],
         type_mapping=site['type_mapping'], default_type=site['default_type'])
 
@@ -135,9 +136,10 @@ class SiteLoader:
 
       index.SetArticles(matching_articles)
 
-    # Fix all broken links in the article summaries.
+    # Fix all broken links in the articles.
     for article in all_articles:
       article.snip = FixBrokenLinks(article.snip, article.permalink)
+      article.content = FixBrokenLinks(article.content, article.permalink)
 
 
   def GetIndexArticles(self, article):
