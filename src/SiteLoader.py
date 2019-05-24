@@ -15,9 +15,9 @@ REQUIRED_SITE_FIELDS = ['site_title', 'date_format', 'permalink_formats',
 class SiteLoader:
   """Loads a whole site, based on the lightning.yaml in the current directory."""
 
-  def __init__(self, include_staging=True):
+  def __init__(self, build_config_path, include_staging=True):
     self.include_staging = include_staging
-    self.build_config = self.LoadBuildConfig('lightning.yaml')
+    self.build_config = self.LoadBuildConfig(build_config_path)
     self.site_config = self.LoadSiteConfig(self.build_config.content_root)
 
 
@@ -45,17 +45,19 @@ class SiteLoader:
 
   def LoadBuildConfig(self, path):
     config = yaml.load(open(path))
+    root = os.path.dirname(os.path.realpath(path))
+    print(root)
     EnsureFieldsExist(config, REQUIRED_CONFIG_FIELDS)
 
-    template_root = config['template']
+    template_root = os.path.join(root, config['template'])
     if not os.path.exists(template_root):
       raise Exception('Template path %s not found.' % template_root)
 
-    content_root = config['content']
+    content_root = os.path.join(root, config['content'])
     if not os.path.exists(content_root):
       raise Exception('Content path %s not found.' % content_root)
 
-    output_root = config['output']
+    output_root = os.path.join(root, config['output'])
 
     return BuildConfig(content_root=content_root, template_root=template_root,
         output_root=output_root)

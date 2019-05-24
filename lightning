@@ -18,6 +18,8 @@ parser = argparse.ArgumentParser(description='Build a Lightning static site.')
 parser.add_argument('command', type=str, nargs='?', help='The command to run.')
 parser.add_argument('--output-root', '-o', dest='output_root',
     help='Alternative output path.')
+parser.add_argument('--build-config-path', '-b', dest='build_config_path',
+    help='The websites YAML path.', default='lightning.yaml')
 parser.add_argument('--changed-file', '-f', dest='changed_files',
     action='append', help='Specifically which files have need to be rebuilt.')
 
@@ -26,7 +28,7 @@ args = parser.parse_args()
 
 def BuildSite(output_root=None):
   start = time.time()
-  site_loader = SiteLoader()
+  site_loader = SiteLoader(args.build_config_path)
   site_loader.Load()
   end = time.time()
   print('Loaded site in %.2f seconds.' % (end - start))
