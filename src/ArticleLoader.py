@@ -140,7 +140,7 @@ class ArticleLoader:
     # Process the rest of the post as Markdown.
     separator_index = lines.index('\n')
     markdown_lines = lines[separator_index+1:]
-    markdown_body = ''.join(markdown_lines).decode('utf-8')
+    markdown_body = ''.join(markdown_lines)
     content = self.is_metadata_only and '' or markdown2.markdown(markdown_body)
     # If there's no snip specified, try to parse it before the <!--more--> tag.
     snip = self.is_metadata_only and '' or \
@@ -148,7 +148,7 @@ class ArticleLoader:
 
     # Save a bunch of properties.
     snip = snip or content
-    title = unicode(data['title'], 'utf8')
+    title = str(data['title'])
     content = content
 
     # Infer slug and type from path.

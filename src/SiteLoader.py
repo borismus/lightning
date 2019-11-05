@@ -1,6 +1,7 @@
 import os
 import warnings
 import yaml
+import functools
 
 from ArticleLoader import ArticleLoader
 from Article import IndexArticle
@@ -44,7 +45,7 @@ class SiteLoader:
 
 
   def LoadBuildConfig(self, path):
-    config = yaml.load(open(path))
+    config = yaml.load(open(path), Loader=yaml.SafeLoader)
     root = os.path.dirname(os.path.realpath(path))
     print(root)
     EnsureFieldsExist(config, REQUIRED_CONFIG_FIELDS)
@@ -65,7 +66,7 @@ class SiteLoader:
 
   def LoadSiteConfig(self, content_root):
     site_config_path = os.path.join(content_root, 'site.yaml')
-    site = yaml.load(open(site_config_path))
+    site = yaml.load(open(site_config_path), Loader=yaml.SafeLoader)
     EnsureFieldsExist(site, REQUIRED_SITE_FIELDS)
 
     return SiteConfig(title=site['site_title'], domain=site['site_domain'],
@@ -107,8 +108,8 @@ class SiteLoader:
         article.date_created.SetDateFormat(self.site_config.date_format)
 
     def IsMatchingSingle(article, index):
-      is_single = not isinstance(a, IndexArticle)
-      is_matching = index.Match(a.type_name)
+      is_single = not isinstance(article, IndexArticle)
+      is_matching = index.Match(article.type_name)
       return is_single and is_matching
 
     def ByDate(a, b):
@@ -129,7 +130,8 @@ class SiteLoader:
           IsMatchingSingle(a, index)]
 
       # Order articles by date, then apply a limit.
-      matching_articles = sorted(matching_articles, cmp=ByDate)
+      matching_articles = sorted(matching_articles,
+          key=functools.cmp_to_key(ByDate))
       if index.limit:
         matching_articles = matching_articles[:index.limit]
 

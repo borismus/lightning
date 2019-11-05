@@ -1,6 +1,6 @@
 import datetime
 from dateutil import parser
-from itertools import tee, izip
+from itertools import tee
 from jinja2 import Template, Environment, FileSystemLoader
 import os
 import re
@@ -62,8 +62,8 @@ def ComputePermalink(type_name, slug, created_date, permalink_template='{{slug}}
   permalink_data = {'slug': slug}
   # If there's date information associated, include it in the permalink data.
   if created_date:
-    permalink_data = dict(permalink_data.items() +
-        created_date.GetDict().items())
+    permalink_data = dict(permalink_data.items())
+    permalink_data.update(created_date.GetDict().items())
   return RenderTemplateString(permalink_template, permalink_data)
 
 
@@ -188,7 +188,7 @@ def GetYamlMetadata(lines):
   # Get the key: value pairs after the title.
   separator_index = lines.index('\n')
   yaml_lines = lines[2:separator_index]
-  data = yaml.load(''.join(yaml_lines)) or {}
+  data = yaml.load(''.join(yaml_lines), Loader=yaml.SafeLoader) or {}
   data['title'] = title
   return data
 
@@ -197,7 +197,7 @@ def Pairwise(iterable):
   """Returns a pairwise iterated list."""
   a, b = tee(iterable)
   next(b, None)
-  return list(izip(a, b))
+  return list(zip(a, b))
 
 
 def CopyAndOverwrite(from_path, to_path):

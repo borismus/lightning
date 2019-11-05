@@ -56,7 +56,7 @@ class SiteBuilder:
 
     # Create the index file inside the directory.
     f = open(index_path, 'w')
-    f.write(html.encode('utf-8'))
+    f.write(html)
 
 
   def CopyAssets(self, article):
