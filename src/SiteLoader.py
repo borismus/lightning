@@ -50,15 +50,15 @@ class SiteLoader:
     print(root)
     EnsureFieldsExist(config, REQUIRED_CONFIG_FIELDS)
 
-    template_root = os.path.join(root, config['template'])
+    template_root = NormalizePath(root, config['template'])
     if not os.path.exists(template_root):
       raise Exception('Template path %s not found.' % template_root)
 
-    content_root = os.path.join(root, config['content'])
+    content_root = NormalizePath(root, config['content'])
     if not os.path.exists(content_root):
       raise Exception('Content path %s not found.' % content_root)
 
-    output_root = os.path.join(root, config['output'])
+    output_root = NormalizePath(root, config['output'])
 
     return BuildConfig(content_root=content_root, template_root=template_root,
         output_root=output_root)
@@ -159,3 +159,10 @@ def EnsureFieldsExist(data, fields):
   for field in fields:
     if not field in data:
       raise Exception('Lightning config field missing: %s.' % field)
+
+def NormalizePath(root, path):
+  if os.path.isabs(path):
+    return os.path.join(root, path)
+  else:
+    return os.path.expanduser(path)
+
