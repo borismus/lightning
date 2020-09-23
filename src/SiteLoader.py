@@ -161,8 +161,5 @@ def EnsureFieldsExist(data, fields):
       raise Exception('Lightning config field missing: %s.' % field)
 
 def NormalizePath(root, path):
-  if os.path.isabs(path):
-    return os.path.join(root, path)
-  else:
-    return os.path.expanduser(path)
+  return os.path.expanduser(os.path.join(root, path))
 
