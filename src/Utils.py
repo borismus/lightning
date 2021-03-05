@@ -236,6 +236,11 @@ def FixBrokenLinks(content, permalink):
 
   return content
 
+def FormatWikiLinks(html):
+  """Given an html file, convert [[WikiLinks]] into *WikiLinks* just to ease
+  readability."""
+  wikilink = re.compile(r'\[\[(?:[^|\]]*\|)?([^\]]+)\]\]')
+  return wikilink.sub(r'*\1*', html)
 
 def StripHtmlTags(html):
   return re.sub('<[^<]+?>|\n', ' ', html)
