@@ -141,8 +141,8 @@ class ArticleLoader:
     separator_index = lines.index('\n')
     markdown_lines = lines[separator_index+1:]
     markdown_body = ''.join(markdown_lines)
-    # Format [[WikiLinks]]
-    markdown_body = FormatWikiLinks(markdown_body)
+    # Handle [[WikiLinks]].
+    markdown_body = ResolveWikiLinks(markdown_body)
     content = self.is_metadata_only and '' or markdown2.markdown(markdown_body)
     # If there's no snip specified, try to parse it before the <!--more--> tag.
     snip = self.is_metadata_only and '' or \

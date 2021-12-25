@@ -242,5 +242,17 @@ def FormatWikiLinks(html):
   wikilink = re.compile(r'\[\[(?:[^|\]]*\|)?([^\]]+)\]\]')
   return wikilink.sub(r'*\1*', html)
 
+def ResolveWikiLinks(html):
+  """Given an html file, convert [[WikiLinks]] into links to the personal wiki:
+  <a href="https://z3.ca/WikiLinks">WikiLinks</a>"""
+  wikilink = re.compile(r'\[\[(?:[^|\]]*\|)?([^\]]+)\]\]')
+  def linkify(match):
+    wiki_root = 'https://z3.ca'
+    wiki_name = match.group(1).replace('\n', ' ')
+    wiki_slug = wiki_name.replace(' ', '_')
+    return f'<a class="wiki" href="{wiki_root}/{wiki_slug}">{wiki_name}</a>'
+  return wikilink.sub(linkify, html)
+
+
 def StripHtmlTags(html):
   return re.sub('<[^<]+?>|\n', ' ', html)
