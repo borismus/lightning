@@ -98,6 +98,7 @@ def GuessDate(path):
     date_tuple = map(int, match.groups())
     date = datetime.datetime(*date_tuple)
     return ParseDate(date)
+  # print(f'GuessDate failed on {path}')
 
 
 def GuessType(path, mappings):
@@ -141,11 +142,11 @@ def RenderTemplate(template_root, filename, data):
   try:
     template = env.get_template(filename)
   except Exception:
-    raise Exception('Failed to find template %s.' % filename)
+    raise Exception(f'Failed to find template {filename}.')
   try:
     out = template.render(data)
   except Exception as e:
-    raise Exception('Failed to render template %s: "%s".' % (filename, e))
+    raise Exception(f'Failed to render template {filename}: "{e}".')
 
   return out
 
