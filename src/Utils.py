@@ -224,7 +224,7 @@ def FixBrokenLinks(content, permalink):
           re.findall(r'<video src="(.+?)"', content, re.DOTALL)
 
   # If the links are relative, make them absolute.
-  for link in links:
+  for link in set(links):
     # If it doesn't have http or / at the beginning, it's a relative URL.
     if not link.startswith('/') and not link.startswith('http') and not \
         link.startswith('mailto'):
@@ -232,8 +232,7 @@ def FixBrokenLinks(content, permalink):
       absolute_link = os.path.join(permalink, link)
       content = content.replace(link, absolute_link)
 
-      #warnings.warn('Making relative link %s into absolute %s.' % (link,
-      #  absolute_link))
+      # warnings.warn(f'Made relative link {link} into absolute {absolute_link}.')
 
   return content
 
