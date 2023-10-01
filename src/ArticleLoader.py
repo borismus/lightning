@@ -1,4 +1,4 @@
-import markdown2
+import markdown
 import re
 import warnings
 import yaml
@@ -143,10 +143,10 @@ class ArticleLoader:
     markdown_body = ''.join(markdown_lines)
     # Handle [[WikiLinks]].
     markdown_body = ResolveWikiLinks(markdown_body)
-    content = self.is_metadata_only and '' or markdown2.markdown(markdown_body)
+    content = self.is_metadata_only and '' or GenerateHtmlFromMd(markdown_body)
     # If there's no snip specified, try to parse it before the <!--more--> tag.
     snip = self.is_metadata_only and '' or \
-        'snip' in data and markdown2.markdown(data['snip']) or ParseSnip(content)
+        'snip' in data and GenerateHtmlFromMd(data['snip']) or ParseSnip(content)
 
     # Save a bunch of properties.
     snip = snip or content
@@ -207,3 +207,6 @@ class ArticleLoader:
       'output_path': permalink,
     }
 
+
+def GenerateHtmlFromMd(md):
+  return markdown.markdown(md, extensions=['tables', 'fenced_code', 'footnotes'])
