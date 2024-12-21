@@ -2,7 +2,7 @@
 name = "lightning"
 version = "0.0.1"
 
-dependencies = ["pyyaml", "markdown2", "jinja2", "python-dateutil", "livereload"]
+dependencies = ["pyyaml", "markdown", "jinja2", "python-dateutil", "livereload"]
 
 [tool.ruff]
 indent-width = 2
