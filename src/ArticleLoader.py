@@ -20,7 +20,7 @@ class ArticleLoader:
 
     Type of article is determined by YAML header called class."""
     # Determine what the article type is based on the YAML metadata.
-    f = open(path, 'rU')
+    f = open(path, 'r')
     lines = f.readlines()
     data = GetYamlMetadata(lines)
     class_name = data['class'] if ('class' in data) else 'default'
@@ -45,7 +45,7 @@ class ArticleLoader:
     """If we're dealing with a split article, we have to split the file into
     separate files, and handling each one separately, and then creating an
     Article for each and linking them together in a SplitArticle."""
-    f = open(path, 'rU')
+    f = open(path, 'r')
     lines = f.readlines()
 
     # Look for splits in the file, in the form \nTITLE\n=====\n\n.
@@ -83,7 +83,7 @@ class ArticleLoader:
   def GetIndexArticleMetadata(self, path):
     metadata = self.GetArticleMetadata(path)
 
-    f = open(path, 'rU')
+    f = open(path, 'r')
     lines = f.readlines()
     data = GetYamlMetadata(lines)
     type_filter = ('filter' in data) and data['filter'] or '*'
@@ -124,7 +124,7 @@ class ArticleLoader:
     source_path = path
     if not lines:
       # Load the file.
-      f = open(path, 'rU')
+      f = open(path, 'r')
       lines = f.readlines()
 
     if len(lines) == 0:
