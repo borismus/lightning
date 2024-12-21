@@ -1,0 +1,5 @@
+PyYAML>=3.10
+Jinja2>=2.7
+python-dateutil
+livereload
+markdown
