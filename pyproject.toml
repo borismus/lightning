@@ -1,6 +1,7 @@
 [project]
 name = "lightning"
 version = "0.0.1"
+requires-python = ">=3.8"
 
 dependencies = ["pyyaml", "markdown", "jinja2", "python-dateutil", "livereload"]
 

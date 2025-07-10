@@ -92,7 +92,7 @@ def ParseDate(date):
 def GuessDate(path):
   """Based on the filesystem structure (eg. blah/2014/09/20/foo-bar.md),
   extracts the date."""
-  regex = '.*\/([0-9]{4})\/([0-9]{2})\/([0-9]{2})\/.*'
+  regex = r'.*\/([0-9]{4})\/([0-9]{2})\/([0-9]{2})\/.*'
   match = re.match(regex, path)
   if match:
     date_tuple = map(int, match.groups())
@@ -158,7 +158,7 @@ def FindSplitIndices(lines):
   def CodeLine(line):
     if line == '\n':
       return 'N'
-    elif re.match('\w', line):
+    elif re.match(r'\w', line):
       return 'T'
     elif re.match('^===+$', line):
       return 'D'
