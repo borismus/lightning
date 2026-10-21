@@ -30,8 +30,18 @@ class SiteBuilder:
       template_data['site'] = site.ToDict()
     template_data['date_generated'] = Date.Now()
 
-    html = RenderTemplate(self.build_config.template_root,
-        article.GetTemplatePath(), template_data)
+    try:
+      html = RenderTemplate(self.build_config.template_root,
+          article.GetTemplatePath(), template_data)
+    except Exception as e:
+      message = f'{e} While building {article.source_path}.'
+      # Undated articles in an index are a common cause of render failures.
+      if isinstance(article, IndexArticle):
+        undated = [a.source_path for a in article.articles if not a.date_created]
+        if undated:
+          message += ' Articles in this index with no date:\n  ' + \
+              '\n  '.join(undated)
+      raise Exception(message) from e
 
     #if isinstance(article, IndexArticle):
     #  print('Index %s has %s children.' % (article.title,
