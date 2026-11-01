@@ -1,5 +1,6 @@
 import markdown
 import re
+from urllib.parse import urljoin
 import warnings
 import yaml
 
@@ -143,7 +144,8 @@ class ArticleLoader:
     markdown_body = ''.join(markdown_lines)
     # Handle [[WikiLinks]].
     markdown_body = ResolveWikiLinks(markdown_body)
-    content = self.is_metadata_only and '' or GenerateHtmlFromMd(markdown_body)
+    content = self.is_metadata_only and '' or \
+        LazyLoadMedia(GenerateHtmlFromMd(markdown_body))
     # If there's no snip specified, try to parse it before the <!--more--> tag.
     snip = self.is_metadata_only and '' or \
         'snip' in data and GenerateHtmlFromMd(data['snip']) or ParseSnip(content)
@@ -186,7 +188,18 @@ class ArticleLoader:
     }
     permalink = self.GetPermalinkMetadata(metadata)
     metadata.update(permalink)
+    metadata['first_image'] = self.GetFirstImageUrl(content,
+        metadata['permalink'])
     return metadata
+
+
+  def GetFirstImageUrl(self, content, permalink):
+    """Absolute URL of the article's first raster image, for share previews."""
+    src = FindFirstImage(content)
+    if not src:
+      return None
+    domain = self.site_config and self.site_config.domain or ''
+    return urljoin(domain + permalink.rstrip('/') + '/', src)
 
 
   def GetPermalinkMetadata(self, metadata):

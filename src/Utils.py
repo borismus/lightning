@@ -256,3 +256,21 @@ def ResolveWikiLinks(html):
 
 def StripHtmlTags(html):
   return re.sub('<[^<]+?>|\n', ' ', html)
+
+
+RASTER_IMAGE_EXTENSIONS = ('.png', '.jpg', '.jpeg', '.gif', '.webp')
+
+def FindFirstImage(html):
+  """Returns the src of the first raster (non-SVG) image in the html, or None."""
+  for src in re.findall(r'<img [^>]*src="([^"]+)"', html):
+    if src.split('?')[0].lower().endswith(RASTER_IMAGE_EXTENSIONS):
+      return src
+  return None
+
+
+def LazyLoadMedia(html):
+  """Defers loading of every iframe and every image but the first, which is
+  usually on screen when the page opens."""
+  first, img, rest = html.partition('<img ')
+  html = first + img + rest.replace('<img ', '<img loading="lazy" ')
+  return html.replace('<iframe ', '<iframe loading="lazy" ')

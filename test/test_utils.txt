@@ -3,5 +3,14 @@
 >>> Pairwise([1, 2, 3])
 [(1, 2), (2, 3)]
 
+>>> FindFirstImage('<p><img alt="" src="diagram.svg" /><img alt="" src="photo.JPG?w=2" /></p>')
+'photo.JPG?w=2'
+
+>>> FindFirstImage('<p>No images here.</p>') is None
+True
+
+>>> LazyLoadMedia('<img src="a.png"><img src="b.png"><iframe src="v"></iframe>')
+'<img src="a.png"><img loading="lazy" src="b.png"><iframe loading="lazy" src="v"></iframe>'
+
 >>> FindSplitIndices(['foo', '\n', 'This is a title', '===', '\n', '\n', 'bar'])
 [1]
