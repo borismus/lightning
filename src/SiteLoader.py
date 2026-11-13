@@ -84,7 +84,10 @@ class SiteLoader:
     # Load all of the markdown files.
     markdown_files = []
     for dirpath, dirnames, filenames in os.walk(content_root):
-      for fname in filenames:
+      # Walk in sorted order so builds don't depend on filesystem order (eg.
+      # which of two same-date articles lists first).
+      dirnames.sort()
+      for fname in sorted(filenames):
         if fname.endswith('.md'):
           path = os.path.join(dirpath, fname)
 

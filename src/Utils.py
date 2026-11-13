@@ -81,7 +81,10 @@ def ParseDate(date):
   try:
     if type(date) == str:
       date_string = date
-      date = parser.parse(date_string)
+      # Fill missing parts with January 1st rather than dateutil's default of
+      # today, so "posted: May 2017" means May 1st no matter when you build.
+      default = datetime.datetime(datetime.date.today().year, 1, 1)
+      date = parser.parse(date_string, default=default)
       #warnings.warn('Parsed %s into %s.' % (date_string, date))
 
     dt = datetime.datetime.combine(date, DEFAULT_TIME)

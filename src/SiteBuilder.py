@@ -52,6 +52,7 @@ class SiteBuilder:
     if article.output_path.endswith('.html'):
       index_path = os.path.join(self.build_config.output_root, article.output_path);
       print('.html path specified, outputting at {}'.format(index_path))
+      os.makedirs(os.path.dirname(index_path), exist_ok=True)
     else:
       dir_path = os.path.join(self.build_config.output_root, article.output_path)
       if isinstance(article, IndexArticle) and article.is_feed:
