@@ -29,6 +29,8 @@ class Article(object):
     self.yaml = yaml
     # Absolute URL of the first raster image in the content, if any.
     self.first_image = first_image
+    # Most similar articles, best first. Set by Related.ComputeRelated.
+    self.related = []
 
   def GetTemplatePath(self):
     if self.type_name.find('.') >= 0:

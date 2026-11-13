@@ -12,3 +12,7 @@ type_mapping:
   /pages/: 'page'
   /posts/: 'post'
 default_type: 'page'
+related:
+  types: [post, book]
+  limit: 3
+  min_score: 0.1

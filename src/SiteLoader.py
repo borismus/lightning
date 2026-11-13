@@ -4,6 +4,7 @@ import yaml
 import functools
 
 from ArticleLoader import ArticleLoader
+from Related import ComputeRelated
 from Article import IndexArticle
 from Site import *
 from Utils import *
@@ -72,7 +73,8 @@ class SiteLoader:
     return SiteConfig(title=site['site_title'], domain=site['site_domain'],
         date_format=site['date_format'],
         permalink_formats=site['permalink_formats'],
-        type_mapping=site['type_mapping'], default_type=site['default_type'])
+        type_mapping=site['type_mapping'], default_type=site['default_type'],
+        related=site.get('related'))
 
 
   def LoadContent(self, staging_prefix='staging', is_metadata_only=False):
@@ -147,6 +149,12 @@ class SiteLoader:
     for article in all_articles:
       article.snip = FixBrokenLinks(article.snip, article.permalink)
       article.content = FixBrokenLinks(article.content, article.permalink)
+
+    # Related articles need every article's full content, so skip them for
+    # metadata-only (incremental) loads.
+    if self.site_config.related and not is_metadata_only:
+      ComputeRelated(all_articles, self.site_config.related,
+          self.site_config.domain)
 
 
   def GetIndexArticles(self, article):

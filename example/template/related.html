@@ -1,0 +1,10 @@
+{% if related %}
+<aside class="related">
+  <h2>Related</h2>
+  <ul>
+    {% for article in related %}
+    <li><a href="{{article.permalink}}">{{article.title}}</a></li>
+    {% endfor %}
+  </ul>
+</aside>
+{% endif %}
