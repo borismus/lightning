@@ -1,4 +1,5 @@
-About this blog
-===============
+---
+title: About this blog
+---
 
 This blog uses Lightning!

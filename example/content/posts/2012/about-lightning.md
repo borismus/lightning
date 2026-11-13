@@ -1,6 +1,7 @@
-About Lightning
-===============
+---
+title: About Lightning
 posted: 2012-12-12
+---
 
 Lightning is a static blogging engine designed to make it painless to
 author and update large blogs. Key features are:
@@ -70,4 +71,3 @@ Lightning working on your server.
 [dropbox]: https://www.dropbox.com/install?os=lnx
 [nebulous]: http://nebulousapps.net/
 [flow]: #
-

@@ -11,6 +11,3 @@ True
 
 >>> LazyLoadMedia('<img src="a.png"><img src="b.png"><iframe src="v"></iframe>')
 '<img src="a.png"><img loading="lazy" src="b.png"><iframe loading="lazy" src="v"></iframe>'
-
->>> FindSplitIndices(['foo', '\n', 'This is a title', '===', '\n', '\n', 'bar'])
-[1]

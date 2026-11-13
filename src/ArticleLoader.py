@@ -21,9 +21,7 @@ class ArticleLoader:
 
     Type of article is determined by YAML header called class."""
     # Determine what the article type is based on the YAML metadata.
-    f = open(path, 'r')
-    lines = f.readlines()
-    data = GetYamlMetadata(lines)
+    data, _ = ParseFrontMatter(ReadFile(path), path)
     class_name = data['class'] if ('class' in data) else 'default'
 
     if class_name == 'index':
@@ -43,50 +41,46 @@ class ArticleLoader:
 
 
   def LoadSplitArticle(self, path):
-    """If we're dealing with a split article, we have to split the file into
-    separate files, and handling each one separately, and then creating an
-    Article for each and linking them together in a SplitArticle."""
-    f = open(path, 'r')
-    lines = f.readlines()
+    """A split article is one file holding many entries (eg. a year of book
+    reviews). The file's own front matter holds defaults like type; each entry
+    then starts with its own front matter block beginning with title:. See
+    FindEntryStarts."""
+    text = ReadFile(path)
+    _, body = ParseFrontMatter(text, path)
+    header = text[:len(text) - len(body)]
+    body_offset = header.count('\n')
+    # The header becomes its own article which is never rendered, but its
+    # type_name propagates to the entries.
+    first_metadata = self.GetArticleMetadata(path, text=header,
+        require_title=False)
 
-    # Look for splits in the file, in the form \nTITLE\n=====\n\n.
-    split_indices = FindSplitIndices(lines)
-
-    # Separate the file based on split indices, and load an article for each.
-    split_indices.append(len(lines))
-
-    # The first part of the split article becomes its own article which is never
-    # rendered. But we should propagate the type_name to the rest of the
-    # articles.
-    first_part = lines[0:split_indices[0]]
-    first_metadata = self.GetArticleMetadata(path, lines=first_part)
+    lines = body.split('\n')
+    starts = FindEntryStarts(body)
+    if not starts:
+      raise BuildException(f'{path}: split file has no entries. Each entry '
+          'starts with a "---" line followed by "title: ...".')
+    stray = '\n'.join(lines[:starts[0]]).strip()
+    if stray:
+      raise BuildException(f'{path}:{body_offset + 1}: content before the '
+          f'first entry: {stray[:60]!r}')
 
     articles = []
-    for start, end in Pairwise(split_indices):
-      subset = lines[start:end]
-      metadata = self.GetArticleMetadata(path, lines=subset)
+    for start, end in Pairwise(starts + [len(lines)]):
+      entry = '\n'.join(lines[start:end])
+      metadata = self.GetArticleMetadata(path, text=entry,
+          line_offset=body_offset + start)
       # Autogenerate the slug from the title.
       metadata['slug'] = GuessSlugFromTitle(metadata['title'])
       metadata['type_name'] = first_metadata['type_name']
       metadata.update(self.GetPermalinkMetadata(metadata))
+      articles.append(Article(**metadata))
 
-      article = Article(**metadata)
-
-      # Generate an auto-slug for each article, based on its title.
-      #warnings.warn('Generated slug for article: %s.' % article.slug)
-
-      articles.append(article)
-
-    #warnings.warn('Creating SplitArticle with %s' % str([a.permalink for a in articles]))
     return SplitArticle(articles, **first_metadata)
 
 
   def GetIndexArticleMetadata(self, path):
     metadata = self.GetArticleMetadata(path)
-
-    f = open(path, 'r')
-    lines = f.readlines()
-    data = GetYamlMetadata(lines)
+    data = metadata['yaml']
     type_filter = ('filter' in data) and data['filter'] or '*'
     # Expect type_filter to be a list of filters.
     if type_filter and type(type_filter) != list:
@@ -108,40 +102,34 @@ class ArticleLoader:
     return HomeArticle(**metadata)
 
 
-  def GetArticleMetadata(self, path, lines=[]):
+  def GetArticleMetadata(self, path, text=None, line_offset=0,
+      require_title=True):
     """Parses markup from files like this:
 
-      My new post
-      ===========
+      ---
+      title: My new post
       type: post
       posted: 2012-03-01 9:00
       slug: my-new-post
       snip: A short summary of what's written in the post.
+      ---
 
       Just **testing**
 
     into an dict bundle representing it.
     """
     source_path = path
-    if not lines:
-      # Load the file.
-      f = open(path, 'r')
-      lines = f.readlines()
+    if text is None:
+      text = ReadFile(path)
 
-    if len(lines) == 0:
-      raise BuildException('Unable to load article %s: content missing.' %
-          source_path)
+    data, markdown_body = ParseFrontMatter(text, source_path, line_offset)
 
-    data = GetYamlMetadata(lines)
+    if 'title' not in data:
+      if require_title:
+        raise BuildException(f'{source_path}:{line_offset + 1}: front '
+            'matter has no title.')
+      data['title'] = GuessSlugFromPath(path)
 
-    if type(data) != dict:
-      raise BuildException('Expected dictionary YAML header for %s.' \
-          % source_path)
-
-    # Process the rest of the post as Markdown.
-    separator_index = lines.index('\n')
-    markdown_lines = lines[separator_index+1:]
-    markdown_body = ''.join(markdown_lines)
     # Handle [[WikiLinks]].
     markdown_body = ResolveWikiLinks(markdown_body)
     content = self.is_metadata_only and '' or \
@@ -153,7 +141,6 @@ class ArticleLoader:
     # Save a bunch of properties.
     snip = snip or content
     title = str(data['title'])
-    content = content
 
     # Infer slug and type from path.
     slug = 'slug' in data and data['slug'] or GuessSlugFromPath(path)
@@ -166,7 +153,6 @@ class ArticleLoader:
       type_name = GuessType(path, self.site_config.type_mapping) or \
           self.site_config.default_type
 
-    summary = markdown_body[:markdown_body.find('.')+1]
     date_created = None
     if 'posted' in data:
       # Parse the date if it's specified.
@@ -223,3 +209,8 @@ class ArticleLoader:
 
 def GenerateHtmlFromMd(md):
   return markdown.markdown(md, extensions=['tables', 'fenced_code', 'footnotes'])
+
+
+def ReadFile(path):
+  with open(path, 'r') as f:
+    return f.read()

@@ -1,13 +1,13 @@
-Book list
-=========
+---
 posted: February 2015
 class: split
 type: book
+---
 
-
-Finite and Infinite Games by James Carse (no)
-===
+---
+title: Finite and Infinite Games by James Carse (no)
 posted: May 2017
+---
 
 I was intrigued by the premise of the book, which introduces a theory of games
 (emphatically not the game theory of economics), in which there are two kinds of
@@ -32,10 +32,10 @@ examples? What good is a grand theoretical framework that only has one instance?
 Lastly, given the author's definition, infinite games seem hardly game-like at
 all.
 
-
-Homo Deus by Harari (yes, if you haven't read Sapiens)
-===
+---
+title: Homo Deus by Harari (yes, if you haven't read Sapiens)
 posted: May 2017
+---
 
 I decided to read Homo Deus because I enjoyed Harari's previous book, Sapiens.
 The first 2/3 of Homo Deus is basically a rehash and more succinct version of
@@ -206,10 +206,10 @@ with the feeling that this was a fast follow for Harari. A lot of the solid
 stuff in the first 2/3 of the book is a rehash of Sapiens. The last part was
 stimulating but mainly to get me thinking about why I disagree. 
 
-
-Understanding Japan: A Cultural History (Yes, audio)
-===
+---
+title: "Understanding Japan: A Cultural History (Yes, audio)"
 posted: April 2017
+---
 
 Overall an engaging lecturer and super interesting subject. Would have greatly
 informed my trips to Japan. Most of these are quick notes about things that were
@@ -252,11 +252,10 @@ Arts
 Lecturer provides a good summary of why he is interested in Japan: it's
 incredibly interesting and exotic, but still has enough western services.
 
-
-The Lessons of History by Will and Ariel Durant (Yes)
-====
+---
+title: The Lessons of History by Will and Ariel Durant (Yes)
 posted: March 2017
-
+---
 
 This book attempts to distill authors' previously written and incredibly popular
 multi-tome historical "The Story of Civilization" into under 100 pages. Full
@@ -326,4 +325,3 @@ The authors allude to some historical patterns:
 
 Civilizations don't die completely. There are more readers of Homer today than
 ever before.
-

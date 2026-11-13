@@ -9,6 +9,8 @@ import time
 import warnings
 import yaml
 
+from BuildException import BuildException
+
 DEFAULT_TIME = datetime.time(9, 0)
 MAX_SLUG_LENGTH = 30
 
@@ -151,47 +153,64 @@ def RenderTemplate(template_root, filename, data):
   return out
 
 
-def FindSplitIndices(lines):
-  """Given some lines representing a markdown file with multiple entries in it,
-  find each split point."""
-
-  def CodeLine(line):
-    if line == '\n':
-      return 'N'
-    elif re.match(r'\w', line):
-      return 'T'
-    elif re.match('^===+$', line):
-      return 'D'
-    else:
-      return '?'
-
-  # Code lines: T if any text, N if new line, D if divider.
-  coded_lines = [CodeLine(line) for line in lines]
-  coded = ''.join(coded_lines)
-
-  #warnings.warn(coded)
-
-  # Look for patterns of NTDN in the coded lines string. If such a pattern is
-  # found, output the index.
-  return [m.start() for m in re.finditer('NTD', coded)]
+FRONT_MATTER_DELIMITER = '---'
+FENCE = re.compile(r'^(```|~~~)')
 
 
-def GetYamlMetadata(lines):
-  # Ignore empty leading lines.
+def ParseFrontMatter(text, source='<string>', line_offset=0):
+  """Splits text that starts with a YAML front matter block:
+
+    ---
+    title: My new post
+    posted: 2012-03-01 9:00
+    ---
+
+    Just **testing**
+
+  into (metadata dict, markdown body). Raises BuildException on malformed
+  input rather than guessing."""
+  where = f'{source}:{line_offset + 1}'
+  lines = text.split('\n')
+  if not lines or lines[0].rstrip() != FRONT_MATTER_DELIMITER:
+    raise BuildException(f'{where}: expected file to start with "---" front '
+        'matter.')
+  try:
+    close = next(i for i in range(1, len(lines))
+        if lines[i].rstrip() == FRONT_MATTER_DELIMITER)
+  except StopIteration:
+    raise BuildException(f'{where}: front matter is missing its closing '
+        '"---".')
+  try:
+    data = yaml.load('\n'.join(lines[1:close]), Loader=yaml.SafeLoader) or {}
+  except yaml.YAMLError as e:
+    raise BuildException(f'{where}: invalid YAML front matter: {e}')
+  if type(data) != dict:
+    raise BuildException(f'{where}: front matter must be a YAML mapping.')
+  body = '\n'.join(lines[close + 1:]).lstrip('\n')
+  return data, body
+
+
+def FindEntryStarts(text):
+  """Given the body of a multi-entry (class: split) file, returns the line
+  index of each entry. An entry starts with a front matter block whose first
+  key is title:
+
+    ---
+    title: Use of Weapons by Iain Banks
+    ---
+
+  A "---" line followed by anything else is an ordinary horizontal rule.
+  Lines inside fenced code blocks are ignored."""
+  lines = text.split('\n')
+  starts = []
+  in_fence = False
   for i, line in enumerate(lines):
-    if line == '\n':
-      del lines[i]
-    else:
-      break
-
-  # Extract the title.
-  title = lines[0].strip()
-  # Get the key: value pairs after the title.
-  separator_index = lines.index('\n')
-  yaml_lines = lines[2:separator_index]
-  data = yaml.load(''.join(yaml_lines), Loader=yaml.SafeLoader) or {}
-  data['title'] = title
-  return data
+    if FENCE.match(line):
+      in_fence = not in_fence
+    elif not in_fence and line.rstrip() == FRONT_MATTER_DELIMITER and \
+        i + 1 < len(lines) and lines[i + 1].startswith('title:'):
+      starts.append(i)
+  return starts
 
 
 def Pairwise(iterable):
