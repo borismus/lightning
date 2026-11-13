@@ -277,7 +277,11 @@ def ResolveWikiLinks(html):
 
 
 def StripHtmlTags(html):
-  return re.sub('<[^<]+?>|\n', ' ', html)
+  text = re.sub('<[^<]+?>|\n', ' ', html)
+  # Collapse the gaps left by removed tags, including before punctuation
+  # ("a <em>b</em>." -> "a b.").
+  text = re.sub(r'\s+', ' ', text)
+  return re.sub(r' ([,.;:!?)])', r'\1', text)
 
 
 RASTER_IMAGE_EXTENSIONS = ('.png', '.jpg', '.jpeg', '.gif', '.webp')
