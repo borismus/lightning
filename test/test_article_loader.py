@@ -1,5 +1,8 @@
+import os
 import sys
-sys.path.insert(0, './src')
+ROOT = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.insert(0, os.path.join(ROOT, 'src'))
+EXAMPLE = os.path.join(ROOT, 'example')
 
 from ArticleLoader import ArticleLoader
 from Article import *
@@ -11,18 +14,18 @@ site_config = SiteConfig(type_mapping={'/pages/': 'page', '/posts/': 'post'},
 loader = ArticleLoader(site_config)
 
 def test_simple():
-  path = 'content/simple.md'
+  path = os.path.join(EXAMPLE, 'content', 'simple.md')
   article = loader.LoadArticle(path)
   assert article.source_path == path
   assert article.title == 'My new post'
 
 def test_any():
-  path = 'content/books_all.md'
+  path = os.path.join(EXAMPLE, 'content', 'books_all.md')
   article = loader.LoadAny(path)
   assert article.source_path == path
   assert isinstance(article, SplitArticle)
 
 def test_index():
-  path = 'content/books.md'
+  path = os.path.join(EXAMPLE, 'content', 'books.md')
   article = loader.LoadAny(path)
   assert isinstance(article, IndexArticle)

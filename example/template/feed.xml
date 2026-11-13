@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom"
       xml:lang="en"
-      xml:base="http://smus.com">
+      xml:base="{{ site.domain }}">
   <title>{{ title }}</title>
-  <link href="http://smus.com/atom.xml" rel="self"/>
-  <link href="http://smus.com"/>
-  <updated>{{ rfc }}</updated>
-  <id>http://smus.com/atom.xml</id>
+  <link href="{{ site.domain }}/atom.xml" rel="self"/>
+  <link href="{{ site.domain }}"/>
+  <updated>{{ date_generated.Rfc() }}</updated>
+  <id>{{ site.domain }}/atom.xml</id>
   {% for post in posts %}
   <entry>
     <title>{{ post.title }}</title>
-    <author><name>Boris Smus</name></author>
+    <author><name>{{ site.title }}</name></author>
     <link href="{{ post.permalink }}"/>
-    {% if post.posted_info %}
-    <updated>{{ post.rfc }}</updated>
+    {% if post.date_created %}
+    <updated>{{ post.date_created.Rfc() }}</updated>
     {% endif %}
     <id>{{ post.permalink }}</id>
     <content type="html">

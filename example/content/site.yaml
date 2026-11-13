@@ -1,4 +1,5 @@
 site_title: Sample Lightning Blog
+site_domain: https://example.com
 date_format: '%d %B %Y'
 permalink_formats:
   post: '{{slug}}'

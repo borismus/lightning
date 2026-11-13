@@ -1,0 +1,94 @@
+<!doctype html>
+<head>
+  <title>About Lightning | Sample Lightning Blog</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="">
+
+  <link rel="stylesheet" href="/static/stylesheets/screen.css" type="text/css" media="screen" charset="utf-8">
+</head>
+<body>
+  <!-- Render errors if they are generated! -->
+  <div id="main">
+    <header><a href="/">Sample Lightning Blog</a></header>
+
+    <section id="articles">
+      
+<article>
+  <h1><a href="">About Lightning</a></h1>
+  <div class="subtitle">
+  
+  
+  </div>
+  <p>
+    <p>Lightning is a static blogging engine designed to make it painless to
+author and update large blogs. Key features are:</p>
+<ul>
+<li>Standalone content directory.</li>
+<li>Incremental building.</li>
+<li>Easy-to-author configuration.</li>
+<li>Use your favorite editor for everything.</li>
+</ul>
+<p>Here's a preview of how easy it is to use lightning <a href="/about-lightning/#">blogging flow
+screencast</a> once you're set up.</p>
+<!--more-->
+
+<h1>Installation</h1>
+<ol>
+<li>Clone the repository via <code>git clone git@github.com:borismus/lightning.git</code></li>
+<li>Run <code>cd lightning</code> to get to your newly cloned repository.</li>
+<li>Install all required dependencies by running <code>pip install -r requirements.txt</code>.</li>
+<li>Run <code>./lightning</code> to build and <code>./lightning preview</code> to run a
+   webserver.</li>
+<li>Open <a href="http://localhost:8000">http://localhost:8000</a> in your browser.</li>
+</ol>
+<h1>Usage</h1>
+<p>Build incrementally.</p>
+<pre><code>&gt; ./lightning
+</code></pre>
+<p>Forcibly rebuild everything regardless of whether or not there have been
+changes made to the content. This is useful if you change your template.</p>
+<pre><code>&gt; ./lightning rebuild
+</code></pre>
+<p>Start watching for local changes to the content, rebuilding
+incrementally based on that.</p>
+<pre><code>&gt; ./lightning watch
+</code></pre>
+<p>Start a really simple local web server with its document root pointing
+to the output directory.</p>
+<pre><code>&gt; ./lightning preview
+</code></pre>
+<h1>Configuration</h1>
+<ol>
+<li><code>lightning.yaml</code> specifies where to look for content, template and
+   where to dump output.</li>
+<li><code>site.yaml</code> in your content directory specifies site-specific
+   configuration.</li>
+</ol>
+<h1>For production</h1>
+<p>I use a combination of Dropbox and Lightning (which uses inotify-tools)
+to make for a <a href="/about-lightning/#">pleasant blogging experience</a>. Here are the steps to get
+Lightning working on your server.</p>
+<ol>
+<li>Install Dropbox on your <a href="https://www.dropbox.com/install?os=lnx">server</a>.</li>
+<li>Install Lightning on your server (see above).</li>
+<li>Customize your theme.</li>
+<li>Configure <code>lightning.yaml</code> to look for your content on Dropbox (eg.
+   <code>~/Dropbox/my-blog/</code>)</li>
+<li>Setup a watcher on your server via <code>lightning watch</code>.</li>
+<li>Make some changes to your content directory from any Dropbox client
+   (I sometimes use <a href="http://nebulousapps.net/">Nebulous</a> on iPad).</li>
+<li>You're done.</li>
+</ol>
+  </p>
+</article>
+
+    </section>
+  </div>
+
+  <footer>
+    Powered by <a href="https://github.com/borismus/lightning">Lightning</a>.
+  </footer>
+  <script src="/lightning_error.js"></script>
+</body>
