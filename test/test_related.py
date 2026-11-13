@@ -57,6 +57,21 @@ def test_min_score_drops_weak_matches():
   assert related_slugs(articles[0]) == ['race']
 
 
+def test_min_count_drops_articles_with_too_few_matches():
+  sail, race, bake, sourdough = corpus()
+  ComputeRelated([sail, race, bake, sourdough], {'min_count': 2})
+  # Each article has only one good match, so none get a related list.
+  assert all(a.related == [] for a in (sail, race, bake, sourdough))
+
+  sail, race, bake, sourdough = corpus()
+  sail.content += '<a href="/bake/">unrelated link</a>'
+  ComputeRelated([sail, race, bake, sourdough], {'min_count': 2})
+  # The link gives sailing and baking a second match each.
+  assert sorted(related_slugs(sail)) == ['bake', 'race']
+  assert sorted(related_slugs(bake)) == ['sail', 'sourdough']
+  assert race.related == [] and sourdough.related == []
+
+
 def test_link_bonus_relates_linked_articles():
   sail, race, bake, sourdough = corpus()
   sail.content += '<a href="/bake/">unrelated link</a>'

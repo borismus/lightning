@@ -4,7 +4,8 @@ Each article becomes a TF-IDF vector over its words (title words count
 extra), and articles are compared by cosine similarity. Articles that link to
 each other get a bonus, since an explicit link is strong evidence. Matches
 below a minimum score are dropped, so an article with no good match gets no
-related section rather than a weak one.
+related section rather than a weak one. Likewise, an article with fewer than
+min_count good matches gets none, so a lone weak-ish card never shows.
 
 Enable it in site.yaml:
 
@@ -12,13 +13,14 @@ Enable it in site.yaml:
     types: [post, note, book]   # which articles get, and can be, related
     limit: 3                    # max related articles per article
     min_score: 0.1              # drop weaker matches
+    min_count: 2                # show none unless at least this many match
 """
 import collections
 import html
 import math
 import re
 
-DEFAULTS = {'types': ['post'], 'limit': 3, 'min_score': 0.1}
+DEFAULTS = {'types': ['post'], 'limit': 3, 'min_score': 0.1, 'min_count': 1}
 TITLE_WEIGHT = 3
 LINK_BONUS = 0.15
 
@@ -137,5 +139,7 @@ def ComputeRelated(articles, config, domain=''):
         score += LINK_BONUS
       if score >= config['min_score']:
         scored.append((score, other.permalink, other))
+    if len(scored) < config['min_count']:
+      scored = []
     scored.sort(key=lambda s: (-s[0], s[1]))
     article.related = [other for _, _, other in scored[:config['limit']]]
